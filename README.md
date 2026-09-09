@@ -3,12 +3,6 @@
 Curso de Python do básico ao emprego. Site estático, sem build, sem dependências de instalação.
 O código Python dos exemplos e dos exercícios corre no browser (Pyodide, carregado só quando o aluno carrega em "Correr").
 
-## Pôr no ar
-
-1. Cria o repositório e mete lá `index.html`, `curso.js` e este ficheiro.
-2. Settings, Pages, Source: `Deploy from a branch`, branch `main`, pasta `/ (root)`.
-3. Fica em `https://<utilizador>.github.io/<repo>/`.
-
 Para testar localmente: `python3 -m http.server` na pasta e abrir `http://localhost:8000`.
 Abrir o `index.html` com duplo clique também funciona porque o conteúdo vem de um `<script>` e não de um `fetch`.
 
