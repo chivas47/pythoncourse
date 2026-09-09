@@ -364,7 +364,7 @@ function vistaPercurso(){
   const t = prontas().length, f = prontas().filter(l => feitas[l.id]).length;
   document.getElementById('sub').textContent = `${f} de ${t} aulas concluídas`;
   app.innerHTML = `<h1>Percurso</h1>
-    <p>Aulas escritas: ${t}. Concluídas: ${f}. O resto do curso está planeado módulo a módulo no índice.</p>
+    <p>Aulas escritas: ${t}. Concluídas: ${f}. Estão todas escritas, com exercício e testes: podes fazê-las por ordem ou ir buscar o que precisas.</p>
     <h2>O que precisas de mostrar a quem recruta</h2>
     <ul>
       <li>Um repositório com testes a passar e um README que explica o problema, não a tecnologia.</li>
@@ -388,7 +388,8 @@ function ligarBotoes(){
       b.disabled = true;
       try{
         const r = await correrPython(pre.textContent);
-        out.textContent = r.erro ? r.erro : (r.saida || '(sem saída)');
+        // mostra a saída antes do erro: há blocos que imprimem e só depois rebentam de propósito
+        out.textContent = (r.saida ? r.saida + '\n' : '') + (r.erro || (r.saida ? '' : '(sem saída)'));
         out.className = 'saida' + (r.erro ? ' mau' : '');
       }catch(e){ out.textContent = e.message; out.className = 'saida mau'; }
       b.disabled = false;

@@ -38,7 +38,14 @@ Antes de publicar, testa a suite contra a tua solução com `python3` local: se 
 
 ## Estado
 
-Escritas por inteiro: 1.1, 1.2, 1.3, 3.1, 10.1, 14.1. As restantes 49 estão planeadas com título, duração e objetivo.
+As 48 aulas dos 20 módulos estão escritas, cada uma com conteúdo, quiz e exercício com testes.
+Todos os exercícios foram validados contra uma solução de referência: a suite passa com a solução
+e falha com o código inicial.
+
+Os exercícios correm no browser, por isso não dependem de bibliotecas externas. Nas aulas sobre
+FastAPI, SQLAlchemy, httpx ou Docker, os blocos com essas bibliotecas são de leitura (`code`) e o
+exercício trabalha a mesma ideia com a biblioteca padrão: validação à entrada, repositório em
+memória, dublês de teste, configuração por variáveis de ambiente.
 
 ## Decisões técnicas
 
