@@ -731,8 +731,72 @@ window.CURSO = {
       n: 9, fase: 2, titulo: "Iteradores e geradores",
       objetivo: "Processar mais dados do que a memória aguenta.",
       licoes: [
-        { id: "9.1", titulo: "yield e avaliação preguiçosa", min: 16, estado: "esboco", meta: "Ler um ficheiro de 4 GB sem esgotar a memória." },
-        { id: "9.2", titulo: "itertools útil", min: 12, estado: "esboco", meta: "groupby, chain, islice em casos reais." }
+        {
+          id: "9.1", titulo: "yield e avaliação preguiçosa", min: 16, estado: "pronta",
+          meta: "No fim: processas um ficheiro maior do que a memória da máquina sem o carregar todo.",
+          blocos: [
+            ["p", "Uma função com `yield` não devolve um valor: devolve um gerador. O corpo só corre quando alguém pede o próximo elemento, e pára exatamente na linha do `yield` até lhe pedirem outro."],
+            ["py", "def contar(ate):\n    print(\"comecei\")\n    for n in range(1, ate + 1):\n        print(\"vou produzir\", n)\n        yield n\n    print(\"acabei\")\n\ng = contar(3)\nprint(\"ainda não correu nada\")\nprint(next(g))\nprint(next(g))\nprint(list(g))"],
+            ["p", "Repara na ordem das mensagens. O 'comecei' só apareceu no primeiro `next`. Um gerador é uma receita, não um tabuleiro de bolos."],
+            ["h", "Porque é que isto importa"],
+            ["p", "Uma lista com 40 milhões de linhas ocupa gigabytes. Um gerador ocupa uma linha de cada vez. É a diferença entre um script que corre num portátil e um script que morre com `MemoryError`."],
+            ["code", "# carrega o ficheiro todo para memória\ndef linhas_ma(caminho):\n    with open(caminho, encoding=\"utf-8\") as f:\n        return f.readlines()\n\n# produz linha a linha\ndef linhas_boa(caminho):\n    with open(caminho, encoding=\"utf-8\") as f:\n        for linha in f:\n            yield linha.rstrip(\"\\n\")"],
+            ["h", "Encadear geradores"],
+            ["p", "Cada passo é um gerador e nenhum guarda nada. Os dados atravessam a cadeia um a um, como numa linha de montagem. Este padrão é o que se usa para processar ficheiros grandes e fluxos de eventos."],
+            ["py", "def numeros():\n    for n in range(1, 11):\n        yield n\n\ndef so_pares(fonte):\n    for n in fonte:\n        if n % 2 == 0:\n            yield n\n\ndef ao_quadrado(fonte):\n    for n in fonte:\n        yield n * n\n\nprint(list(ao_quadrado(so_pares(numeros()))))\nprint(sum(ao_quadrado(so_pares(numeros()))))"],
+            ["p", "`yield from` delega noutro iterável e evita um ciclo de repetição. Já o viste no módulo 14, na função que percorria as páginas de uma API."],
+            ["py", "def tudo(*colecoes):\n    for c in colecoes:\n        yield from c\n\nprint(list(tudo([1, 2], (3, 4), \"ab\")))"],
+            ["aviso", "Um gerador esgota-se: depois de o percorrer uma vez fica vazio, sem aviso nenhum. Se precisas de percorrer duas vezes, guarda numa lista com `list(...)` e assume o custo em memória, conscientemente."],
+            ["py", "g = (n * n for n in range(4))\nprint(list(g))\nprint(list(g))"],
+            ["obra", "Em código de dados vais ver funções que devolvem geradores como convenção. O sinal de aviso é quando alguém escreve `len(gerador)`, que rebenta, ou percorre o mesmo gerador em dois sítios e recebe zero resultados no segundo. Sabendo isto, poupas uma tarde."]
+          ],
+          quiz: [
+            { p: "Um colega diz que o script dele rebenta com MemoryError a ler um CSV de 6 GB. Que mudança propões primeiro?", o: ["Comprar mais memória", "Ler linha a linha com um gerador em vez de carregar tudo", "Dividir o ficheiro à mão"], c: 1,
+              e: "Streaming em vez de carregamento. Quase todo o processamento de ficheiros é sequencial e não precisa de ter tudo em memória ao mesmo tempo." }
+          ],
+          exercicio: {
+            enunciado: "Escreve o gerador `linhas_validas(linhas)` que produz, uma a uma, as linhas sem espaços nas pontas, ignorando as vazias e as que começam por `#`. Tem de ser um gerador, não uma lista.",
+            inicio: "def linhas_validas(linhas):\n    pass\n",
+            testes: "import inspect as _i\nverifica('é uma função geradora', _i.isgeneratorfunction(linhas_validas))\n_e = ['  ola  ', '', '# comentario', 'mundo', '   ']\nverifica('limpa e filtra', list(linhas_validas(_e)) == ['ola', 'mundo'])\nverifica('entrada vazia', list(linhas_validas([])) == [])\nverifica('não consome tudo de uma vez', next(linhas_validas(_e)) == 'ola')"
+          }
+        },
+        {
+          id: "9.2", titulo: "itertools útil", min: 12, estado: "pronta",
+          meta: "No fim: resolves agrupamentos e cortes com a biblioteca padrão em vez de ciclos à mão.",
+          blocos: [
+            ["p", "`itertools` é um conjunto de ferramentas que trabalham sobre iteráveis sem construir listas. Não precisas de as saber todas: quatro resolvem quase tudo o que vais encontrar."],
+            ["h", "groupby: agrupar em sequência"],
+            ["aviso", "`groupby` agrupa elementos consecutivos, não iguais em todo o lado. Se os dados não estiverem ordenados pela mesma chave, o resultado vem partido em pedaços e ninguém te avisa. Ordena primeiro, sempre."],
+            ["py", "from itertools import groupby\n\nvendas = [\n    {\"loja\": \"Porto\", \"valor\": 80},\n    {\"loja\": \"Lisboa\", \"valor\": 120},\n    {\"loja\": \"Porto\", \"valor\": 20},\n]\n\nchave = lambda v: v[\"loja\"]\nfor loja, grupo in groupby(sorted(vendas, key=chave), key=chave):\n    itens = list(grupo)\n    print(loja, len(itens), sum(i[\"valor\"] for i in itens))"],
+            ["p", "Repara no `list(grupo)`: o grupo também é um iterador preguiçoso e desaparece assim que avanças para o grupo seguinte. É a pegadela clássica desta função."],
+            ["h", "chain: juntar sem copiar"],
+            ["py", "from itertools import chain\n\nsemana1 = [10, 12]\nsemana2 = [8]\nsemana3 = [15, 3]\n\nprint(sum(chain(semana1, semana2, semana3)))\nprint(list(chain.from_iterable([semana1, semana2, semana3])))"],
+            ["h", "islice: cortar um iterador"],
+            ["p", "Não podes fatiar um gerador com `[:5]`. `islice` faz isso, e é a forma de espreitar as primeiras linhas de um ficheiro enorme sem o ler todo."],
+            ["py", "from itertools import islice\n\ndef infinito():\n    n = 0\n    while True:\n        yield n\n        n += 1\n\nprint(list(islice(infinito(), 5)))\nprint(list(islice(infinito(), 10, 15)))"],
+            ["h", "count e cycle, com cuidado"],
+            ["py", "from itertools import count, cycle, islice\n\nprint(list(islice(count(100, 10), 4)))\nprint(list(islice(cycle(\"ABC\"), 7)))"],
+            ["p", "São infinitos. Sem `islice` ou um `break`, o teu programa nunca mais acaba. Usa-os para gerar identificadores ou distribuir trabalho de forma rotativa."],
+            ["h", "Alternativas fora do itertools"],
+            ["lista", [
+              "`collections.Counter` para contar ocorrências.",
+              "`collections.defaultdict(list)` para agrupar sem ordenar, que é o que eu escolho em código de todos os dias.",
+              "`zip(*lista)` para transpor pares em duas listas.",
+              "`enumerate` para posição e valor, do módulo 2."
+            ]],
+            ["py", "from collections import defaultdict\n\nvendas = [(\"Porto\", 80), (\"Lisboa\", 120), (\"Porto\", 20)]\n\npor_loja = defaultdict(list)\nfor loja, valor in vendas:\n    por_loja[loja].append(valor)\n\nprint(dict(por_loja))"],
+            ["obra", "Em revisão de código, um ciclo de quinze linhas a agrupar dicionários vai receber o comentário 'isto é um defaultdict'. Não é pedantismo: menos código escrito à mão é menos código onde esconder um erro de contagem."]
+          ],
+          quiz: [
+            { p: "`groupby` sobre uma lista de vendas devolve a mesma loja em três grupos separados. Porquê?", o: ["Bug do itertools", "A lista não estava ordenada pela chave de agrupamento", "Faltou converter para lista"], c: 1,
+              e: "`groupby` só junta elementos consecutivos. Ou ordenas antes pela mesma chave, ou usas `defaultdict`, que não se importa com a ordem." }
+          ],
+          exercicio: {
+            enunciado: "Escreve `agrupar(vendas)` que recebe uma lista de dicionários com `loja` e `valor` e devolve um dicionário de loja para lista de valores, pela ordem em que aparecem.",
+            inicio: "from collections import defaultdict\n\n\ndef agrupar(vendas):\n    pass\n",
+            testes: "_v = [{'loja':'Porto','valor':80},{'loja':'Lisboa','valor':120},{'loja':'Porto','valor':20}]\n_r = agrupar(_v)\nverifica('agrupa por loja', _r['Porto'] == [80, 20])\nverifica('mantém as outras lojas', _r['Lisboa'] == [120])\nverifica('duas lojas', len(_r) == 2)\nverifica('lista vazia devolve vazio', dict(agrupar([])) == {})"
+          }
+        }
       ]
     },
 
@@ -768,32 +832,340 @@ window.CURSO = {
             testes: "verifica('média simples', media([10, 20]) == 15.0)\nverifica('arredonda a uma casa', media([1, 2, 2]) == 1.7)\n_erro = False\ntry:\n    media([])\nexcept ValueError:\n    _erro = True\nverifica('lista vazia levanta ValueError', _erro)"
           }
         },
-        { id: "10.2", titulo: "Fixtures e organização da suite", min: 16, estado: "esboco", meta: "conftest, dados de teste, isolamento." },
-        { id: "10.3", titulo: "Escrever o teste primeiro", min: 14, estado: "esboco", meta: "Ciclo vermelho, verde, limpar, num caso real." }
+        {
+          id: "10.2", titulo: "Fixtures e organização da suite", min: 16, estado: "pronta",
+          meta: "No fim: preparas dados de teste sem os repetir e mantens cada teste isolado dos outros.",
+          blocos: [
+            ["p", "Uma fixture é código que prepara o que o teste precisa: um objeto, uma base de dados temporária, um ficheiro. O pytest chama-a por ti quando o nome aparece como argumento do teste."],
+            ["code", "import pytest\nfrom loja import Carrinho\n\n@pytest.fixture\ndef carrinho():\n    c = Carrinho()\n    c.adicionar(\"teclado\", 39.9)\n    return c\n\ndef test_total_com_um_item(carrinho):\n    assert carrinho.total() == 39.9\n\ndef test_adicionar_soma(carrinho):\n    carrinho.adicionar(\"rato\", 12.5)\n    assert carrinho.total() == 52.4"],
+            ["p", "Os dois testes recebem carrinhos diferentes. A fixture corre uma vez por teste, e é isso que garante que o segundo teste não vê o que o primeiro fez. Isolamento é a propriedade que faz uma suite valer alguma coisa."],
+            ["h", "conftest.py"],
+            ["p", "Fixtures usadas por vários ficheiros vivem num `conftest.py` na pasta de testes. Não precisas de importar nada: o pytest encontra-as sozinho, incluindo nas subpastas."],
+            ["code", "testes/\n  conftest.py          # fixtures partilhadas\n  test_carrinho.py\n  test_relatorio.py\n  dados/\n    vendas_exemplo.csv"],
+            ["h", "Preparar e limpar"],
+            ["p", "Com `yield`, o que está antes corre para preparar e o que está depois corre para limpar, mesmo que o teste rebente. É o gerador do módulo 9 a servir de gestor de contexto."],
+            ["code", "@pytest.fixture\ndef ficheiro_temporario(tmp_path):\n    caminho = tmp_path / \"vendas.csv\"\n    caminho.write_text(\"produto,valor\\nteclado,39.9\\n\", encoding=\"utf-8\")\n    yield caminho\n    # aqui limpava-se, se o tmp_path não o fizesse por nós"],
+            ["p", "`tmp_path` é uma fixture que já vem no pytest: dá-te uma pasta temporária nova por teste e apaga-a no fim. Nunca escrevas ficheiros de teste na pasta do projeto."],
+            ["h", "Âmbito"],
+            ["lista", [
+              "`scope=\"function\"`, o valor por omissão: uma instância nova por teste. É o que queres em 90 por cento dos casos.",
+              "`scope=\"module\"` ou `scope=\"session\"`: partilhada, para coisas caras como arrancar um servidor.",
+              "Partilhar estado alterável entre testes é como se cria uma suite que passa sozinha e falha em conjunto, ou pior, que só passa numa certa ordem."
+            ]],
+            ["obra", "Um sinal de suite doente: os testes passam quando corres o ficheiro sozinho e falham quando corres a suite toda. É quase sempre estado partilhado, uma base de dados que não é limpa, ou uma variável de módulo. Corre com `pytest -p no:randomly` desligado e vais ver."],
+            ["h", "Construtores de dados"],
+            ["p", "Mesmo sem pytest, o padrão mais útil é uma função que cria dados de teste com valores por omissão sensatos e deixa alterar só o que interessa ao teste. Torna cada teste legível: vê-se logo o que é relevante."],
+            ["py", "def criar_utilizador(**alteracoes):\n    base = {\"nome\": \"Ana\", \"email\": \"ana@exemplo.pt\", \"ativo\": True}\n    base.update(alteracoes)\n    return base\n\nprint(criar_utilizador())\nprint(criar_utilizador(ativo=False))"],
+            ["aviso", "Fixtures que fazem cinco coisas escondem o que o teste precisa. Se ao ler um teste não percebes de onde vem o estado, a fixture está a ser esperta a mais. Explícito ganha a poupado."]
+          ],
+          quiz: [
+            { p: "A tua suite passa a correr o ficheiro sozinho e falha ao correr tudo. Causa mais provável?", o: ["Falta de fixtures", "Estado partilhado entre testes, como um ficheiro ou uma variável de módulo", "Testes a mais"], c: 1,
+              e: "Testes têm de ser independentes e poder correr em qualquer ordem. Cada um prepara o seu estado e limpa o que sujou." }
+          ],
+          exercicio: {
+            enunciado: "Escreve `criar_utilizador(**alteracoes)`, um construtor de dados de teste. Devolve um dicionário com nome 'Ana', email 'ana@exemplo.pt' e ativo `True`, com os campos passados substituídos. Cada chamada devolve um dicionário novo.",
+            inicio: "def criar_utilizador(**alteracoes):\n    pass\n",
+            testes: "_u = criar_utilizador()\nverifica('valores por omissão', _u == {'nome': 'Ana', 'email': 'ana@exemplo.pt', 'ativo': True})\nverifica('substitui um campo', criar_utilizador(ativo=False)['ativo'] is False)\nverifica('aceita campos novos', criar_utilizador(idade=30)['idade'] == 30)\n_u['nome'] = 'alterado'\nverifica('cada chamada devolve um dicionário novo', criar_utilizador()['nome'] == 'Ana')"
+          }
+        },
+        {
+          id: "10.3", titulo: "Escrever o teste primeiro", min: 14, estado: "pronta",
+          meta: "No fim: usas o ciclo vermelho, verde, limpar num problema real e percebes o que ele te dá.",
+          blocos: [
+            ["p", "Escrever o teste antes do código parece ao contrário e não é. O teste é a primeira utilização da função que vais escrever, e obriga-te a decidir a assinatura e o comportamento antes de te enterrares na implementação."],
+            ["h", "O ciclo"],
+            ["lista", [
+              "Vermelho: escreve um teste do comportamento que falta. Corre-o e vê-o falhar, com a mensagem certa.",
+              "Verde: escreve o mínimo de código que o faz passar. Feio é aceitável nesta fase.",
+              "Limpar: arruma o código com os testes a passar a servir de rede."
+            ]],
+            ["p", "O passo que toda a gente salta é ver o teste falhar. Um teste que nunca falhou pode estar a testar coisa nenhuma: um `assert` com um nome mal escrito, uma função que não está a ser chamada."],
+            ["h", "Um caso a sério"],
+            ["p", "Requisito: uma password é válida se tiver pelo menos oito caracteres, um algarismo e uma maiúscula. Devolve a lista de problemas, vazia quando está tudo bem. Primeiro os testes:"],
+            ["code", "def test_password_valida_nao_tem_problemas():\n    assert validar(\"Segura123\") == []\n\ndef test_password_curta():\n    assert \"curta\" in validar(\"Ab1\")\n\ndef test_password_sem_algarismo():\n    assert \"sem algarismo\" in validar(\"Segurissima\")\n\ndef test_acumula_varios_problemas():\n    assert len(validar(\"abc\")) == 3"],
+            ["p", "Repara no que os testes já decidiram: o nome da função, que devolve uma lista, que os problemas são strings curtas, e que se acumulam. Isso é desenho, e aconteceu antes de escrever uma linha de implementação."],
+            ["py", "def validar(password):\n    problemas = []\n    if len(password) < 8:\n        problemas.append(\"curta\")\n    if not any(c.isdigit() for c in password):\n        problemas.append(\"sem algarismo\")\n    if not any(c.isupper() for c in password):\n        problemas.append(\"sem maiuscula\")\n    return problemas\n\nprint(validar(\"Segura123\"))\nprint(validar(\"abc\"))"],
+            ["h", "Onde compensa mesmo"],
+            ["lista", [
+              "Regras de negócio com muitos casos limite, como esta.",
+              "Correção de bugs: escreve primeiro o teste que reproduz o bug relatado. Se não o consegues escrever, ainda não percebeste o bug.",
+              "Refatorações: os testes existentes dizem-te se partiste alguma coisa.",
+              "Onde não compensa: exploração, protótipos, código de interface que vais deitar fora amanhã."
+            ]],
+            ["obra", "Numa entrevista técnica com código, começar pelos casos de teste em voz alta vale mais do que a solução ótima. Mostra que pensas em casos limite antes de escrever, que é literalmente o trabalho. Diz: 'antes de implementar, os casos que me interessam são vazio, um elemento e valores repetidos'."],
+            ["aviso", "Testar a implementação em vez do comportamento é a armadilha. Um teste que verifica que uma função interna foi chamada parte-se na primeira refatoração, mesmo com o resultado certo. Testa o que entra e o que sai."]
+          ],
+          quiz: [
+            { p: "Chega-te um relatório de bug de produção. Qual é o primeiro passo?", o: ["Corrigir depressa e publicar", "Escrever um teste que falha por causa do bug", "Pedir mais informação ao utilizador"], c: 1,
+              e: "O teste prova que reproduziste o problema e fica a impedir que ele volte. Correções sem teste voltam, e voltam com o mesmo número de bilhete." }
+          ],
+          exercicio: {
+            enunciado: "Implementa `validar(password)` para passar nos testes já escritos: devolve uma lista de problemas com 'curta' (menos de 8 caracteres), 'sem algarismo' e 'sem maiuscula', por esta ordem. Password válida devolve lista vazia.",
+            inicio: "def validar(password):\n    pass\n",
+            testes: "verifica('password válida', validar('Segura123') == [])\nverifica('password curta', validar('Ab1') == ['curta'])\nverifica('sem algarismo', validar('Segurissima') == ['sem algarismo'])\nverifica('acumula os três problemas', validar('abc') == ['curta', 'sem algarismo', 'sem maiuscula'])\nverifica('password vazia', len(validar('')) == 3)"
+          }
+        }
       ]
     },
     {
       n: 11, fase: 3, titulo: "Qualidade e ferramentas",
       objetivo: "Entregar código que passa em revisão à primeira.",
       licoes: [
-        { id: "11.1", titulo: "ruff, formatação automática e mypy", min: 15, estado: "esboco", meta: "Configurar num projeto e perceber o que cada aviso quer dizer." },
-        { id: "11.2", titulo: "pre-commit e integração contínua", min: 14, estado: "esboco", meta: "GitHub Actions a correr testes em cada push." }
+        {
+          id: "11.1", titulo: "ruff, formatação automática e mypy", min: 15, estado: "pronta",
+          meta: "No fim: configuras as três ferramentas num projeto e percebes o que cada aviso quer dizer.",
+          blocos: [
+            ["p", "Três ferramentas, três trabalhos diferentes. O formatador arruma o código. O linter aponta problemas. O verificador de tipos prova que as peças encaixam. Nenhuma delas substitui testes, e as três juntas apanham antes da revisão o que faria perder tempo a um humano."],
+            ["h", "ruff: linter e formatador"],
+            ["code", "pip install ruff\n\nruff format .        # arruma indentação, aspas, linhas\nruff check .         # aponta problemas\nruff check --fix .   # corrige o que é seguro corrigir"],
+            ["p", "O `ruff` substituiu num só programa o que antes eram quatro: black, isort, flake8 e pyupgrade. É escrito em Rust e corre um projeto inteiro em menos de um segundo, o que faz toda a diferença: uma ferramenta lenta acaba desligada."],
+            ["code", "# pyproject.toml\n[tool.ruff]\nline-length = 88\ntarget-version = \"py312\"\n\n[tool.ruff.lint]\nselect = [\"E\", \"F\", \"I\", \"UP\", \"B\"]\n# E: estilo, F: erros reais, I: ordem dos imports,\n# UP: sintaxe moderna, B: armadilhas conhecidas"],
+            ["h", "O que os avisos querem dizer"],
+            ["lista", [
+              "`F401 imported but unused`: import a mais. Apaga, não comentes.",
+              "`F841 local variable assigned but never used`: ou te esqueceste de a usar, ou há aqui um bug.",
+              "`E501 line too long`: parte a linha. Quase sempre é uma expressão que devia ter nome.",
+              "`B006 mutable default argument`: o bug do módulo 4, apanhado automaticamente.",
+              "`B008 function call in default argument`: chamada avaliada uma vez, na definição."
+            ]],
+            ["h", "Formatar não é opinião"],
+            ["p", "Discussões sobre aspas simples ou duplas custam dinheiro e não produzem nada. O formatador decide, corre no gravar do editor, e a equipa passa a discutir o que interessa. Além disso, os diffs no git ficam limpos: só muda o que mudaste mesmo."],
+            ["h", "mypy: os tipos verificados"],
+            ["code", "pip install mypy\nmypy vendas/"],
+            ["code", "def desconto(preco: float, pct: float) -> float:\n    return preco * (1 - pct / 100)\n\ndesconto(\"100\", 20)\n# error: Argument 1 has incompatible type \"str\"; expected \"float\""],
+            ["p", "Aquele erro apareceu sem correr o programa. Num projeto grande, o mypy apanha centenas de casos destes, sobretudo `None` onde ninguém esperava `None`. Começa por o correr só nos módulos novos: `strict` desde o dia um num projeto antigo é desmoralizante."],
+            ["obra", "Numa candidatura, um repositório com `pyproject.toml` configurado, `ruff` limpo e testes a passar diz mais sobre ti do que qualquer linha do CV. Diz que já trabalhaste em equipa, mesmo que ainda não tenhas trabalhado."],
+            ["aviso", "`# noqa` desliga um aviso naquela linha e serve para casos justificados, com comentário a explicar. Ficheiros cheios de `noqa` são a prova de que a configuração está errada, e é a configuração que se corrige."]
+          ],
+          quiz: [
+            { p: "O linter aponta `F841: local variable 'resultado' is assigned to but never used`. O que investigas?", o: ["Nada, é só estilo", "Se te esqueceste de devolver ou usar esse resultado, o que costuma ser um bug", "Renomear a variável"], c: 1,
+              e: "Este aviso apanha lógica esquecida a meio: cálculos cujo resultado se perde. É dos poucos avisos de estilo que denunciam bugs a sério." }
+          ],
+          exercicio: {
+            enunciado: "Escreve `verificar_estilo(linhas)`, um mini-linter. Devolve uma lista de tuplos `(numero_da_linha, problema)` com 'linha demasiado longa' para linhas com mais de 88 caracteres e 'espaços no fim' para linhas que acabam em espaço. As linhas contam a partir de 1 e uma linha pode ter os dois problemas, por esta ordem.",
+            inicio: "def verificar_estilo(linhas):\n    pass\n",
+            testes: "_l = ['ok', 'x' * 89, 'com espaco  ', 'y' * 89 + ' ']\n_r = verificar_estilo(_l)\nverifica('linha longa apanhada', (2, 'linha demasiado longa') in _r)\nverifica('espaços no fim apanhados', (3, 'espaços no fim') in _r)\nverifica('linha limpa não aparece', all(n != 1 for n, _ in _r))\nverifica('dois problemas na mesma linha', _r[-2:] == [(4, 'linha demasiado longa'), (4, 'espaços no fim')])\nverifica('ficheiro limpo devolve vazio', verificar_estilo(['a', 'b']) == [])"
+          }
+        },
+        {
+          id: "11.2", titulo: "pre-commit e integração contínua", min: 14, estado: "pronta",
+          meta: "No fim: pões as verificações a correr sozinhas antes do commit e em cada push.",
+          blocos: [
+            ["p", "Uma verificação que depende de alguém se lembrar de a correr não é uma verificação. Há dois sítios onde isto se automatiza: no teu computador, antes do commit, e no servidor, a cada push."],
+            ["h", "pre-commit, no teu computador"],
+            ["code", "pip install pre-commit\npre-commit install     # instala o gancho no .git\npre-commit run --all-files"],
+            ["code", "# .pre-commit-config.yaml\nrepos:\n  - repo: https://github.com/astral-sh/ruff-pre-commit\n    rev: v0.5.0\n    hooks:\n      - id: ruff\n        args: [--fix]\n      - id: ruff-format\n  - repo: https://github.com/pre-commit/pre-commit-hooks\n    rev: v4.6.0\n    hooks:\n      - id: trailing-whitespace\n      - id: end-of-file-fixer\n      - id: check-yaml\n      - id: check-added-large-files"],
+            ["p", "A partir daqui, o commit é recusado se o formatador tiver mudado alguma coisa. Corres outra vez e o commit passa. Parece chato durante dois dias e depois deixas de pensar nisso."],
+            ["aviso", "Não ponhas a suite de testes inteira no pre-commit. Um gancho que demora um minuto faz com que a equipa comece a usar `--no-verify`, e aí perdeste tudo. Ganchos rápidos localmente, testes completos no servidor."],
+            ["h", "Integração contínua: o servidor não se esquece"],
+            ["code", "# .github/workflows/ci.yml\nname: CI\non: [push, pull_request]\n\njobs:\n  testes:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n      - uses: actions/setup-python@v5\n        with:\n          python-version: \"3.12\"\n      - run: pip install -r requirements.txt\n      - run: ruff check .\n      - run: ruff format --check .\n      - run: mypy vendas/\n      - run: pytest -q"],
+            ["p", "Isto corre numa máquina limpa, o que apanha a categoria de erros mais irritante de todas: 'na minha máquina funciona'. Se o teu projeto tem uma dependência que só tu tens instalada, é aqui que ela aparece."],
+            ["h", "A ordem importa"],
+            ["p", "Põe primeiro o que é rápido e falha mais: linter, depois formatação, depois tipos, e os testes no fim. Assim quem abriu o pull request tem a resposta em vinte segundos em vez de cinco minutos."],
+            ["obra", "Um repositório de portefólio com um `ci.yml` e o crachá verde no README responde sozinho à pergunta 'este candidato já trabalhou com práticas de equipa'. Custa quinze minutos a montar e é o melhor retorno de tempo do curso inteiro."],
+            ["h", "Quando a CI fica vermelha"],
+            ["lista", [
+              "Lê o registo de baixo para cima até à primeira falha real, tal como um traceback.",
+              "Reproduz localmente o comando exato que falhou, sem inventar variações.",
+              "Se falha na CI e passa localmente, suspeita de versões, variáveis de ambiente e ordem dos testes.",
+              "Nunca desligues o teste para ficar verde. Corrige ou marca como falha conhecida com bilhete aberto."
+            ]],
+            ["aviso", "Segredos não vão para o ficheiro de configuração da CI. Vão para os segredos do repositório e chegam como variáveis de ambiente. Um token num ficheiro YAML é público a partir do momento em que o commit existe."]
+          ],
+          quiz: [
+            { p: "A CI falha e localmente passa tudo. Que hipótese testas primeiro?", o: ["A CI está avariada", "Diferença de ambiente: versão de Python, dependências ou variáveis em falta", "O código está errado na mesma"], c: 1,
+              e: "A máquina da CI arranca limpa. Costuma faltar uma dependência que só tens instalada globalmente, ou uma variável de ambiente que só existe no teu ficheiro `.env`." }
+          ],
+          exercicio: {
+            enunciado: "Escreve `resumo_pipeline(passos)` que recebe uma lista de tuplos `(nome, passou)` pela ordem de execução. Devolve 'verde' se passaram todos, e 'vermelho: nome' com o nome do primeiro passo que falhou caso contrário. Lista vazia devolve 'sem passos'.",
+            inicio: "def resumo_pipeline(passos):\n    pass\n",
+            testes: "verifica('tudo a passar', resumo_pipeline([('ruff', True), ('pytest', True)]) == 'verde')\nverifica('primeiro a falhar', resumo_pipeline([('ruff', True), ('mypy', False), ('pytest', False)]) == 'vermelho: mypy')\nverifica('falha logo no início', resumo_pipeline([('ruff', False)]) == 'vermelho: ruff')\nverifica('sem passos', resumo_pipeline([]) == 'sem passos')"
+          }
+        }
       ]
     },
     {
       n: 12, fase: 3, titulo: "Git como se trabalha a sério",
       objetivo: "O requisito que aparece em 100 por cento das vagas.",
       licoes: [
-        { id: "12.1", titulo: "Ramos, commits e histórico legível", min: 18, estado: "esboco", meta: "Mensagens de commit, rebase contra merge, resolver conflitos sem pânico." },
-        { id: "12.2", titulo: "Pull requests e revisão de código", min: 16, estado: "esboco", meta: "Abrir, descrever, responder a comentários sem levar a peito." }
+        {
+          id: "12.1", titulo: "Ramos, commits e histórico legível", min: 18, estado: "pronta",
+          meta: "No fim: trabalhas em ramos, escreves mensagens que servem daqui a um ano e resolves conflitos sem pânico.",
+          blocos: [
+            ["p", "Git guarda fotografias do projeto. Um commit é uma fotografia com uma mensagem e um pai. Um ramo é um autocolante que aponta para um commit e anda para a frente quando fazes commits novos. Percebido isto, o resto é vocabulário."],
+            ["h", "O ciclo diário"],
+            ["code", "git switch -c feat/importador-csv    # ramo novo a partir do atual\n\n# ... escreves código ...\n\ngit status                          # o que mudou\ngit diff                            # o que mudou, linha a linha\ngit add importador.py testes/test_importador.py\ngit commit -m \"Ler CSV de vendas e ignorar linhas sem valor\"\ngit push -u origin feat/importador-csv"],
+            ["p", "Nunca trabalhes diretamente no ramo principal. Um ramo por tarefa, com nome que diz o que faz: `feat/`, `fix/`, `chore/` são os prefixos que vais encontrar em quase todo o lado."],
+            ["h", "Uma boa mensagem de commit"],
+            ["lista", [
+              "Primeira linha até 72 caracteres, no imperativo, a dizer o que o commit faz: 'Corrigir cálculo do IVA em vendas isentas'.",
+              "Sem ponto final e sem 'atualizações' ou 'alterações várias', que não dizem nada.",
+              "Se for preciso, linha em branco e um parágrafo a explicar porquê. O 'o quê' está no diff; o 'porquê' só está aqui.",
+              "Um commit, uma ideia. Se a mensagem precisa de um 'e', são dois commits."
+            ]],
+            ["code", "# mau\ngit commit -m \"fix\"\ngit commit -m \"alteracoes\"\ngit commit -m \"agora vai\"\n\n# bom\ngit commit -m \"Corrigir IVA em vendas isentas\"\ngit commit -m \"Acrescentar teste para CSV sem cabeçalho\""],
+            ["obra", "Quem te vai entrevistar abre o teu repositório e olha para o histórico. Vinte commits com 'update' são um sinal de alarme; trinta commits pequenos e descritivos ao longo de semanas dizem que trabalhas com método. É a única parte do teu portefólio que não se consegue fingir à pressa."],
+            ["h", "Atualizar o ramo: merge ou rebase"],
+            ["code", "git switch main\ngit pull\ngit switch feat/importador-csv\n\ngit merge main       # cria um commit de junção, histórico fiel\ngit rebase main      # reescreve os teus commits por cima, histórico linear"],
+            ["aviso", "Nunca faças rebase de um ramo que outra pessoa já tem. Reescrever commits publicados obriga toda a gente a arranjar o repositório local. Rebase no teu ramo pessoal antes do pull request: à vontade. Em ramos partilhados: merge."],
+            ["h", "Conflitos"],
+            ["p", "Um conflito é o git a dizer que duas pessoas mexeram nas mesmas linhas e que a decisão é humana. Não é um erro nem uma catástrofe."],
+            ["code", "<<<<<<< HEAD\ntaxa = 0.23\n=======\ntaxa = IVA_NORMAL\n>>>>>>> main"],
+            ["p", "Escolhes o que fica, apagas os marcadores todos, corres os testes, `git add` e `git commit`. Se te enterrares, `git merge --abort` põe tudo como estava. Nada se perde enquanto não fizeres commit."],
+            ["h", "Desfazer sem partir nada"],
+            ["lista", [
+              "`git restore ficheiro.py`: deitar fora alterações não gravadas.",
+              "`git commit --amend`: corrigir o último commit, se ainda não foi enviado.",
+              "`git revert <commit>`: criar um commit que anula outro. É o que se usa em ramos partilhados.",
+              "`git reset --hard`: apaga trabalho. Só quando tens a certeza, e não em ramos partilhados.",
+              "`git reflog`: o histórico de tudo o que fizeste, incluindo o que julgas ter perdido."
+            ]]
+          ],
+          quiz: [
+            { p: "Enviaste um commit com um bug para o ramo principal, que outras pessoas já usam. O que fazes?", o: ["`git reset --hard` e força o push", "`git revert` do commit, criando um commit que o anula", "Apagas o ramo e crias outro"], c: 1,
+              e: "Reescrever histórico partilhado obriga toda a equipa a reparar o repositório. `revert` é honesto: fica registado o que aconteceu e o que se desfez." }
+          ],
+          exercicio: {
+            enunciado: "Escreve `validar_mensagem(msg)` que verifica a primeira linha de um commit. Devolve a lista de problemas, por esta ordem: 'vazia', 'longa' (mais de 72 caracteres), 'ponto final' e 'minuscula' (não começa por maiúscula). Mensagem correta devolve lista vazia.",
+            inicio: "def validar_mensagem(msg):\n    pass\n",
+            testes: "verifica('mensagem correta', validar_mensagem('Corrigir IVA em vendas isentas') == [])\nverifica('mensagem vazia', validar_mensagem('') == ['vazia'])\nverifica('ponto final', validar_mensagem('Corrigir o IVA.') == ['ponto final'])\nverifica('minúscula inicial', validar_mensagem('corrigir o IVA') == ['minuscula'])\nverifica('longa e com ponto', validar_mensagem('C' + 'x' * 80 + '.') == ['longa', 'ponto final'])"
+          }
+        },
+        {
+          id: "12.2", titulo: "Pull requests e revisão de código", min: 16, estado: "pronta",
+          meta: "No fim: abres um pull request que se revê em dez minutos e respondes a comentários como profissional.",
+          blocos: [
+            ["p", "Um pull request é um pedido para juntar o teu ramo ao principal, com discussão à volta. É também o sítio onde, num primeiro emprego, a tua reputação técnica se constrói ou se estraga."],
+            ["h", "O que faz um bom pull request"],
+            ["lista", [
+              "Pequeno. Duzentas linhas revêem-se bem; mil linhas recebem um 'parece-me bem' que não leu nada.",
+              "Uma intenção só. Correção de bug e refatoração juntas obrigam o revisor a separar o que é o quê.",
+              "Título que diz o efeito, não o mecanismo: 'Corrigir IVA em vendas isentas', não 'mudar função calcular'.",
+              "Descrição com o problema, a solução e como se testa. Três frases chegam.",
+              "Testes incluídos e CI verde antes de pedires revisão."
+            ]],
+            ["code", "## Problema\nVendas isentas estavam a somar 23 por cento de IVA no relatório mensal.\n\n## Solução\nA taxa passa a vir do produto em vez de ser constante. Acrescentado\no campo `isento` ao modelo.\n\n## Como testar\n`pytest testes/test_relatorio.py -q`, e o caso novo\n`test_venda_isenta_nao_soma_iva`."],
+            ["h", "Rever o código de outra pessoa"],
+            ["p", "Vão pedir-te para rever, mesmo sendo júnior, e é das melhores formas de aprender a base de código. Procura, por esta ordem: está correto, está testado, percebe-se daqui a um ano."],
+            ["lista", [
+              "Distingue o que bloqueia do que é preferência. Marca as preferências como tal: 'nit: ' à frente.",
+              "Pergunta em vez de acusar: 'o que acontece se a lista vier vazia?' vale mais do que 'isto está mal'.",
+              "Elogia o que está bom. Uma revisão só com críticas ensina a esconder trabalho.",
+              "Se são cinco comentários sobre a mesma coisa, escreve um só e sugere falarem."
+            ]],
+            ["h", "Receber comentários"],
+            ["p", "Isto é competência profissional, não personalidade. O código não és tu. Um comentário que aponta um erro é trabalho gratuito que alguém fez por ti."],
+            ["lista", [
+              "Responde a todos os comentários, nem que seja 'feito' ou 'boa apanha'.",
+              "Quando discordas, explica com um argumento técnico e propõe alternativa. Discordar é legítimo, ignorar não.",
+              "Se o comentário revela que não percebeste o problema, diz isso. Ninguém espera que um júnior saiba tudo; esperam que pergunte.",
+              "Não faças force push a meio de uma revisão: os comentários perdem a linha a que se referiam."
+            ]],
+            ["obra", "O erro mais comum de um júnior não é escrever código mau, é abrir um pull request de dois mil linhas depois de duas semanas sem falar com ninguém. Abre cedo, mesmo incompleto, marcado como rascunho. Feedback à segunda hora custa muito menos do que à segunda semana."],
+            ["aviso", "Antes de pedires revisão, lê o teu próprio diff de cima a baixo no browser. Vais encontrar prints esquecidos, ficheiros a mais, código comentado e um `TODO` que já não se aplica. Cinco minutos que poupam o tempo de outra pessoa."]
+          ],
+          quiz: [
+            { p: "Um revisor diz que a tua abordagem tem um problema que tu não vês. Qual é a melhor resposta?", o: ["Mudar logo, para não criar atrito", "Perguntar que caso concreto o preocupa e discutir com um exemplo", "Explicar porque é que a tua está certa"], c: 1,
+              e: "Um caso concreto resolve a discussão em dois minutos, num sentido ou no outro. Ceder sem perceber deixa-te sem aprender; insistir sem ouvir gasta o crédito que tens com a equipa." }
+          ],
+          exercicio: {
+            enunciado: "Escreve `problemas_do_pr(pr)` que recebe um dicionário com `titulo`, `descricao`, `linhas` e `testes` e devolve a lista de razões para não pedir revisão ainda: 'sem titulo', 'sem descricao', 'demasiado grande' (mais de 400 linhas) e 'sem testes', por esta ordem.",
+            inicio: "def problemas_do_pr(pr):\n    pass\n",
+            testes: "_bom = {'titulo': 'Corrigir IVA', 'descricao': 'Vendas isentas somavam IVA.', 'linhas': 120, 'testes': True}\nverifica('pr pronto', problemas_do_pr(_bom) == [])\nverifica('sem título', problemas_do_pr({**_bom, 'titulo': ''}) == ['sem titulo'])\nverifica('grande e sem testes', problemas_do_pr({**_bom, 'linhas': 900, 'testes': False}) == ['demasiado grande', 'sem testes'])\nverifica('tudo em falta', len(problemas_do_pr({'titulo': '', 'descricao': '', 'linhas': 5000, 'testes': False})) == 4)"
+          }
+        }
       ]
     },
     {
       n: 13, fase: 3, titulo: "Depuração e desempenho",
       objetivo: "Encontrar o problema em minutos em vez de horas.",
       licoes: [
-        { id: "13.1", titulo: "Depurador em vez de prints", min: 14, estado: "esboco", meta: "breakpoint(), pontos de paragem, inspeção de estado." },
-        { id: "13.2", titulo: "Medir antes de otimizar", min: 12, estado: "esboco", meta: "timeit, profiling, complexidade na prática." }
+        {
+          id: "13.1", titulo: "Depurador em vez de prints", min: 14, estado: "pronta",
+          meta: "No fim: paras o programa a meio e inspecionas o estado em vez de adivinhar com prints.",
+          blocos: [
+            ["p", "O `print` é uma ferramenta legítima e é a primeira que usas. O problema é o ciclo: acrescentar print, correr, ler, apagar, acrescentar outro print. Com um depurador, paras uma vez e vês tudo o que quiseres, incluindo o que não te tinhas lembrado de imprimir."],
+            ["h", "breakpoint()"],
+            ["p", "Escreve `breakpoint()` na linha onde queres parar e corre o programa normalmente. Abre uma consola no meio da execução, com todas as variáveis daquele momento."],
+            ["code", "def calcular_total(vendas):\n    total = 0\n    for venda in vendas:\n        breakpoint()          # pára aqui, em cada volta\n        total += venda[\"valor\"]\n    return total"],
+            ["h", "Os comandos que precisas"],
+            ["lista", [
+              "`n` (next): executa a linha e pára na seguinte, sem entrar nas funções.",
+              "`s` (step): entra dentro da função que está a ser chamada.",
+              "`c` (continue): continua até ao próximo breakpoint.",
+              "`p nome` ou só `nome`: mostra o valor de uma variável.",
+              "`l` (list): mostra o código à volta de onde estás.",
+              "`w` (where): a pilha de chamadas, como um traceback ao vivo.",
+              "`q` (quit): sai."
+            ]],
+            ["p", "São sete comandos. Vinte minutos a habituares-te poupam-te horas todos os meses, e o teu editor tem tudo isto em botões: pontos de paragem na margem, painel de variáveis, entrar e sair da função."],
+            ["h", "Parar só quando interessa"],
+            ["p", "Num ciclo de dez mil voltas não queres parar dez mil vezes. Põe o breakpoint dentro de um `if` com a condição do caso que te interessa."],
+            ["code", "for venda in vendas:\n    if venda[\"valor\"] < 0:      # só o caso estranho\n        breakpoint()\n    total += venda[\"valor\"]"],
+            ["h", "Depurar bem, sem depurador"],
+            ["p", "Antes de abrires o que quer que seja, faz o método: reproduz o erro de forma fiável, reduz o caso ao mínimo que ainda falha, e forma uma hipótese que possas testar. Mexer no código a ver se passa é a forma mais lenta de tudo, e é a que toda a gente tenta primeiro."],
+            ["lista", [
+              "Consegues reproduzir? Se não, o problema é reproduzir, e é aí que trabalhas.",
+              "Qual é o input mínimo que ainda falha? Metade das vezes, encontras a causa a reduzir.",
+              "O que é que tu assumes que pode não ser verdade? É quase sempre aí que está.",
+              "Escreve o teste que falha. Passa a ser o módulo 10.3 a partir daqui."
+            ]],
+            ["obra", "Numa equipa, 'não consigo reproduzir' é uma resposta aceitável uma vez; à segunda, espera-se que peças os dados, a versão e os passos exatos. Um bilhete de bug com passos, resultado esperado e resultado obtido é um profissional a falar."],
+            ["aviso", "`breakpoint()` esquecido no código pendura o programa em produção à espera de alguém escrever na consola. O `ruff` apanha isto com a regra T100. Configura-a e dorme descansado."],
+            ["h", "Ver o estado sem parar"],
+            ["py", "def calcular_total(vendas):\n    total = 0\n    for i, venda in enumerate(vendas):\n        valor = venda.get(\"valor\")\n        if not isinstance(valor, (int, float)):\n            print(f\"linha {i}: valor inesperado {valor!r} em {venda}\")\n            continue\n        total += valor\n    return total\n\nprint(calcular_total([{\"valor\": 10}, {\"valor\": \"20\"}, {\"produto\": \"x\"}]))"],
+            ["p", "Repara no `!r`: mostra a representação, com aspas incluídas. É como distingues o número 20 da string '20' num print, e essa distinção é metade dos bugs de dados."]
+          ],
+          quiz: [
+            { p: "Um bug só aparece uma vez em cada mil execuções. Qual é o primeiro passo?", o: ["Pôr breakpoints em todo o lado", "Encontrar uma forma fiável de o reproduzir", "Envolver tudo em try/except"], c: 1,
+              e: "Sem reprodução fiável não sabes se corrigiste ou se tiveste sorte. Regista o estado suficiente para reproduzir, e trabalha primeiro nisso." }
+          ],
+          exercicio: {
+            enunciado: "A função abaixo devia devolver a palavra mais frequente, desempatando por ordem alfabética, e `None` para lista vazia. Tem um bug. Encontra-o e corrige.",
+            inicio: "def mais_frequente(palavras):\n    contagens = {}\n    for p in palavras:\n        contagens = {}\n        contagens[p] = contagens.get(p, 0) + 1\n    melhor = None\n    for palavra, n in contagens.items():\n        if n > contagens.get(melhor, 0):\n            melhor = palavra\n    return melhor\n",
+            testes: "verifica('conta bem', mais_frequente(['a', 'b', 'a']) == 'a')\nverifica('desempata por ordem alfabética', mais_frequente(['b', 'a']) == 'a')\nverifica('lista vazia devolve None', mais_frequente([]) is None)\nverifica('caso maior', mais_frequente(['x', 'y', 'y', 'z', 'z']) == 'y')"
+          }
+        },
+        {
+          id: "13.2", titulo: "Medir antes de otimizar", min: 12, estado: "pronta",
+          meta: "No fim: medes onde o tempo se perde e escolhes a estrutura de dados certa em vez de adivinhar.",
+          blocos: [
+            ["p", "A intuição sobre desempenho está quase sempre errada. O tempo raramente está onde julgas: está numa consulta à base de dados dentro de um ciclo, numa procura linear repetida, ou numa conversão de dados que ninguém reparou. Mede primeiro."],
+            ["h", "timeit para comparar duas versões"],
+            ["py", "import timeit\n\nlista = list(range(20000))\nconjunto = set(lista)\n\nt_lista = timeit.timeit(lambda: 19999 in lista, number=200)\nt_set = timeit.timeit(lambda: 19999 in conjunto, number=200)\n\nprint(f\"lista: {t_lista:.4f}s\")\nprint(f\"set:   {t_set:.4f}s\")"],
+            ["p", "A diferença não é de dez por cento, é de ordens de grandeza. Procurar numa lista percorre tudo; num `set` ou num `dict` vai direto por hash. Esta é a otimização que mais vezes vais precisar e a mais barata de aplicar."],
+            ["h", "As complexidades que precisas de saber"],
+            ["lista", [
+              "`x in lista`: percorre tudo, custo proporcional ao tamanho.",
+              "`x in set` ou `x in dict`: praticamente constante.",
+              "`lista.append`: constante. `lista.insert(0, x)`: caro, empurra tudo.",
+              "`sorted`: proporcional a n log n, e é dificilmente evitável.",
+              "Ciclo dentro de ciclo sobre os mesmos dados: proporcional ao quadrado. É aqui que os scripts morrem."
+            ]],
+            ["h", "Perfilar um programa inteiro"],
+            ["code", "python -m cProfile -s cumtime meu_script.py | head -20"],
+            ["p", "Mostra quanto tempo se gastou em cada função, ordenado. Lê a coluna cumulativa e procura a primeira função tua na lista: é aí que trabalhas. Otimizar o que está abaixo dela é otimizar detalhes."],
+            ["h", "A regra de trabalho"],
+            ["lista", [
+              "Torna o código correto e legível primeiro.",
+              "Mede com dados realistas. Um milhão de linhas comporta-se de forma diferente de mil.",
+              "Otimiza o ponto mais caro, um de cada vez, e volta a medir.",
+              "Guarda os testes a passar durante todo o processo. Código rápido e errado não serve de nada."
+            ]],
+            ["obra", "O relato mais comum de um júnior no primeiro mês: 'o script demorava quatro horas, agora demora dois minutos'. Quase sempre é a mesma correção, trocar procuras repetidas numa lista por um dicionário construído uma vez. Sabe reconhecer o padrão e vais parecer mágico com quinze linhas."],
+            ["py", "clientes = [{\"id\": i, \"nome\": f\"cliente {i}\"} for i in range(5000)]\nencomendas = [{\"cliente_id\": i % 5000} for i in range(5000)]\n\n# lento: procura linear por cada encomenda\ndef juntar_lento():\n    return [c[\"nome\"] for e in encomendas for c in clientes if c[\"id\"] == e[\"cliente_id\"]]\n\n# rápido: um índice construído uma vez\ndef juntar_rapido():\n    indice = {c[\"id\"]: c[\"nome\"] for c in clientes}\n    return [indice[e[\"cliente_id\"]] for e in encomendas]\n\nimport time\nt = time.perf_counter(); juntar_rapido(); print(f\"rápido: {time.perf_counter() - t:.4f}s\")"],
+            ["aviso", "Não troques legibilidade por microssegundos. Uma linha esperta que poupa dois por cento e ninguém percebe é um custo permanente para toda a equipa. Otimiza onde a medição diz que dói, e escreve um comentário a dizer porquê."]
+          ],
+          quiz: [
+            { p: "Um script demora horas a cruzar duas listas de dez mil elementos. Qual é a primeira coisa a mudar?", o: ["Usar threads", "Construir um dicionário de índice e trocar a procura linear por acesso direto", "Comprar uma máquina melhor"], c: 1,
+              e: "Cem milhões de comparações passam a dez mil acessos. Paralelizar código quadrático é paralelizar o desperdício." }
+          ],
+          exercicio: {
+            enunciado: "Escreve `comuns(a, b)` que devolve os elementos presentes nas duas listas, ordenados e sem repetidos. Tem de aguentar listas grandes: um teste mede o tempo com três mil elementos.",
+            inicio: "def comuns(a, b):\n    pass\n",
+            testes: "verifica('elementos comuns ordenados', comuns([3, 1, 2, 3], [2, 3, 9]) == [2, 3])\nverifica('sem comuns', comuns([1], [2]) == [])\nverifica('lista vazia', comuns([], [1, 2]) == [])\nimport time as _t\n_a = list(range(3000))\n_b = list(range(1500, 4500))\n_i = _t.perf_counter()\n_r = comuns(_a, _b)\n_demora = _t.perf_counter() - _i\nverifica('resultado correto com muitos dados', _r == list(range(1500, 3000)))\nverifica('rápido com muitos dados', _demora < 0.5)"
+          }
+        }
       ]
     },
 
@@ -828,15 +1200,110 @@ window.CURSO = {
             testes: "_d = [{'nome':'Rui','ativo':True},{'nome':'Ana','ativo':False},{'ativo':True},{'nome':'Bea','ativo':True}]\nverifica('filtra e ordena', nomes_ativos(_d) == ['Bea','Rui'])\nverifica('lista vazia devolve lista vazia', nomes_ativos([]) == [])"
           }
         },
-        { id: "14.2", titulo: "Dublês de teste para chamadas externas", min: 14, estado: "esboco", meta: "Testar código de rede sem rede." }
+        {
+          id: "14.2", titulo: "Dublês de teste para chamadas externas", min: 14, estado: "pronta",
+          meta: "No fim: testas código que fala com a rede, sem rede, em milissegundos.",
+          blocos: [
+            ["p", "Um teste que chama uma API a sério é lento, falha quando a internet falha e devolve dados diferentes amanhã. Um dublê é um objeto que finge ser essa dependência e responde o que tu mandares."],
+            ["h", "O mais simples: uma classe falsa"],
+            ["py", "class RespostaFalsa:\n    def __init__(self, dados, estado=200):\n        self.dados = dados\n        self.status_code = estado\n\n    def raise_for_status(self):\n        if self.status_code >= 400:\n            raise RuntimeError(f\"HTTP {self.status_code}\")\n\n    def json(self):\n        return self.dados\n\nclass ClienteFalso:\n    def __init__(self, resposta):\n        self.resposta = resposta\n        self.pedidos = []\n\n    def get(self, caminho):\n        self.pedidos.append(caminho)\n        return self.resposta\n\ndef nomes(cliente):\n    r = cliente.get(\"/utilizadores\")\n    r.raise_for_status()\n    return [u[\"nome\"] for u in r.json()[\"resultados\"]]\n\nfalso = ClienteFalso(RespostaFalsa({\"resultados\": [{\"nome\": \"Ana\"}]}))\nprint(nomes(falso))\nprint(falso.pedidos)"],
+            ["p", "Repara em duas coisas. A função recebe o cliente como argumento, que é a injeção de dependências do módulo 8.3, e o dublê guarda o que lhe pediram, para poderes verificar o pedido além do resultado."],
+            ["h", "unittest.mock, quando não te apetece escrever a classe"],
+            ["py", "from unittest.mock import Mock\n\ndef nomes(cliente):\n    r = cliente.get(\"/utilizadores\")\n    r.raise_for_status()\n    return [u[\"nome\"] for u in r.json()[\"resultados\"]]\n\nresposta = Mock()\nresposta.json.return_value = {\"resultados\": [{\"nome\": \"Ana\"}, {\"nome\": \"Rui\"}]}\ncliente = Mock()\ncliente.get.return_value = resposta\n\nprint(nomes(cliente))\ncliente.get.assert_called_once_with(\"/utilizadores\")\nprint(resposta.raise_for_status.called)"],
+            ["p", "Um `Mock` aceita qualquer atributo e qualquer chamada, e regista tudo. Isso é conveniente e é também o perigo: um erro de escrita no nome do método não rebenta, devolve outro `Mock`. Por isso existe `autospec`, que copia a assinatura do objeto real."],
+            ["h", "Simular falhas, que é o que interessa"],
+            ["py", "from unittest.mock import Mock\n\ndef nomes_seguros(cliente):\n    try:\n        r = cliente.get(\"/utilizadores\")\n        r.raise_for_status()\n    except RuntimeError:\n        return []\n    return [u[\"nome\"] for u in r.json()[\"resultados\"]]\n\nresposta = Mock()\nresposta.raise_for_status.side_effect = RuntimeError(\"HTTP 500\")\ncliente = Mock()\ncliente.get.return_value = resposta\n\nprint(nomes_seguros(cliente))"],
+            ["p", "`side_effect` faz o dublê levantar uma exceção. É assim que testas o caminho do 500, do tempo esgotado e do JSON inválido, que na vida real acontecem e que quase ninguém testa."],
+            ["obra", "Em entrevista, 'como testarias isto se depende de uma API externa' é pergunta frequente. A resposta completa tem três partes: injetar a dependência, substituí-la por um dublê no teste, e ter um teste de integração separado, que corre poucas vezes, contra a API a sério."],
+            ["aviso", "Não testes o dublê. Um teste que só verifica que o mock foi chamado, sem verificar o resultado, passa sempre e não prova nada. Verifica o que a tua função devolve e, se for relevante, também o pedido que fez."],
+            ["h", "Onde pôr a fronteira"],
+            ["p", "Isola no ponto mais estreito: uma função que faz o pedido e devolve dados, e outra que trata os dados. A segunda não precisa de dublê nenhum, testa-se com dicionários à mão. Bom desenho reduz a quantidade de mocks necessários, e um teste cheio de mocks é um sinal de que o desenho pode melhorar."]
+          ],
+          quiz: [
+            { p: "O teu teste com `Mock` passa, mas em produção rebenta com AttributeError num método que não existe. Porquê?", o: ["O mock estava mal configurado", "Um Mock aceita qualquer atributo, mesmo os que o objeto real não tem", "A biblioteca mudou"], c: 1,
+              e: "Um `Mock` diz sim a tudo. Usa `create_autospec` ou `autospec=True` para o dublê ter a mesma superfície do objeto real, e o erro de escrita aparece no teste." }
+          ],
+          exercicio: {
+            enunciado: "Escreve `nomes_de_utilizadores(cliente)` que chama `cliente.get('/utilizadores')`, valida a resposta com `raise_for_status()` e devolve a lista de nomes que vem em `resposta.json()['resultados']`. Erros da resposta devem propagar-se.",
+            inicio: "def nomes_de_utilizadores(cliente):\n    pass\n",
+            testes: "from unittest.mock import Mock as _Mock\n_resp = _Mock()\n_resp.json.return_value = {'resultados': [{'nome': 'Ana'}, {'nome': 'Rui'}]}\n_cli = _Mock()\n_cli.get.return_value = _resp\nverifica('devolve os nomes', nomes_de_utilizadores(_cli) == ['Ana', 'Rui'])\nverifica('pediu o caminho certo', _cli.get.call_args[0][0] == '/utilizadores')\nverifica('validou o estado da resposta', _resp.raise_for_status.called)\n_mau = _Mock()\n_mau.get.return_value.raise_for_status.side_effect = RuntimeError('HTTP 500')\n_subiu = False\ntry:\n    nomes_de_utilizadores(_mau)\nexcept RuntimeError:\n    _subiu = True\nverifica('erro da resposta propaga-se', _subiu)"
+          }
+        }
       ]
     },
     {
       n: 15, fase: 4, titulo: "Bases de dados",
       objetivo: "Guardar dados a sério, não em ficheiros JSON.",
       licoes: [
-        { id: "15.1", titulo: "SQL que um programador precisa", min: 20, estado: "esboco", meta: "select, join, group by, índices." },
-        { id: "15.2", titulo: "sqlite3 e SQLAlchemy", min: 18, estado: "esboco", meta: "Do driver ao ORM, e porque não se juntam strings para fazer queries." }
+        {
+          id: "15.1", titulo: "SQL que um programador precisa", min: 20, estado: "pronta",
+          meta: "No fim: escreves consultas com junções e agregações e percebes porque é que uma é lenta.",
+          blocos: [
+            ["p", "SQL não é uma tecnologia paralela ao Python: é metade do trabalho de backend. Dizes o que queres, não como se procura. O motor decide o caminho, e o teu trabalho é dar-lhe condições para escolher bem."],
+            ["h", "O básico, por ordem de execução mental"],
+            ["code", "SELECT loja, SUM(valor) AS total\nFROM vendas\nWHERE data >= '2026-01-01'\nGROUP BY loja\nHAVING SUM(valor) > 1000\nORDER BY total DESC\nLIMIT 10;"],
+            ["lista", [
+              "`FROM`: de onde vêm as linhas.",
+              "`WHERE`: filtra linhas, antes de agrupar.",
+              "`GROUP BY`: junta linhas em grupos.",
+              "`HAVING`: filtra grupos, depois de agregar.",
+              "`SELECT`: escolhe as colunas do resultado.",
+              "`ORDER BY` e `LIMIT`: ordena e corta."
+            ]],
+            ["p", "A confusão mais comum é entre `WHERE` e `HAVING`. `WHERE` não vê somas porque ainda não foram calculadas; `HAVING` só existe depois do `GROUP BY`. Saber isto responde a metade das perguntas de SQL numa entrevista."],
+            ["h", "Junções"],
+            ["code", "SELECT c.nome, COUNT(e.id) AS encomendas\nFROM clientes AS c\nLEFT JOIN encomendas AS e ON e.cliente_id = c.id\nGROUP BY c.id, c.nome\nORDER BY encomendas DESC;"],
+            ["lista", [
+              "`INNER JOIN`: só linhas com correspondência dos dois lados.",
+              "`LEFT JOIN`: todas as da esquerda, com nulos onde não há par. É o que queres quando a pergunta é 'incluindo os que não têm nenhum'.",
+              "Junta sempre por chaves indexadas, tipicamente a chave primária de um lado e a chave estrangeira do outro."
+            ]],
+            ["aviso", "`COUNT(*)` conta linhas, incluindo as que vieram vazias de um `LEFT JOIN`. `COUNT(coluna)` ignora nulos. Num `LEFT JOIN`, `COUNT(*)` dá 1 para clientes sem encomendas nenhumas, e alguém vai perguntar-te porque é que o relatório está errado."],
+            ["h", "Índices, em duas frases"],
+            ["p", "Um índice é uma estrutura ordenada que evita ler a tabela toda, tal como o `set` do módulo 13.2 evita percorrer a lista. Cria índices nas colunas por que filtras e juntas com frequência. Cada índice acelera leituras e atrasa escritas, por isso não se indexa tudo."],
+            ["code", "CREATE INDEX idx_encomendas_cliente ON encomendas (cliente_id);\n\nEXPLAIN QUERY PLAN\nSELECT * FROM encomendas WHERE cliente_id = 42;"],
+            ["p", "`EXPLAIN` mostra o plano escolhido. Ver `SCAN TABLE` numa tabela grande é o sinal de que falta um índice; `SEARCH TABLE ... USING INDEX` é o que queres ver."],
+            ["obra", "O pedido típico do primeiro mês: 'quantos clientes novos por mês no último ano, incluindo os meses a zero'. Envolve agregação, formatação de datas e um `LEFT JOIN` com uma tabela de meses. Se souberes escrever isto, já vales o ordenado."],
+            ["aviso", "`SELECT *` em código de produção é dívida: traz colunas que não usas, parte quando alguém acrescenta uma coluna nova e esconde o que a consulta precisa mesmo. Escreve as colunas."]
+          ],
+          quiz: [
+            { p: "Precisas do total de encomendas por cliente, incluindo clientes sem nenhuma. Que junção usas?", o: ["INNER JOIN", "LEFT JOIN com COUNT da coluna da tabela da direita", "Duas consultas separadas"], c: 1,
+              e: "O `INNER JOIN` deitava fora os clientes sem encomendas, que são precisamente os que a pergunta quer ver. E conta a coluna, não `*`, para eles darem zero." }
+          ],
+          exercicio: {
+            enunciado: "Escreve `sql_total_por_loja()` que devolve uma consulta SQL sobre a tabela `vendas` (colunas `loja` e `valor`) com duas colunas, `loja` e `total`, somando os valores por loja, apenas com total acima de 100, da maior para a menor.",
+            inicio: "def sql_total_por_loja():\n    return \"\"\n",
+            testes: "import sqlite3 as _s\n_c = _s.connect(':memory:')\n_c.execute('CREATE TABLE vendas (loja TEXT, valor REAL)')\n_c.executemany('INSERT INTO vendas VALUES (?, ?)', [('Lisboa', 120), ('Porto', 80), ('Lisboa', 45), ('Faro', 200)])\n_linhas = _c.execute(sql_total_por_loja()).fetchall()\nverifica('duas lojas acima de 100', len(_linhas) == 2)\nverifica('ordenado do maior para o menor', [l[0] for l in _linhas] == ['Faro', 'Lisboa'])\nverifica('total de Lisboa somado', abs(_linhas[1][1] - 165) < 0.001)\nverifica('colunas com os nomes certos', [d[0] for d in _c.execute(sql_total_por_loja()).description] == ['loja', 'total'])"
+          }
+        },
+        {
+          id: "15.2", titulo: "sqlite3 e SQLAlchemy", min: 18, estado: "pronta",
+          meta: "No fim: falas com uma base de dados a partir de Python sem abrir uma porta a injeção de SQL.",
+          blocos: [
+            ["p", "O `sqlite3` vem com o Python e não precisa de servidor: a base de dados é um ficheiro. Para aprender, para testes e para muitas ferramentas internas, chega perfeitamente. O que aprenderes aqui aplica-se igual ao PostgreSQL, que é o que vais usar no emprego."],
+            ["py", "import sqlite3\n\nligacao = sqlite3.connect(\":memory:\")\nligacao.execute(\"CREATE TABLE produtos (nome TEXT, preco REAL)\")\nligacao.execute(\"INSERT INTO produtos VALUES (?, ?)\", (\"teclado\", 39.9))\nligacao.executemany(\n    \"INSERT INTO produtos VALUES (?, ?)\",\n    [(\"rato\", 12.5), (\"cabo\", 4.0)],\n)\nligacao.commit()\n\nfor linha in ligacao.execute(\"SELECT nome, preco FROM produtos ORDER BY preco DESC\"):\n    print(linha)"],
+            ["aviso", "Os pontos de interrogação não são estilo: são a diferença entre código seguro e a vulnerabilidade mais explorada da história da web. Nunca construas SQL com f-strings ou com `+`, nem com dados que 'vêm de dentro'. Nunca é nunca."],
+            ["code", "# catástrofe à espera de acontecer\ncursor.execute(f\"SELECT * FROM utilizadores WHERE nome = '{nome}'\")\n# com nome = \"x'; DROP TABLE utilizadores; --\" perdeste a tabela\n\n# correto\ncursor.execute(\"SELECT * FROM utilizadores WHERE nome = ?\", (nome,))"],
+            ["p", "Com parâmetros, o valor nunca é interpretado como SQL: é sempre tratado como dado, por mais aspas que tenha. O motor recebe a consulta e os valores em separado."],
+            ["h", "Transações"],
+            ["p", "Sem `commit`, as alterações não ficam. Com `with ligacao:` o commit é automático no fim e o rollback é automático se houver exceção: ou tudo acontece, ou nada acontece."],
+            ["py", "import sqlite3\n\nligacao = sqlite3.connect(\":memory:\")\nligacao.execute(\"CREATE TABLE contas (nome TEXT, saldo REAL)\")\nligacao.executemany(\"INSERT INTO contas VALUES (?, ?)\", [(\"ana\", 100), (\"rui\", 0)])\nligacao.commit()\n\ntry:\n    with ligacao:\n        ligacao.execute(\"UPDATE contas SET saldo = saldo - 50 WHERE nome = 'ana'\")\n        raise RuntimeError(\"falha a meio da transferência\")\nexcept RuntimeError as e:\n    print(\"rollback:\", e)\n\nprint(ligacao.execute(\"SELECT nome, saldo FROM contas\").fetchall())"],
+            ["h", "Do driver ao ORM"],
+            ["p", "Um ORM mapeia tabelas para classes. Poupa código repetitivo, dá-te tipos e migrações, e no dia em que precisares de SQL a sério deixa-te escrever SQL a sério. O SQLAlchemy é o padrão em Python."],
+            ["code", "from sqlalchemy import create_engine, select\nfrom sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, Session\n\nclass Base(DeclarativeBase):\n    pass\n\nclass Produto(Base):\n    __tablename__ = \"produtos\"\n    id: Mapped[int] = mapped_column(primary_key=True)\n    nome: Mapped[str]\n    preco: Mapped[float]\n\nmotor = create_engine(\"sqlite:///loja.db\")\nBase.metadata.create_all(motor)\n\nwith Session(motor) as sessao:\n    sessao.add(Produto(nome=\"teclado\", preco=39.9))\n    sessao.commit()\n    caros = sessao.scalars(select(Produto).where(Produto.preco > 20)).all()\n    print([p.nome for p in caros])"],
+            ["aviso", "O problema clássico de qualquer ORM chama-se N mais 1: carregas cem encomendas e depois, dentro de um ciclo, acedes ao cliente de cada uma. São cento e uma consultas em vez de uma. Resolve-se a dizer ao ORM para carregar tudo de uma vez, com `joinedload` ou `selectinload`."],
+            ["obra", "Saber SQL e saber ORM não é a mesma competência, e as equipas querem as duas. Numa entrevista de backend é normal pedirem para escrever a consulta em SQL e depois explicar como o ORM a geraria. Se só sabes o ORM, ficas preso no dia em que a consulta for lenta."]
+          ],
+          quiz: [
+            { p: "Porque é que `f\"... WHERE nome = '{nome}'\"` é inaceitável mesmo quando o valor vem da tua própria base de dados?", o: ["Por estilo", "Porque qualquer valor com aspas altera a consulta, e dados 'de dentro' vieram de fora um dia", "Porque é mais lento"], c: 1,
+              e: "Injeção de segunda ordem: o valor foi gravado por um utilizador há seis meses e explode agora. Parâmetros sempre, sem exceções." }
+          ],
+          exercicio: {
+            enunciado: "Escreve `guardar(ligacao, produtos)` que insere na tabela `produtos` (colunas nome e preco) uma lista de tuplos, confirma a transação e devolve quantas linhas inseriu. Usa parâmetros: um dos nomes de teste é uma tentativa de injeção e tem de ser guardado tal e qual.",
+            inicio: "def guardar(ligacao, produtos):\n    pass\n",
+            testes: "import sqlite3 as _s\n_lig = _s.connect(':memory:')\n_lig.execute('CREATE TABLE produtos (nome TEXT, preco REAL)')\n_ataque = \"rato'); DROP TABLE produtos; --\"\n_n = guardar(_lig, [('teclado', 39.9), (_ataque, 12.5)])\nverifica('devolve o número de linhas', _n == 2)\n_nomes = [l[0] for l in _lig.execute('SELECT nome FROM produtos ORDER BY preco DESC')]\nverifica('gravou os dois produtos', len(_nomes) == 2)\nverifica('guardou o texto tal e qual', _ataque in _nomes)\n_lig2 = _s.connect(':memory:')\n_lig2.execute('CREATE TABLE produtos (nome TEXT, preco REAL)')\nverifica('lista vazia insere zero', guardar(_lig2, []) == 0)"
+          }
+        }
       ]
     },
     {
