@@ -157,7 +157,7 @@ nav a.on{color:var(--tinta);box-shadow:inset 0 3px 0 var(--margem)}
   <div class="n-margem" id="marg">py</div>
   <p class="mini">Caderno de exercícios</p>
   <div class="marca"><h1>Python até ao primeiro emprego</h1></div>
-  <p class="mini" id="sub">20 módulos, prática a correr no browser, sem instalar nada.</p>
+  <p class="mini" id="sub">Do primeiro comando no terminal ao primeiro emprego.</p>
   <div class="progresso"><i id="barra" style="width:0"></i></div>
 </header>
 
@@ -235,9 +235,12 @@ async function correrPython(codigo, testes){
     py.runPython(codigo, { globals: ns });
     if(testes){
       py.runPython('_res = []\ndef verifica(nome, cond):\n    _res.append((nome, bool(cond)))\n', { globals: ns });
-      py.runPython(testes, { globals: ns });
-      const r = ns.get('_res');
-      if(r){ resultados = r.toJs().map(t => ({ nome:t[0], ok:t[1] })); r.destroy(); }
+      // se os testes rebentarem a meio, guardamos na mesma o que já tinha corrido
+      try{ py.runPython(testes, { globals: ns }); }
+      finally{
+        const r = ns.get('_res');
+        if(r){ resultados = r.toJs().map(t => ({ nome:t[0], ok:t[1] })); r.destroy(); }
+      }
     }
   }catch(e){ erro = String(e.message || e).trim(); }
   ns.destroy();
@@ -268,7 +271,8 @@ function renderBlocos(blocos){
 
 /* ---------- vistas ---------- */
 function vistaIndice(){
-  document.getElementById('sub').textContent = '20 módulos, prática a correr no browser, sem instalar nada.';
+  document.getElementById('sub').textContent =
+    `${CURSO.modulos.length} módulos, ${prontas().length} aulas, prática a correr no browser.`;
   const consola = `
    <div class="consola">
      <div class="consola-topo"><span>consola de Python</span><span>corre no teu telemóvel</span></div>
@@ -423,7 +427,9 @@ function ligarBotoes(){
       try{
         const r = await correrPython(ed.value, l.exercicio.testes);
         if(r.erro){
-          res.innerHTML = `<div class="mau">O teu código rebentou antes dos testes:</div><pre style="padding:8px 0;font-size:16px">${esc(r.erro)}</pre>`;
+          res.innerHTML = r.resultados.map(x =>
+            `<div class="${x.ok ? 'ok' : 'mau'}">${x.ok ? 'v' : 'x'} ${esc(x.nome)}</div>`).join('') +
+            `<div class="mau">O código rebentou:</div><pre style="padding:8px 0;font-size:16px">${esc(r.erro)}</pre>`;
         }else{
           const passou = r.resultados.every(x => x.ok) && r.resultados.length > 0;
           res.innerHTML = r.resultados.map(x =>
