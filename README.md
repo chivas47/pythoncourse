@@ -38,7 +38,7 @@ Antes de publicar, testa a suite contra a tua solução com `python3` local: se 
 
 ## Estado
 
-As 48 aulas dos 20 módulos estão escritas, cada uma com conteúdo, quiz e exercício com testes.
+As 73 aulas dos 25 módulos estão escritas, cada uma com conteúdo, quiz e exercício com testes.
 Todos os exercícios foram validados contra uma solução de referência: a suite passa com a solução
 e falha com o código inicial.
 
@@ -46,6 +46,20 @@ Os exercícios correm no browser, por isso não dependem de bibliotecas externas
 FastAPI, SQLAlchemy, httpx ou Docker, os blocos com essas bibliotecas são de leitura (`code`) e o
 exercício trabalha a mesma ideia com a biblioteca padrão: validação à entrada, repositório em
 memória, dublês de teste, configuração por variáveis de ambiente.
+
+## Mapa do curso
+
+| Fase | Módulos |
+| --- | --- |
+| 1. Fundamentos | 1 máquina de trabalho (terminal, instalação, REPL) · 2 primeiro código · 3 tipos por dentro · 4 decisões e repetição · 5 estruturas de dados · 6 funções · 7 como pensar um problema |
+| 2. Estruturar código | 8 erros e exceções · 9 ficheiros, JSON e CSV · 10 módulos e ambientes · 11 objetos · 12 iteradores e geradores · 13 algoritmos e complexidade |
+| 3. Prática profissional | 14 testes · 15 qualidade e ferramentas · 16 git · 17 depuração e desempenho |
+| 4. Backend e dados | 18 APIs · 19 bases de dados · 20 FastAPI · 21 concorrência · 22 pôr no ar · 23 programas que te vão pedir no trabalho |
+| 5. Chegar ao emprego | 24 projeto final · 25 recrutamento |
+
+Os números dos módulos são a ordem de leitura e aparecem na margem. Os identificadores das lições
+(`13.2`) são a chave de rota (`#/l/13.2`) e a chave de progresso no `localStorage`, por isso
+renumerar um módulo implica renumerar as lições e corrigir as referências cruzadas no texto.
 
 ## Decisões técnicas
 

@@ -21,11 +21,134 @@ window.CURSO = {
   modulos: [
     /* ---------------- FASE 1 ---------------- */
     {
-      n: 1, fase: 1, titulo: "Correr o teu primeiro código",
+      n: 1, fase: 1, titulo: "A tua máquina de trabalho",
+      objetivo: "Ter terminal, Python e editor a funcionar como numa empresa.",
+      licoes: [
+        {
+          id: "1.1", titulo: "O terminal, sem medo", min: 14, estado: "pronta",
+          meta: "No fim: navegas pelo disco, corres comandos e percebes porque é que 'comando não encontrado' acontece.",
+          blocos: [
+            ["p", "O terminal é um programa que recebe comandos escritos e responde com texto. Não é mais místico do que isso. Acontece que quase tudo o que é trabalho de Python passa por lá: correr um script, instalar dependências, usar git, publicar. O teu editor tem botões para isto, e os botões correm exatamente os mesmos comandos."],
+            ["p", "Abre-o: no Windows é o Terminal ou o PowerShell, no macOS é o Terminal, no Linux é o Terminal. A linha onde escreves chama-se prompt e costuma acabar em `$` ou `>`."],
+            ["h", "Onde é que tu estás"],
+            ["p", "O disco é uma árvore de pastas e tu estás sempre dentro de uma delas, a pasta atual. Todos os comandos que escreves acontecem a partir daí, e metade da confusão dos primeiros dias é não saber onde se está."],
+            ["lista", [
+              "`pwd` mostra a pasta atual. No PowerShell também funciona.",
+              "`ls` lista o que lá está (`dir` no cmd do Windows).",
+              "`cd nome` entra numa pasta, `cd ..` sobe uma, `cd` sozinho volta à tua pasta pessoal.",
+              "`mkdir projetos` cria uma pasta.",
+              "`cat ficheiro.py` mostra o conteúdo de um ficheiro de texto (`type` no cmd).",
+              "Seta para cima repete o comando anterior. Tab completa nomes a meio. Usa os dois desde hoje."
+            ]],
+            ["code", "$ pwd\n/home/ana\n$ mkdir projetos\n$ cd projetos\n$ pwd\n/home/ana/projetos\n$ ls\n(vazio)"],
+            ["h", "Caminhos absolutos e relativos"],
+            ["p", "Um caminho absoluto começa na raiz e não depende de onde estás: `/home/ana/projetos/curso.py`, ou `C:\\Users\\ana\\projetos\\curso.py` no Windows. Um caminho relativo parte da pasta atual: `curso.py`, `dados/vendas.csv`, `../outro_projeto`."],
+            ["lista", [
+              "`.` é a pasta atual.",
+              "`..` é a pasta acima.",
+              "`~` é a tua pasta pessoal.",
+              "Nomes com espaços vão entre aspas: `cd \"Os meus documentos\"`."
+            ]],
+            ["h", "Correr Python"],
+            ["code", "$ python3 --version\nPython 3.12.4\n$ python3 relatorio.py\n$ python3 -c \"print(2 + 2)\"\n4"],
+            ["p", "`Ctrl+C` interrompe um programa que está a correr. `Ctrl+D` (ou `exit()`) sai da consola de Python. São as duas teclas que te tiram de qualquer sítio onde te sintas preso."],
+            ["h", "PATH: porque é que 'comando não encontrado' acontece"],
+            ["p", "Quando escreves `python3`, o sistema procura um programa com esse nome numa lista de pastas chamada PATH. Se não estiver em nenhuma delas, recebes `command not found`. Não significa que o Python não está instalado: significa que o sistema não sabe onde ele está."],
+            ["code", "$ which python3        # macOS e Linux\n/usr/bin/python3\n> where python         # Windows\nC:\\Users\\ana\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"],
+            ["obra", "O primeiro dia numa empresa é quase sempre: clonar o repositório, criar o ambiente, correr os testes. São três comandos no terminal. Quem hesita aqui perde a manhã numa coisa que ninguém considera difícil, e é uma péssima primeira impressão por uma razão que não tem nada a ver com programar."],
+            ["aviso", "`rm` apaga sem caixote do lixo. `rm -rf` apaga uma árvore inteira sem perguntar. Antes de carregares no Enter num comando que apaga, lê o caminho duas vezes, e escreve sempre caminhos relativos curtos a partir da pasta do projeto."]
+          ],
+          quiz: [
+            { p: "Estás em `/home/ana/projetos` e queres chegar a `/home/ana/documentos`. Que comando usas?", o: ["cd documentos", "cd ../documentos", "cd /documentos"], c: 1,
+              e: "`documentos` está ao lado, não dentro. Sobes um nível com `..` e entras. `cd /documentos` iria para uma pasta na raiz do disco, que provavelmente não existe." }
+          ],
+          exercicio: {
+            enunciado: "Escreve `resolver(atual, caminho)`, que devolve o caminho absoluto onde ficas depois de fazer `cd caminho` a partir de `atual`. Trata `.`, `..` e caminhos absolutos (começados por `/`). Nunca devolve barra no fim, e a raiz é `/`. Subir acima da raiz fica na raiz.",
+            inicio: "def resolver(atual, caminho):\n    pass\n",
+            testes: "verifica('caminho relativo', resolver('/home/ana', 'projetos') == '/home/ana/projetos')\nverifica('sobe um nivel', resolver('/home/ana/projetos', '..') == '/home/ana')\nverifica('caminho absoluto ignora o atual', resolver('/home/ana', '/etc') == '/etc')\nverifica('ponto fica no sitio', resolver('/home/ana', '.') == '/home/ana')\nverifica('varios saltos', resolver('/home/ana/projetos/curso', '../../documentos') == '/home/ana/documentos')\nverifica('subir acima da raiz fica na raiz', resolver('/', '..') == '/')\nverifica('caminho com varias pastas', resolver('/home', 'ana/projetos/curso') == '/home/ana/projetos/curso')"
+          }
+        },
+        {
+          id: "1.2", titulo: "Instalar Python e escolher o editor", min: 14, estado: "pronta",
+          meta: "No fim: tens uma versão recente de Python a responder no terminal e um editor que te ajuda a escrever.",
+          blocos: [
+            ["p", "Há duas coisas para instalar e nenhuma delas demora mais do que dez minutos: o interpretador de Python e um editor de código. Tudo o resto que te vierem vender nesta fase é distração."],
+            ["h", "O interpretador"],
+            ["lista", [
+              "Windows: instalador oficial em python.org. Liga a caixa **Add python.exe to PATH** no primeiro ecrã, ou vais passar a tarde a resolver isso. Depois tens o comando `py`, que escolhe a versão certa por ti.",
+              "macOS: o Python que já vem no sistema é do sistema, não é teu. Instala o oficial de python.org ou usa o Homebrew (`brew install python`).",
+              "Linux: já lá está. Confirma que tens também o `venv` (`sudo apt install python3-venv` no Debian e derivados) e nunca mexas no Python do sistema."
+            ]],
+            ["p", "Qualquer versão a partir da 3.11 serve para tudo o que este curso faz. Se te deixarem escolher num projeto novo, escolhe a mais recente que as tuas bibliotecas já suportem, nunca a que saiu ontem."],
+            ["code", "$ python3 --version\nPython 3.12.4\n$ python3 -m pip --version\npip 24.0"],
+            ["aviso", "Nunca `sudo pip install`. Instalar pacotes no Python do sistema com poderes de administrador é como se partem sistemas operativos inteiros. Tudo o que instalas vive num ambiente virtual do projeto, e isso é o módulo 10.2."],
+            ["h", "O editor"],
+            ["p", "VS Code é a escolha por omissão e é o que vais encontrar na maioria das equipas. PyCharm é excelente e mais pesado. Qualquer um serve; o que não serve é o Bloco de Notas."],
+            ["lista", [
+              "Instala a extensão **Python** da Microsoft. É ela que dá conclusão de código, ir à definição, erros sublinhados e depurador com botões.",
+              "Instala a extensão **Ruff** para veres os problemas de estilo enquanto escreves (módulo 15.1).",
+              "Liga **Format on Save**. Deixas de discutir espaços contigo próprio.",
+              "Aprende dois atalhos: ir à definição (F12) e procurar em todo o projeto. Vão poupar-te horas."
+            ]],
+            ["obra", "Quando entras numa equipa, o repositório já traz `pyproject.toml`, `.editorconfig` e configuração de linter. Essa configuração ganha à tua. Um pull request cheio de alterações de formatação porque o teu editor faz diferente é a forma mais rápida de irritar quem revê."],
+            ["h", "Confirmar que está tudo bem"],
+            ["code", "$ python3 --version\n$ python3 -m pip --version\n$ python3 -m venv .venv\n$ source .venv/bin/activate      # Windows: .venv\\Scripts\\activate\n(.venv) $ python -m pip install pytest\n(.venv) $ pytest --version"],
+            ["p", "Se estes seis comandos correrem, a tua máquina está pronta para qualquer projeto de Python deste curso e do teu primeiro emprego."],
+            ["aviso", "Podes ter três Pythons instalados sem saber. Escreve sempre `python3 -m pip install x` em vez de `pip install x`: assim o pacote vai para o interpretador que estás mesmo a usar, e não para outro qualquer que apanhou o nome `pip` primeiro."]
+          ],
+          quiz: [
+            { p: "Tens várias versões de Python na máquina. Como garantes que instalas um pacote no interpretador certo?", o: ["pip install pacote", "python3 -m pip install pacote", "sudo pip install pacote"], c: 1,
+              e: "`python3 -m pip` usa o pip do interpretador que acabaste de invocar. `pip` sozinho é um programa à parte que pode pertencer a outra instalação." }
+          ],
+          exercicio: {
+            enunciado: "Escreve `versao_ok(texto, minima)`. Recebe a saída de `python --version` (por exemplo `'Python 3.11.5'`) e um tuplo mínimo como `(3, 11)`. Devolve `True` se a versão instalada é igual ou superior à mínima. Se não encontrar versão nenhuma no texto, levanta `ValueError`.",
+            inicio: "def versao_ok(texto, minima):\n    pass\n",
+            testes: "verifica('versao suficiente', versao_ok('Python 3.11.5', (3, 11)) is True)\nverifica('versao inferior', versao_ok('Python 3.9.18', (3, 11)) is False)\nverifica('compara por numero e nao por texto', versao_ok('Python 3.10.0', (3, 9)) is True)\nverifica('aceita versao sem patch', versao_ok('Python 3.12', (3, 11)) is True)\nverifica('igual a minima passa', versao_ok('Python 3.11.0', (3, 11)) is True)\n_erro = False\ntry:\n    versao_ok('qualquer coisa', (3, 11))\nexcept ValueError:\n    _erro = True\nverifica('texto sem versao levanta ValueError', _erro)"
+          }
+        },
+        {
+          id: "1.3", titulo: "Do REPL ao ficheiro .py", min: 13, estado: "pronta",
+          meta: "No fim: sabes quando usar a consola interativa e como se estrutura um programa que alguém corre.",
+          blocos: [
+            ["p", "Escreve `python3` sozinho no terminal e entras no REPL, a consola interativa. Escreves uma linha, vês o resultado, escreves outra. É a melhor ferramenta que existe para responder a 'o que é que este método devolve mesmo?' sem abrir documentação."],
+            ["code", ">>> texto = \"  Ana Silva \"\n>>> texto.strip()\n'Ana Silva'\n>>> dir(texto)[-10:]\n['rstrip', 'split', 'splitlines', 'startswith', ...]\n>>> help(str.split)"],
+            ["p", "O REPL não guarda nada. Serve para experimentar. Quando a experiência funciona, passa para um ficheiro."],
+            ["h", "Um programa a sério é um ficheiro"],
+            ["code", "# relatorio.py\nimport sys\n\n\ndef ler_valores(texto):\n    return [float(p) for p in texto.split(\",\") if p.strip()]\n\n\ndef main(argv):\n    if not argv:\n        print(\"uso: python3 relatorio.py 10,20,30\", file=sys.stderr)\n        return 2\n    valores = ler_valores(argv[0])\n    print(f\"total: {sum(valores):.2f}\")\n    return 0\n\n\nif __name__ == \"__main__\":\n    sys.exit(main(sys.argv[1:]))"],
+            ["h", "O que é aquele `__name__`"],
+            ["p", "Quando corres um ficheiro diretamente, o Python põe `__name__` a `\"__main__\"`. Quando o importas a partir de outro ficheiro, `__name__` passa a ser o nome do módulo. A guarda `if __name__ == \"__main__\"` é o que separa a parte biblioteca da parte programa: importar não dispara nada, correr dispara o `main`."],
+            ["aviso", "Código solto no topo do ficheiro corre no momento do `import`. Um ficheiro que começa a processar dados só por ser importado é um clássico: os testes ficam lentos, e ninguém percebe porquê."],
+            ["h", "Receber dados"],
+            ["lista", [
+              "`input(\"Nome: \")` pergunta à pessoa. Devolve sempre texto e só serve quando há uma pessoa a olhar.",
+              "`sys.argv` são os argumentos da linha de comandos: `python3 relatorio.py 10,20` põe `['relatorio.py', '10,20']`.",
+              "Variáveis de ambiente (`os.environ`) para configuração e segredos.",
+              "Num programa a sério, argumentos tratam-se com `argparse`, que está no módulo 23.1."
+            ]],
+            ["obra", "Scripts que fazem `input()` não correm em automatismos. No servidor, às três da manhã, ninguém escreve nada: o programa fica a olhar para o vazio até alguém o matar. Tudo o que um programa precisa de saber entra por argumentos ou por variáveis de ambiente."],
+            ["h", "Código de saída"],
+            ["p", "Um programa devolve um número ao sistema: `0` é sucesso, qualquer outro é falha. É assim que o cron, o CI e o teu colega no terminal sabem se correu bem. Um programa que falha e devolve `0` é pior do que um que rebenta."],
+            ["code", "$ python3 relatorio.py 10,20,30\ntotal: 60.00\n$ echo $?\n0\n$ python3 relatorio.py\nuso: python3 relatorio.py 10,20,30\n$ echo $?\n2"],
+            ["py", "import sys\n\ndef main(argv):\n    if not argv:\n        return 2\n    return 0\n\nprint(\"com argumento:\", main([\"10,20\"]))\nprint(\"sem argumentos:\", main([]))"]
+          ],
+          quiz: [
+            { p: "Para que serve `if __name__ == \"__main__\":`?", o: ["Para o Python saber por onde começar", "Para o ficheiro poder ser importado sem correr o programa", "É uma convenção de estilo sem efeito"], c: 1,
+              e: "Sem a guarda, importar o ficheiro num teste ou noutro módulo executa tudo o que está lá dentro. Com ela, o ficheiro serve as duas coisas: biblioteca e programa." }
+          ],
+          exercicio: {
+            enunciado: "Escreve `main(argv)`, a função de entrada de um script. `argv` é a lista de argumentos, já sem o nome do programa. Com um argumento numérico, guarda o dobro em `RESULTADO` e devolve `0`. Sem argumentos devolve `2`. Com um argumento que não é número devolve `1`.",
+            inicio: "RESULTADO = None\n\n\ndef main(argv):\n    pass\n",
+            testes: "verifica('argumento valido devolve 0', main(['21']) == 0)\nverifica('guarda o dobro', RESULTADO == 42)\nverifica('sem argumentos devolve 2', main([]) == 2)\nverifica('argumento invalido devolve 1', main(['abc']) == 1)\nverifica('zero tambem e valido', main(['0']) == 0)\nverifica('numero negativo', main(['-3']) == 0 and RESULTADO == -6)"
+          }
+        }
+      ]
+    },
+    {
+      n: 2, fase: 1, titulo: "Correr o teu primeiro código",
       objetivo: "Perceber o que acontece quando carregas em correr.",
       licoes: [
         {
-          id: "1.1", titulo: "O interpretador e o print", min: 12, estado: "pronta",
+          id: "2.1", titulo: "O interpretador e o print", min: 12, estado: "pronta",
           meta: "No fim: escreves, corres e lês o resultado de um programa.",
           blocos: [
             ["p", "Python é lido de cima para baixo, linha a linha, por um programa chamado interpretador. Não há passo de compilação: escreves, corres, vês. É por isso que se aprende depressa e é por isso que os erros só aparecem quando a linha é executada."],
@@ -51,7 +174,7 @@ window.CURSO = {
           }
         },
         {
-          id: "1.2", titulo: "Tipos, conversões e f-strings", min: 15, estado: "pronta",
+          id: "2.2", titulo: "Tipos, conversões e f-strings", min: 15, estado: "pronta",
           meta: "No fim: sabes porque é que 1 + '1' rebenta e como juntar texto com valores.",
           blocos: [
             ["p", "Cada valor tem um tipo. Os quatro que vais usar em todo o lado: `str` (texto), `int` (inteiro), `float` (decimal), `bool` (verdadeiro ou falso). A função `type()` diz-te qual é."],
@@ -62,7 +185,7 @@ window.CURSO = {
             ["p", "A forma moderna de construir texto com valores lá dentro. Prefixo `f` e chavetas com a expressão dentro."],
             ["py", "produto = \"teclado\"\npreco = 39.9\nquantidade = 3\n\nprint(f\"{quantidade} x {produto} = {preco * quantidade:.2f} euros\")"],
             ["p", "O `:.2f` dentro das chavetas é formatação: duas casas decimais. Também tens `{valor:>10}` para alinhar à direita e `{n:,}` para separador de milhares."],
-            ["obra", "Concatenar com `+` em relatórios e logs é o sinal mais rápido de código antigo. Em 2026 escreve-se f-string, sempre. As exceções são o módulo `logging` e queries de base de dados, e as razões vão aparecer nos módulos 6 e 14."],
+            ["obra", "Concatenar com `+` em relatórios e logs é o sinal mais rápido de código antigo. Em 2026 escreve-se f-string, sempre. As exceções são o módulo `logging` e queries de base de dados, e as razões vão aparecer nos módulos 9 e 18."],
             ["aviso", "`float` não é exato. `0.1 + 0.2` dá 0.30000000000000004. Para dinheiro usa-se `Decimal` ou guarda-se em cêntimos como inteiro. Isto já causou processos judiciais a sério."],
             ["py", "print(0.1 + 0.2)\nprint(0.1 + 0.2 == 0.3)\nprint(round(0.1 + 0.2, 2) == 0.3)"]
           ],
@@ -77,7 +200,7 @@ window.CURSO = {
           }
         },
         {
-          id: "1.3", titulo: "Ler o traceback", min: 10, estado: "pronta",
+          id: "2.3", titulo: "Ler o traceback", min: 10, estado: "pronta",
           meta: "No fim: consegues corrigir um erro sem copiar a mensagem para o Google.",
           blocos: [
             ["p", "Um erro em Python não é um castigo, é um relatório. Lê-se de baixo para cima: a última linha diz o tipo de erro e a mensagem, as linhas acima dizem o caminho até lá."],
@@ -107,11 +230,167 @@ window.CURSO = {
       ]
     },
     {
-      n: 2, fase: 1, titulo: "Decisões e repetição",
+      n: 3, fase: 1, titulo: "Os tipos por dentro",
+      objetivo: "Saber o que cada tipo garante e onde cada um te trai.",
+      licoes: [
+        {
+          id: "3.1", titulo: "Números: int, float e dinheiro", min: 16, estado: "pronta",
+          meta: "No fim: sabes porque é que não se guarda dinheiro em float e o que faz `//` com números negativos.",
+          blocos: [
+            ["p", "Python tem dois tipos numéricos que vais usar sempre: `int` e `float`. Parecem a mesma coisa com e sem vírgula. Não são, e a diferença já custou dinheiro a muita gente."],
+            ["h", "int não tem limite"],
+            ["p", "Um inteiro em Python cresce até à memória acabar. Não há estouro, não há `long`, não há nada para configurar. Isto é raro entre linguagens e é uma vantagem tua."],
+            ["py", "print(2 ** 200)\nprint(len(str(2 ** 10000)))"],
+            ["h", "As três divisões"],
+            ["py", "print(7 / 2)      # sempre float\nprint(7 // 2)     # divisão inteira, arredonda para baixo\nprint(7 % 2)      # resto\nprint(divmod(7, 2))"],
+            ["p", "`//` não corta a parte decimal: arredonda para baixo, para o lado do menos infinito. Com números positivos parece a mesma coisa. Com negativos, não é."],
+            ["py", "print(-7 // 2)\nprint(int(-7 / 2))\nprint(-7 % 2)"],
+            ["aviso", "`-7 // 2` dá `-4`, não `-3`. E `-7 % 2` dá `1`, não `-1`: em Python o resto tem o sinal do divisor. Quem escreve paginação ou reparte lotes com números que podem ser negativos leva com isto pelo menos uma vez."],
+            ["h", "float é binário, e por isso é aproximado"],
+            ["p", "Um `float` são 64 bits em base 2. Números como 0.1 não têm representação exata em base 2, tal como 1/3 não tem representação exata em base 10. O resultado é o clássico:"],
+            ["py", "print(0.1 + 0.2)\nprint(0.1 + 0.2 == 0.3)\n\nimport math\nprint(math.isclose(0.1 + 0.2, 0.3))"],
+            ["p", "Regra: nunca compares floats com `==`. Usa `math.isclose`, ou compara arredondado, ou, melhor ainda, não uses floats para aquilo."],
+            ["h", "Dinheiro"],
+            ["p", "Duas soluções corretas, e a escolha é da equipa. Ou guardas cêntimos em `int` e divides por 100 só para mostrar, ou usas `Decimal` com um número de casas definido. A errada é `float`."],
+            ["py", "from decimal import Decimal, ROUND_HALF_UP\n\nprint(Decimal(\"0.1\") + Decimal(\"0.2\"))\n\npreco = Decimal(\"19.99\")\niva = (preco * Decimal(\"0.23\")).quantize(Decimal(\"0.01\"), rounding=ROUND_HALF_UP)\nprint(preco, iva, preco + iva)"],
+            ["aviso", "`Decimal(0.1)` com um float lá dentro já traz o erro do float agarrado. Constrói sempre a partir de texto: `Decimal(\"0.1\")`."],
+            ["h", "round não faz o que julgas"],
+            ["py", "print(round(0.5), round(1.5), round(2.5), round(3.5))"],
+            ["p", "Isto chama-se arredondamento bancário: os empates vão para o par mais próximo. Existe para não enviesar somas grandes e é o que a norma manda. Se o negócio exige meio para cima, é `Decimal` com `ROUND_HALF_UP`, explicitamente."],
+            ["obra", "Um cêntimo de diferença entre o teu total e o do sistema de contabilidade é um bilhete de bug, e em faturação pode ser uma coima. Quando te pedirem um cálculo com dinheiro, a primeira pergunta é: em que unidade guardamos isto, e com que regra de arredondamento?"],
+            ["aviso", "`int(\"3.5\")` rebenta com `ValueError`. `int(3.9)` dá `3`: trunca, não arredonda. Para converter texto com decimais é `int(float(\"3.5\"))`, e mais vale decidires de propósito o que queres."]
+          ],
+          quiz: [
+            { p: "Estás a somar 5000 preços em euros guardados em `float`. Que risco corres?", o: ["Nenhum, o erro é pequeno demais", "Erros de arredondamento que se acumulam e dão um total diferente do da contabilidade", "O programa fica lento"], c: 1,
+              e: "Cada soma acrescenta um erro minúsculo. Ao fim de milhares de operações, a diferença aparece nas casas dos cêntimos, que é exatamente onde alguém está a olhar." }
+          ],
+          exercicio: {
+            enunciado: "Escreve `dividir_conta(total_cent, pessoas)`, que reparte um total em cêntimos. Devolve uma lista de inteiros cuja soma é exatamente o total; os cêntimos que sobram vão um a um para as primeiras pessoas. Se `pessoas` for menor que 1, levanta `ValueError`.",
+            inicio: "def dividir_conta(total_cent, pessoas):\n    pass\n",
+            testes: "verifica('divisao exata', dividir_conta(1000, 4) == [250, 250, 250, 250])\nverifica('a soma e sempre o total', sum(dividir_conta(1001, 3)) == 1001)\nverifica('a sobra vai para os primeiros', dividir_conta(1001, 3) == [334, 334, 333])\nverifica('uma pessoa paga tudo', dividir_conta(777, 1) == [777])\nverifica('total zero', dividir_conta(0, 2) == [0, 0])\nverifica('devolve inteiros', all(isinstance(x, int) for x in dividir_conta(100, 3)))\n_erro = False\ntry:\n    dividir_conta(100, 0)\nexcept ValueError:\n    _erro = True\nverifica('zero pessoas levanta ValueError', _erro)"
+          }
+        },
+        {
+          id: "3.2", titulo: "Texto: strings por dentro", min: 18, estado: "pronta",
+          meta: "No fim: limpas e transformas texto com os métodos certos e percebes de onde vêm os erros de acentos.",
+          blocos: [
+            ["p", "Uma string é uma sequência imutável de caracteres. Imutável quer dizer que nenhum método altera a string: todos devolvem uma nova. `texto.strip()` sozinho numa linha não faz nada de útil, e é um erro que toda a gente comete uma vez."],
+            ["py", "texto = \"  Ana Silva  \"\ntexto.strip()\nprint(repr(texto))\n\ntexto = texto.strip()\nprint(repr(texto))"],
+            ["h", "Índices e fatias"],
+            ["py", "nome = \"relatorio.csv\"\nprint(nome[0], nome[-1])\nprint(nome[:9])\nprint(nome[-3:])\nprint(nome[::-1])\nprint(len(nome))"],
+            ["h", "Os métodos que usas todos os dias"],
+            ["lista", [
+              "`strip()`, `lstrip()`, `rstrip()`: tiram espaços (ou os caracteres que indicares) das pontas.",
+              "`lower()`, `upper()`, `casefold()`: caixa. Para comparar, `casefold()` é o mais correto.",
+              "`split(\";\")` e `\"; \".join(lista)`: partir e juntar. São inversos um do outro.",
+              "`replace(a, b)`: substitui todas as ocorrências.",
+              "`startswith()`, `endswith()`: aceitam um tuplo de hipóteses.",
+              "`removeprefix()`, `removesuffix()`: tiram só se lá estiver, sem o risco de `replace`.",
+              "`zfill(5)`: enche com zeros à esquerda, útil para códigos postais e números de fatura.",
+              "`isdigit()`, `isalpha()`: testam o conteúdo, mas cuidado, `\"-3\".isdigit()` é `False`."
+            ]],
+            ["py", "linha = \" TECLADO ; 39,90 ; 2 \"\nproduto, preco, qtd = [p.strip() for p in linha.split(\";\")]\nprint(produto.capitalize(), float(preco.replace(\",\", \".\")), int(qtd))"],
+            ["aviso", "Construir texto com `texto += linha` dentro de um ciclo cria uma string nova em cada volta e copia tudo outra vez. Com 100 mil linhas isso é lentidão a sério. Junta numa lista e faz `\"\".join(lista)` no fim."],
+            ["h", "Acentos, bytes e o dia em que o ficheiro rebenta"],
+            ["p", "Uma `str` são caracteres. Um ficheiro no disco são bytes. A tradução entre os dois chama-se codificação, e hoje a resposta certa é quase sempre UTF-8. `UnicodeDecodeError` significa que estás a ler bytes com a tabela errada."],
+            ["py", "palavra = \"olá\"\nprint(len(palavra))\nprint(palavra.encode(\"utf-8\"))\nprint(len(palavra.encode(\"utf-8\")))\nprint(b\"ol\\xc3\\xa1\".decode(\"utf-8\"))"],
+            ["obra", "O ficheiro que o cliente exportou do Excel vem em `cp1252` ou `latin-1` e traz um BOM à cabeça. Abre-se com `encoding=\"utf-8-sig\"` quando há BOM, e pede-se a origem do ficheiro quando há acentos partidos. Escreve sempre `encoding=` explícito: o valor por omissão muda de sistema para sistema e o teu código deixa de funcionar na máquina do colega."],
+            ["h", "Formatar"],
+            ["py", "produto, valor, n = \"teclado\", 39.9, 7\nprint(f\"{produto:>12} | {valor:8.2f} | {n:03d}\")\nprint(f\"{valor:,.2f}\")\nprint(f\"valor bruto: {produto!r}\")"],
+            ["aviso", "`\"Ana\" == \"ana\"` é `False`, e `\"ana\"` não é igual a `\"aña\"` nem a `\"a n a\"`. Antes de comparar texto escrito por pessoas, normaliza: `casefold()` e `strip()` no mínimo."]
+          ],
+          quiz: [
+            { p: "Estás a construir um relatório de 200 mil linhas com `texto += linha` dentro do ciclo. Qual é o problema?", o: ["Nenhum, é assim que se faz", "As strings são imutáveis: cada volta copia tudo outra vez e o custo cresce ao quadrado", "Falta usar f-strings"], c: 1,
+              e: "Acumula as linhas numa lista e junta uma vez com `\"\\n\".join(linhas)`. É a diferença entre segundos e minutos." }
+          ],
+          exercicio: {
+            enunciado: "Escreve `normalizar(nome)`, que limpa um nome escrito por uma pessoa: tira espaços das pontas, reduz espaços repetidos a um só, e põe cada palavra com a primeira letra maiúscula e o resto minúsculo.",
+            inicio: "def normalizar(nome):\n    pass\n",
+            testes: "verifica('espacos nas pontas', normalizar('  ana silva  ') == 'Ana Silva')\nverifica('espacos repetidos', normalizar('ana    maria') == 'Ana Maria')\nverifica('maiusculas a mais', normalizar('JOAO PEDRO') == 'Joao Pedro')\nverifica('acentos preservados', normalizar('joão') == 'João')\nverifica('so espacos da string vazia', normalizar('   ') == '')\nverifica('nome ja correto nao muda', normalizar('Ana Silva') == 'Ana Silva')\nverifica('quebras de linha tambem contam como espaco', normalizar('ana\\nsilva') == 'Ana Silva')"
+          }
+        },
+        {
+          id: "3.3", titulo: "Verdadeiro, falso e None", min: 13, estado: "pronta",
+          meta: "No fim: percebes porque é que o desconto de 0 por cento desapareceu do sistema.",
+          blocos: [
+            ["p", "Em Python, qualquer valor pode ser usado numa condição. Há uma lista curta de coisas falsas e tudo o resto é verdadeiro."],
+            ["lista", [
+              "Falsos: `False`, `None`, `0`, `0.0`, `\"\"`, `[]`, `{}`, `set()`, `()`.",
+              "Verdadeiros: tudo o resto, incluindo `\"0\"`, `\"False\"`, `[0]` e `-1`."
+            ]],
+            ["py", "for valor in [0, \"\", [], \"0\", [0], -1, None]:\n    print(repr(valor), \"->\", bool(valor))"],
+            ["p", "Isto torna o código agradável: `if not lista:` em vez de `if len(lista) == 0:`. E torna-o perigoso exatamente no mesmo sítio."],
+            ["h", "O bug do zero"],
+            ["py", "pedido = {\"produto\": \"teclado\", \"desconto\": 0}\n\ndesconto = pedido.get(\"desconto\") or 10\nprint(\"com or:\", desconto)\n\ndesconto = pedido[\"desconto\"] if pedido.get(\"desconto\") is not None else 10\nprint(\"com is not None:\", desconto)"],
+            ["p", "O `or` para valores por omissão só está certo quando `0`, `\"\"` e `False` não são valores legítimos. Como raramente sabes isso de antemão, a forma segura é perguntar por `None`."],
+            ["h", "None é ausência, não é zero"],
+            ["p", "`None` significa 'não há valor'. Serve para dizer que um campo não foi preenchido, que uma pesquisa não encontrou nada, que um argumento não foi dado. É diferente de zero, de vazio e de falso, e essa diferença costuma ser informação de negócio."],
+            ["lista", [
+              "Preço `None`: ainda não sabemos o preço.",
+              "Preço `0`: é grátis.",
+              "Guardar os dois como `0` é perder informação que alguém vai pedir."
+            ]],
+            ["h", "is e =="],
+            ["p", "`==` compara valores. `is` pergunta se são exatamente o mesmo objeto na memória. Usa-se `is` com `None`, `True` e `False`, e com mais nada."],
+            ["py", "a = [1, 2]\nb = [1, 2]\nprint(a == b, a is b)\n\nx = None\nprint(x is None)"],
+            ["aviso", "`a is b` com números pequenos às vezes dá `True` porque o Python reutiliza objetos para inteiros pequenos e textos curtos. É um detalhe da implementação e não é para contar com ele. Compara números com `==`, sempre."],
+            ["obra", "'O campo de desconto a zero está a ser ignorado' e 'a quantidade 0 aparece como 1 na fatura' são bilhetes de bug reais, e são quase sempre a mesma linha: um `or` a servir de valor por omissão. Quando fores rever código, procura `or` à direita de um `get`."]
+          ],
+          quiz: [
+            { p: "`quantidade = linha.get('quantidade') or 1`. Que bug tem?", o: ["Nenhum", "Uma quantidade de 0 passa a valer 1", "Rebenta se a chave não existir"], c: 1,
+              e: "`0` é falso, por isso o `or` avança para o `1`. Uma encomenda com quantidade zero passa a ter um item. A versão correta pergunta por `None`." }
+          ],
+          exercicio: {
+            enunciado: "Escreve `com_omissao(valor, omissao)`, que devolve `omissao` apenas quando `valor` é `None`. Qualquer outro valor, incluindo `0`, `''`, `False` e listas vazias, é devolvido tal e qual.",
+            inicio: "def com_omissao(valor, omissao):\n    pass\n",
+            testes: "verifica('None e substituido', com_omissao(None, 10) == 10)\nverifica('zero e mantido', com_omissao(0, 10) == 0)\nverifica('string vazia e mantida', com_omissao('', 'x') == '')\nverifica('False e mantido', com_omissao(False, True) is False)\nverifica('lista vazia e mantida', com_omissao([], [1]) == [])\nverifica('valor normal e mantido', com_omissao(5, 10) == 5)\nverifica('omissao None tambem funciona', com_omissao(None, None) is None)"
+          }
+        },
+        {
+          id: "3.4", titulo: "Mutável, imutável e referências", min: 16, estado: "pronta",
+          meta: "No fim: percebes porque é que alterar uma lista dentro de uma função mudou os dados de quem a chamou.",
+          blocos: [
+            ["p", "Uma variável não é uma caixa com um valor lá dentro: é um nome colado a um objeto. `b = a` não copia o objeto, cola outro nome ao mesmo objeto. Enquanto o objeto for imutável, isto nunca te incomoda. Quando é mutável, é a origem de uma família inteira de bugs."],
+            ["py", "a = [1, 2, 3]\nb = a\nb.append(4)\nprint(a)\nprint(a is b)\n\nc = a[:]      # cópia\nc.append(5)\nprint(a, c)"],
+            ["lista", [
+              "Imutáveis: `int`, `float`, `str`, `bool`, `tuple`, `frozenset`, `bytes`.",
+              "Mutáveis: `list`, `dict`, `set`, e praticamente todos os objetos que escreveres."
+            ]],
+            ["h", "Passar a uma função"],
+            ["py", "def acrescentar_iva(precos):\n    for i in range(len(precos)):\n        precos[i] = round(precos[i] * 1.23, 2)\n    return precos\n\noriginais = [100.0, 50.0]\ncom_iva = acrescentar_iva(originais)\nprint(com_iva)\nprint(originais)"],
+            ["p", "Os preços originais desapareceram. A função recebeu o mesmo objeto, não uma cópia. A versão correta constrói uma lista nova e não toca no que recebeu."],
+            ["py", "def com_iva(precos):\n    return [round(p * 1.23, 2) for p in precos]\n\noriginais = [100.0, 50.0]\nprint(com_iva(originais), originais)"],
+            ["h", "O argumento por omissão mutável"],
+            ["py", "def registar(evento, historico=[]):\n    historico.append(evento)\n    return historico\n\nprint(registar(\"a\"))\nprint(registar(\"b\"))"],
+            ["p", "A lista por omissão é criada uma vez, quando a função é definida, e fica a ser partilhada por todas as chamadas. Nunca é o que queres. O padrão correto usa `None`:"],
+            ["py", "def registar(evento, historico=None):\n    historico = list(historico) if historico is not None else []\n    historico.append(evento)\n    return historico\n\nprint(registar(\"a\"))\nprint(registar(\"b\"))"],
+            ["h", "Copiar em profundidade"],
+            ["py", "import copy\n\noriginal = {\"cliente\": \"Ana\", \"linhas\": [{\"produto\": \"teclado\"}]}\nrasa = dict(original)\nfunda = copy.deepcopy(original)\n\nrasa[\"linhas\"][0][\"produto\"] = \"rato\"\nprint(original[\"linhas\"][0][\"produto\"])\nprint(funda[\"linhas\"][0][\"produto\"])"],
+            ["p", "`dict(x)`, `list(x)` e `x[:]` copiam um nível. O que está lá dentro continua a ser partilhado. Para estruturas encaixadas é `copy.deepcopy`, que é mais lento e às vezes é exatamente o que precisas."],
+            ["h", "Porque é que uma lista não pode ser chave de dicionário"],
+            ["py", "d = {}\nd[(1, 2)] = \"tuplo serve\"\nprint(d)\ntry:\n    d[[1, 2]] = \"lista nao\"\nexcept TypeError as e:\n    print(\"TypeError:\", e)"],
+            ["p", "Uma chave precisa de um código de dispersão estável. Se o objeto pudesse mudar, mudaria de sítio na tabela e o dicionário perdia-o. Por isso só objetos imutáveis servem de chave."],
+            ["obra", "A regra da casa em quase todas as equipas: ou a função devolve uma coisa nova e não toca no que recebeu, ou altera o que recebeu e devolve `None`. Fazer as duas ao mesmo tempo é como se criam bugs que aparecem a três ficheiros de distância. O `.sort()` e o `sorted()` do Python são esta regra aplicada."],
+            ["aviso", "Alterar uma lista enquanto a percorres salta elementos. `for x in lista: lista.remove(x)` deixa metade lá dentro. Percorre uma cópia (`for x in list(lista)`) ou constrói uma lista nova com os que ficam."]
+          ],
+          quiz: [
+            { p: "`def registar(evento, historico=[])`. Porque é que isto está errado?", o: ["Porque listas não podem ser argumentos", "Porque a lista é criada uma vez e fica partilhada entre todas as chamadas", "Porque devia ser um tuplo"], c: 1,
+              e: "O valor por omissão é avaliado quando a função é definida, não a cada chamada. Usa `None` e cria a lista lá dentro." }
+          ],
+          exercicio: {
+            enunciado: "Escreve `adicionar(item, carrinho=None)`, que devolve um carrinho com o item acrescentado no fim. Sem carrinho, começa um novo. Nunca altera o carrinho recebido nem partilha estado entre chamadas.",
+            inicio: "def adicionar(item, carrinho=None):\n    pass\n",
+            testes: "verifica('comeca um carrinho novo', adicionar('pao') == ['pao'])\nverifica('chamadas independentes', adicionar('leite') == ['leite'])\n_c = ['pao']\n_novo = adicionar('leite', _c)\nverifica('acrescenta ao recebido', _novo == ['pao', 'leite'])\nverifica('nao altera o carrinho recebido', _c == ['pao'])\nverifica('devolve uma lista nova', _novo is not _c)\nverifica('carrinho vazio explicito', adicionar('pao', []) == ['pao'])"
+          }
+        }
+      ]
+    },
+    {
+      n: 4, fase: 1, titulo: "Decisões e repetição",
       objetivo: "Controlar o caminho que o programa segue.",
       licoes: [
         {
-          id: "2.1", titulo: "if, elif, else e a indentação como sintaxe", min: 14, estado: "pronta",
+          id: "4.1", titulo: "if, elif, else e a indentação como sintaxe", min: 14, estado: "pronta",
           meta: "No fim: escreves condições encadeadas sem as transformar numa escada ilegível.",
           blocos: [
             ["p", "Um `if` corre o bloco seguinte só quando a condição é verdadeira. Em Python o bloco não se marca com chavetas nem com `end`: marca-se com indentação. Quatro espaços, sempre os mesmos, é o que a equipa espera ver."],
@@ -141,7 +420,7 @@ window.CURSO = {
           }
         },
         {
-          id: "2.2", titulo: "for, while, break e continue", min: 16, estado: "pronta",
+          id: "4.2", titulo: "for, while, break e continue", min: 16, estado: "pronta",
           meta: "No fim: percorres coleções sem índices manuais e sabes quando um while é a escolha certa.",
           blocos: [
             ["p", "Em Python percorre-se a coleção, não os índices. `for item in lista` é a forma normal. Se vieres de outra linguagem, a vontade de escrever `for i in range(len(lista))` vai passar e deve passar."],
@@ -158,7 +437,7 @@ window.CURSO = {
             ["h", "O else do for"],
             ["p", "Um `for` pode ter `else`, que corre só se o ciclo terminou sem `break`. Serve exatamente para o caso procurar e não encontrar."],
             ["py", "procurado = 42\nfor n in [1, 2, 3]:\n    if n == procurado:\n        print(\"encontrado\")\n        break\nelse:\n    print(\"não está na lista\")"],
-            ["obra", "Ciclos aninhados sobre duas listas grandes são a causa número um de scripts que demoram horas. Se te apanhares com um `for` dentro de outro `for` a comparar dados, provavelmente querias um dicionário. O módulo 13 mede isso a sério."]
+            ["obra", "Ciclos aninhados sobre duas listas grandes são a causa número um de scripts que demoram horas. Se te apanhares com um `for` dentro de outro `for` a comparar dados, provavelmente querias um dicionário. O módulo 17 mede isso a sério."]
           ],
           quiz: [
             { p: "Precisas do índice e do valor ao percorrer uma lista. Qual é a forma idiomática?", o: ["`for i in range(len(lista))` e depois `lista[i]`", "`for i, v in enumerate(lista)`", "Um `while` com contador"], c: 1,
@@ -171,7 +450,7 @@ window.CURSO = {
           }
         },
         {
-          id: "2.3", titulo: "Compreensões de lista", min: 12, estado: "pronta",
+          id: "4.3", titulo: "Compreensões de lista", min: 12, estado: "pronta",
           meta: "No fim: escreves transformações numa linha e sabes quando não o deves fazer.",
           blocos: [
             ["p", "Uma compreensão é um ciclo que constrói uma coleção, escrito numa expressão. Lê-se de dentro para fora: primeiro o `for`, depois o filtro, e o que fica à esquerda é o que entra na lista."],
@@ -201,11 +480,11 @@ window.CURSO = {
       ]
     },
     {
-      n: 3, fase: 1, titulo: "Estruturas de dados",
+      n: 5, fase: 1, titulo: "Estruturas de dados",
       objetivo: "Escolher a estrutura certa, que é metade do desempenho do programa.",
       licoes: [
         {
-          id: "3.1", titulo: "Dicionários, a estrutura que vais usar todos os dias", min: 18, estado: "pronta",
+          id: "5.1", titulo: "Dicionários, a estrutura que vais usar todos os dias", min: 18, estado: "pronta",
           meta: "No fim: modelas dados reais com dicionários e evitas o KeyError.",
           blocos: [
             ["p", "Uma lista guarda coisas por posição. Um dicionário guarda coisas por nome. Quase todos os dados que vais tocar no trabalho (respostas de APIs, linhas de base de dados, configuração) chegam como dicionários."],
@@ -230,7 +509,7 @@ window.CURSO = {
           }
         },
         {
-          id: "3.2", titulo: "Listas, tuplos e sets", min: 15, estado: "pronta",
+          id: "5.2", titulo: "Listas, tuplos e sets", min: 15, estado: "pronta",
           meta: "No fim: escolhes a estrutura pela operação que precisas de fazer, não por hábito.",
           blocos: [
             ["p", "Três coleções, três propósitos. A lista é ordenada e alterável, e é o valor por omissão. O tuplo é ordenado e fixo, para coisas que andam juntas e não mudam. O conjunto não tem ordem nem repetidos, e responde a pertence numa fração do tempo."],
@@ -244,7 +523,7 @@ window.CURSO = {
             ["h", "Sets: pertence, únicos, diferenças"],
             ["py", "inscritos = {\"ana\", \"rui\", \"bea\"}\npresentes = {\"rui\", \"zeca\"}\n\nprint(\"ana\" in inscritos)\nprint(inscritos - presentes)\nprint(inscritos & presentes)\nprint(inscritos | presentes)"],
             ["obra", "Comparar duas listas de identificadores para ver o que falta de um lado é trabalho de rotina em integrações. Faz-se com `set(a) - set(b)` numa linha, e não com dois ciclos aninhados. Quem escreve os dois ciclos aninhados escreve também o bug."],
-            ["aviso", "`lista_b = lista_a` não copia nada: são dois nomes para a mesma lista, e alterar uma altera a outra. Para copiar usa `lista_a.copy()` ou `list(lista_a)`. Isto apanha toda a gente uma vez, e há de te apanhar num argumento por omissão no módulo 4."],
+            ["aviso", "`lista_b = lista_a` não copia nada: são dois nomes para a mesma lista, e alterar uma altera a outra. Para copiar usa `lista_a.copy()` ou `list(lista_a)`. Isto apanha toda a gente uma vez, e há de te apanhar num argumento por omissão no módulo 6."],
             ["py", "a = [1, 2]\nb = a\nb.append(3)\nprint(a)\n\nc = a.copy()\nc.append(4)\nprint(a, c)"]
           ],
           quiz: [
@@ -258,7 +537,7 @@ window.CURSO = {
           }
         },
         {
-          id: "3.3", titulo: "Ordenar e filtrar dados", min: 14, estado: "pronta",
+          id: "5.3", titulo: "Ordenar e filtrar dados", min: 14, estado: "pronta",
           meta: "No fim: ordenas listas de dicionários por vários campos sem escrever um único ciclo.",
           blocos: [
             ["p", "`sorted()` devolve uma lista nova. `lista.sort()` ordena no sítio e devolve `None`. Escrever `x = lista.sort()` e ficar com `None` é um clássico da primeira semana."],
@@ -289,11 +568,11 @@ window.CURSO = {
       ]
     },
     {
-      n: 4, fase: 1, titulo: "Funções",
+      n: 6, fase: 1, titulo: "Funções",
       objetivo: "Deixar de escrever scripts corridos e passar a escrever peças reutilizáveis.",
       licoes: [
         {
-          id: "4.1", titulo: "Definir, devolver, chamar", min: 15, estado: "pronta",
+          id: "6.1", titulo: "Definir, devolver, chamar", min: 15, estado: "pronta",
           meta: "No fim: escreves funções que devolvem valores e percebes porque é que print não serve.",
           blocos: [
             ["p", "Uma função é um bloco com nome, que recebe dados e devolve um resultado. Existe por duas razões: não repetir código e dar nome a uma ideia. A segunda é a mais importante e é a que quase ninguém diz."],
@@ -323,7 +602,7 @@ window.CURSO = {
           }
         },
         {
-          id: "4.2", titulo: "Argumentos por omissão, *args e **kwargs", min: 14, estado: "pronta",
+          id: "6.2", titulo: "Argumentos por omissão, *args e **kwargs", min: 14, estado: "pronta",
           meta: "No fim: escreves assinaturas flexíveis e escapas à armadilha do argumento mutável.",
           blocos: [
             ["p", "Um argumento por omissão dá um valor quando quem chama não o fornece. Serve para não obrigar toda a gente a repetir o caso normal."],
@@ -353,10 +632,10 @@ window.CURSO = {
           }
         },
         {
-          id: "4.3", titulo: "Anotações de tipo", min: 12, estado: "pronta",
+          id: "6.3", titulo: "Anotações de tipo", min: 12, estado: "pronta",
           meta: "No fim: escreves assinaturas que o editor e a equipa conseguem ler sem abrir o corpo da função.",
           blocos: [
-            ["p", "Uma anotação diz que tipo se espera. Python não a verifica em execução: quem verifica é o teu editor e uma ferramenta chamada mypy, no módulo 11. O valor é documentação que não fica desatualizada em silêncio."],
+            ["p", "Uma anotação diz que tipo se espera. Python não a verifica em execução: quem verifica é o teu editor e uma ferramenta chamada mypy, no módulo 15. O valor é documentação que não fica desatualizada em silêncio."],
             ["py", "def area(largura: float, altura: float) -> float:\n    return largura * altura\n\nprint(area(3, 4.5))\nprint(area.__annotations__)"],
             ["h", "Coleções"],
             ["p", "Desde o Python 3.9 escreve-se com os tipos normais: `list[str]`, `dict[str, int]`, `tuple[int, int]`. As versões antigas usavam `List` e `Dict` do módulo `typing` e ainda as vais encontrar em código com uns anos."],
@@ -366,11 +645,11 @@ window.CURSO = {
             ["lista", [
               "Nas funções públicas de um módulo, que outras pessoas vão chamar.",
               "Em qualquer coisa que devolva `None` em certos casos.",
-              "Em estruturas de dados que atravessam camadas, como as `dataclasses` do módulo 8.",
+              "Em estruturas de dados que atravessam camadas, como as `dataclasses` do módulo 11.",
               "Em código que já te enganou uma vez sobre o que recebia."
             ]],
             ["obra", "Num projeto novo em 2026, uma função sem anotações levanta perguntas em revisão. Não porque falte rigor teórico: é porque sem elas ninguém sabe se `dados` é uma lista de dicionários, um dicionário de listas ou um objeto, sem ir ler três ficheiros."],
-            ["aviso", "Anotar não valida. `def idade(n: int)` chamada com a string 'trinta' corre na mesma até rebentar mais à frente. Validação de dados que vêm de fora faz-se com código, ou com Pydantic, no módulo 16."],
+            ["aviso", "Anotar não valida. `def idade(n: int)` chamada com a string 'trinta' corre na mesma até rebentar mais à frente. Validação de dados que vêm de fora faz-se com código, ou com Pydantic, no módulo 20."],
             ["py", "def dobro(n: int) -> int:\n    return n * 2\n\nprint(dobro(\"ab\"))"],
             ["p", "Aquele resultado é 'abab'. Correu, não é o que querias, e nenhuma anotação te salvou. Foi mypy que ficou vermelho, no computador de quem correu mypy."]
           ],
@@ -387,13 +666,124 @@ window.CURSO = {
       ]
     },
 
+    {
+      n: 7, fase: 1, titulo: "Como pensar um problema",
+      objetivo: "Um método repetível para ir do enunciado ao código que funciona.",
+      licoes: [
+        {
+          id: "7.1", titulo: "Antes de escrever código: sete perguntas", min: 15, estado: "pronta",
+          meta: "No fim: transformas um pedido vago numa lista de exemplos concretos antes de escrever a primeira linha.",
+          blocos: [
+            ["p", "O erro mais caro de quem começa não é escolher a estrutura de dados errada: é começar a escrever. Dez minutos de perguntas poupam três horas de código que resolve o problema errado."],
+            ["p", "Quando te chega um pedido, seja de um exercício ou de um colega, responde a estas sete perguntas por escrito. Demora menos do que parece."],
+            ["lista", [
+              "**O que entra?** Que tipos, em que formato, vindo de onde. 'Uma lista de vendas' não chega: lista de quê, com que campos, sempre preenchidos?",
+              "**O que sai?** Tipo exato e formato exato. Uma lista? Um dicionário? Texto formatado? Com que ordem?",
+              "**Que exemplos consigo escrever já?** Pelo menos três pares entrada/saída, escritos à mão.",
+              "**Quais são os casos limite?** Vazio, um elemento, muitos, repetidos, negativos, o maior possível.",
+              "**O que é inválido e o que faço?** Levanto erro, ignoro a linha, ou uso um valor por omissão? Esta é uma decisão de negócio, não técnica.",
+              "**Que tamanho tem isto na realidade?** Cem linhas ou cem milhões muda tudo o que vem a seguir.",
+              "**Quem chama isto e o que faz com o resultado?** Decide a assinatura melhor do que qualquer teoria."
+            ]],
+            ["h", "A tabela de exemplos"],
+            ["p", "Escreve as respostas à pergunta três numa tabela. Parece trabalho a mais. É a tua lista de testes, já escrita."],
+            ["code", "entrada                     -> saída        porquê\n[10, 20, 30]                -> 20.0         caso normal\n[10]                        -> 10.0         um elemento\n[]                          -> ValueError   média de nada não existe\n[10, None, 20]              -> ?            decidir: ignorar ou rebentar?"],
+            ["p", "Repara na última linha. Aparece sempre uma linha com um ponto de interrogação, e é sobre essa que vale a pena perguntar a alguém. As outras decides tu."],
+            ["h", "Quando não há ninguém a quem perguntar"],
+            ["p", "Decide, escolhe a opção mais conservadora, e escreve a decisão onde ela se veja: um comentário, o docstring, a descrição do pull request. 'Assumi que linhas sem data são do dia anterior' é uma frase que salva reuniões."],
+            ["obra", "Metade do trabalho de um programador com experiência é transformar 'preciso de um relatório das vendas' em perguntas antes de abrir o editor. Quem só pergunta depois de ter escrito, reescreve. E numa equipa, quem faz as perguntas certas na reunião de refinamento ganha reputação mais depressa do que quem escreve mais código."],
+            ["aviso", "'Faz sentido?' não é uma pergunta útil ao teu chefe de equipa, porque a resposta é sempre sim. 'Para pedidos cancelados, conto o valor ou não?' é uma pergunta a que só existe uma resposta e que muda o código."]
+          ],
+          quiz: [
+            { p: "Pedem-te 'uma função que calcula a média das notas'. Qual é a pergunta mais importante antes de escrever?", o: ["Que nome dou à função", "O que devolve quando a lista está vazia", "Uso NumPy ou Python puro"], c: 1,
+              e: "É o caso limite que a função vai encontrar no primeiro dia e sobre o qual o enunciado não diz nada. Zero, `None` ou erro são três comportamentos diferentes e quem pediu tem uma opinião." }
+          ],
+          exercicio: {
+            enunciado: "Aplica as perguntas e implementa `partir_em_lotes(itens, tamanho)`, que parte uma lista em sublistas de no máximo `tamanho` elementos. O último lote pode ser menor. Lista vazia dá lista vazia. `tamanho` menor que 1 levanta `ValueError`. Não altera a lista recebida.",
+            inicio: "def partir_em_lotes(itens, tamanho):\n    pass\n",
+            testes: "verifica('divisao exata', partir_em_lotes([1, 2, 3, 4], 2) == [[1, 2], [3, 4]])\nverifica('ultimo lote menor', partir_em_lotes([1, 2, 3], 2) == [[1, 2], [3]])\nverifica('lote maior que a lista', partir_em_lotes([1, 2], 5) == [[1, 2]])\nverifica('lista vazia', partir_em_lotes([], 3) == [])\nverifica('tamanho um', partir_em_lotes([1, 2], 1) == [[1], [2]])\n_erro = 0\nfor _t in [0, -1]:\n    try:\n        partir_em_lotes([1], _t)\n    except ValueError:\n        _erro += 1\nverifica('tamanho invalido levanta ValueError', _erro == 2)\n_orig = [1, 2, 3]\npartir_em_lotes(_orig, 2)\nverifica('nao altera a lista recebida', _orig == [1, 2, 3])"
+          }
+        },
+        {
+          id: "7.2", titulo: "Decompor: do papel às funções", min: 17, estado: "pronta",
+          meta: "No fim: escreves o esqueleto de um programa inteiro antes de escreveres o corpo de qualquer função.",
+          blocos: [
+            ["p", "Quem começa escreve uma função de oitenta linhas. Quem trabalha nisto há tempo escreve seis de oito. Não é gosto pessoal: uma função pequena tem nome, pode ser testada sozinha, e quando rebenta o traceback diz-te logo qual das seis é."],
+            ["h", "Esqueleto primeiro, corpo depois"],
+            ["p", "Escreve os nomes e as docstrings, com `pass` lá dentro. Vês a forma toda do programa antes de te enterrares no primeiro detalhe, e percebes cedo se a divisão está má, que é quando ainda é barato mudar."],
+            ["code", "def ler_linhas(caminho):\n    \"\"\"Lê o ficheiro e devolve uma lista de dicionários, um por linha.\"\"\"\n\n\ndef validar(linha):\n    \"\"\"Devolve None se a linha está bem, ou o motivo da rejeição.\"\"\"\n\n\ndef agregar(linhas):\n    \"\"\"Soma os valores por produto. Devolve produto -> total.\"\"\"\n\n\ndef formatar(totais):\n    \"\"\"Devolve as linhas do relatório, já ordenadas.\"\"\"\n\n\ndef main(caminho):\n    linhas = ler_linhas(caminho)\n    boas = [l for l in linhas if validar(l) is None]\n    return formatar(agregar(boas))"],
+            ["p", "A `main` lê-se como o enunciado do problema. Isso não é um acidente bonito: é o objetivo. Se a tua `main` não se lê assim, a divisão está errada."],
+            ["h", "Um nível de abstração por função"],
+            ["p", "Se uma função abre ficheiros **e** calcula IVA, são duas funções. A regra prática: o corpo de uma função deve ler-se todo à mesma altura, como um resumo. Misturar `open()` com `round(preco * 1.23, 2)` na mesma função é misturar duas alturas."],
+            ["h", "Empurra a entrada e a saída para as bordas"],
+            ["p", "Uma função pura recebe valores, devolve valores, e não toca em mais nada: nem ficheiros, nem rede, nem relógio, nem variáveis globais. Dá a mesma resposta para a mesma pergunta, sempre. É trivial de testar e é onde deve viver a lógica de negócio."],
+            ["py", "# difícil de testar: lê, calcula e escreve tudo junto\ndef relatorio_mau(caminho):\n    with open(caminho) as f:\n        total = sum(float(l) for l in f)\n    print(f\"total: {total}\")\n\n\n# fácil de testar: o cálculo é puro, a borda faz o resto\ndef total_de(linhas):\n    return sum(float(l) for l in linhas)\n\n\nprint(total_de([\"10\", \"20.5\"]))"],
+            ["p", "Repara no que ganhaste: para testar `total_de` não precisas de ficheiro nenhum. É esta separação que faz a diferença entre uma suite de testes rápida e uma que ninguém corre."],
+            ["obra", "Ler, validar, transformar, escrever. Esta é a forma de noventa por cento do software de empresa, do script de importação ao serviço web. Saber em qual destas quatro caixas é que um pedaço de código deve viver é mais arquitetura do que a maioria do código que vais encontrar."],
+            ["aviso", "Decompor a mais também custa. Quinze funções de duas linhas, cada uma chamada num sítio só, obrigam a saltar por todo o ficheiro para perceber uma coisa simples. Uma função existe quando tem um nome honesto; se o melhor nome que arranjas é `processar_parte_2`, junta-a outra vez."]
+          ],
+          quiz: [
+            { p: "Tens uma função de sessenta linhas que lê um ficheiro, valida, calcula e imprime. Qual é a primeira coisa a fazer?", o: ["Dividir a meio, em duas de trinta", "Separar a leitura e a escrita do cálculo, para poderes testar o cálculo sem ficheiros", "Acrescentar comentários a explicar cada parte"], c: 1,
+              e: "Cortar pelo meio dá duas funções sem nome honesto. Cortar pelas bordas de entrada e saída dá-te uma função pura no meio, que é a parte que tem lógica e a que interessa testar." }
+          ],
+          exercicio: {
+            enunciado: "Constrói um pequeno relatório por decomposição, em três funções. `analisar(linha)` recebe `'teclado;39.90;2'` e devolve `('teclado', 79.8)`, ou `None` se a linha for inválida. `agregar(linhas)` devolve um dicionário produto para total, ignorando as linhas inválidas. `relatorio(linhas)` devolve linhas de texto como `'teclado: 79.80'`, ordenadas por total decrescente e, em caso de empate, por nome.",
+            inicio: "def analisar(linha):\n    pass\n\n\ndef agregar(linhas):\n    pass\n\n\ndef relatorio(linhas):\n    pass\n",
+            testes: "verifica('analisa uma linha', analisar('teclado;39.90;2') == ('teclado', 79.8))\nverifica('valor invalido devolve None', analisar('teclado;abc;2') is None)\nverifica('campos a menos devolve None', analisar('teclado;39.90') is None)\nverifica('agrega o mesmo produto', agregar(['rato;10.00;1', 'rato;10.00;2']) == {'rato': 30.0})\nverifica('ignora linhas invalidas', agregar(['rato;10.00;1', 'lixo']) == {'rato': 10.0})\nverifica('relatorio ordenado por total', relatorio(['rato;10.00;1', 'teclado;39.90;2']) == ['teclado: 79.80', 'rato: 10.00'])\nverifica('empate resolvido por nome', relatorio(['b;10.00;1', 'a;10.00;1']) == ['a: 10.00', 'b: 10.00'])\nverifica('sem linhas', relatorio([]) == [])"
+          }
+        },
+        {
+          id: "7.3", titulo: "Resolver em voz alta, do princípio ao fim", min: 18, estado: "pronta",
+          meta: "No fim: viste o processo completo de resolver um problema, hesitações incluídas, e sabes imitá-lo.",
+          blocos: [
+            ["p", "Esta aula é uma transcrição. O problema é real e aparece em entrevistas e no trabalho: **dado um registo de acessos, diz-me as três páginas com mais erros de servidor**."],
+            ["code", "GET /produtos 200\nGET /carrinho 500\nPOST /pagamento 503\nGET /carrinho 500\nGET /inicio 200\nPOST /pagamento 500"],
+            ["h", "Passo 1: perguntas, antes de tudo"],
+            ["lista", [
+              "O que conta como erro de servidor? Só 500, ou tudo a partir de 500? **Decido: 500 ou mais.**",
+              "E se houver empate na contagem? **Decido: ordem alfabética, para o relatório ser reprodutível.**",
+              "E se houver menos de três páginas com erros? **Decido: devolvo as que há.**",
+              "E linhas com formato estranho? **Decido: ignoro, mas conto quantas ignorei.**",
+              "Quantas linhas tem isto? Se forem milhões, não leio tudo para memória."
+            ]],
+            ["h", "Passo 2: exemplos escritos à mão"],
+            ["code", "as 6 linhas acima, n=3  -> ['/carrinho', '/pagamento']   (só há dois com erros)\n[], n=3                 -> []\nlinhas sem erros, n=3   -> []\n['GET /a 500'], n=0     -> []"],
+            ["h", "Passo 3: a versão mais burra que funciona"],
+            ["py", "linhas = [\"GET /produtos 200\", \"GET /carrinho 500\", \"POST /pagamento 503\",\n          \"GET /carrinho 500\", \"GET /inicio 200\", \"POST /pagamento 500\"]\n\ncontagens = {}\nfor linha in linhas:\n    partes = linha.split()\n    if len(partes) != 3:\n        continue\n    _, url, codigo = partes\n    if int(codigo) >= 500:\n        contagens[url] = contagens.get(url, 0) + 1\n\nprint(contagens)"],
+            ["p", "Está feio, está numa só tira, e funciona. Isto é um ponto de partida legítimo e é muito melhor do que uma solução elegante que não corre. Nunca fiques preso a tentar acertar à primeira."],
+            ["h", "Passo 4: os casos limite que eu próprio listei"],
+            ["p", "`int(codigo)` rebenta se o código não for um número. O enunciado dizia para ignorar linhas estranhas, não para rebentar. Corrijo, e aproveito para contar as ignoradas, que era outra decisão minha."],
+            ["h", "Passo 5: arrumar, agora que funciona"],
+            ["py", "from collections import Counter\n\n\ndef paginas_com_mais_erros(linhas, n=3):\n    contagens = Counter()\n    ignoradas = 0\n    for linha in linhas:\n        partes = linha.split()\n        if len(partes) != 3 or not partes[2].isdigit():\n            ignoradas += 1\n            continue\n        _, url, codigo = partes\n        if int(codigo) >= 500:\n            contagens[url] += 1\n    ordenadas = sorted(contagens.items(), key=lambda p: (-p[1], p[0]))\n    return [url for url, _ in ordenadas[:n]], ignoradas\n\n\nlinhas = [\"GET /produtos 200\", \"GET /carrinho 500\", \"POST /pagamento 503\",\n          \"GET /carrinho 500\", \"lixo\", \"POST /pagamento 500\"]\nprint(paginas_com_mais_erros(linhas))"],
+            ["h", "Passo 6: o que ficou por fazer, dito em voz alta"],
+            ["lista", [
+              "Com um ficheiro de dez milhões de linhas, leio com um gerador em vez de carregar tudo (módulo 12.1).",
+              "Se isto correr todos os dias, quero o número de ignoradas no registo, senão a qualidade dos dados degrada-se sem ninguém ver.",
+              "A ordenação completa é desnecessária: `Counter.most_common(n)` chega. Deixei `sorted` porque preciso do desempate alfabético."
+            ]],
+            ["obra", "Numa entrevista técnica é exatamente isto que estão a avaliar: perguntas, exemplos, versão simples, casos limite, melhoria, e o que ficou por fazer. Chegar à solução ótima em silêncio pontua menos do que este percurso falado, porque no trabalho ninguém programa sozinho em silêncio."],
+            ["aviso", "Começar pela versão esperta é a forma mais rápida de ficar preso vinte minutos. Se estás preso, escreve a versão burra, mesmo que seja lenta e feia. Ter código que funciona muda a natureza do problema: passas a melhorar em vez de adivinhar."]
+          ],
+          quiz: [
+            { p: "Estás há vinte minutos preso numa solução elegante que não funciona. O que fazes?", o: ["Continuas, já estás quase", "Escreves a versão mais simples que funcione, mesmo que lenta, e melhoras a partir daí", "Procuras a solução na internet"], c: 1,
+              e: "Código a funcionar é uma base para melhorar e é uma resposta entregável. Uma solução elegante por acabar não vale nada, nem numa entrevista nem numa sprint." }
+          ],
+          exercicio: {
+            enunciado: "Implementa `paginas_com_mais_erros(linhas, n)`. Cada linha é `'MÉTODO /url CÓDIGO'`. Conta apenas as linhas com código maior ou igual a 500 e devolve as `n` páginas com mais erros, da mais frequente para a menos. Empates resolvem-se por ordem alfabética. Linhas que não tenham exatamente três partes, ou cujo código não seja um número, são ignoradas.",
+            inicio: "def paginas_com_mais_erros(linhas, n):\n    pass\n",
+            testes: "_linhas = ['GET /produtos 200', 'GET /carrinho 500', 'POST /pagamento 503', 'GET /carrinho 500', 'GET /inicio 200', 'POST /pagamento 500']\nverifica('conta e ordena', paginas_com_mais_erros(_linhas, 3) == ['/carrinho', '/pagamento'])\nverifica('limita a n', paginas_com_mais_erros(_linhas, 1) == ['/carrinho'])\nverifica('empate por ordem alfabetica', paginas_com_mais_erros(['GET /b 500', 'GET /a 500'], 2) == ['/a', '/b'])\nverifica('sem erros devolve vazio', paginas_com_mais_erros(['GET /a 200'], 3) == [])\nverifica('sem linhas', paginas_com_mais_erros([], 3) == [])\nverifica('n zero', paginas_com_mais_erros(_linhas, 0) == [])\nverifica('ignora linhas estranhas', paginas_com_mais_erros(['lixo', 'GET /a xpto', 'GET /a 500'], 3) == ['/a'])\nverifica('codigo 499 nao e erro de servidor', paginas_com_mais_erros(['GET /a 499'], 3) == [])"
+          }
+        }
+      ]
+    },
+
     /* ---------------- FASE 2 ---------------- */
     {
-      n: 5, fase: 2, titulo: "Erros e exceções",
+      n: 8, fase: 2, titulo: "Erros e exceções",
       objetivo: "Falhar de forma controlada em vez de esconder problemas.",
       licoes: [
         {
-          id: "5.1", titulo: "try, except, else, finally", min: 14, estado: "pronta",
+          id: "8.1", titulo: "try, except, else, finally", min: 14, estado: "pronta",
           meta: "No fim: apanhas o erro certo, no sítio certo, e nunca escreves um except vazio.",
           blocos: [
             ["p", "Nem todos os erros são bugs. Um ficheiro que não existe, uma rede que caiu, um utilizador que escreveu 'trinta' na idade: são casos previsíveis. O `try` serve para os tratar, não para esconder código partido."],
@@ -423,7 +813,7 @@ window.CURSO = {
           }
         },
         {
-          id: "5.2", titulo: "Exceções próprias e validação", min: 12, estado: "pronta",
+          id: "8.2", titulo: "Exceções próprias e validação", min: 12, estado: "pronta",
           meta: "No fim: distingues erro de programação de erro de domínio e escreves mensagens que ajudam.",
           blocos: [
             ["p", "As exceções da biblioteca padrão descrevem problemas técnicos: tipo errado, chave em falta, divisão por zero. O teu programa tem problemas próprios: encomenda sem itens, saldo insuficiente, ficheiro com colunas a mais. Esses merecem exceções com nome teu."],
@@ -440,7 +830,7 @@ window.CURSO = {
             ["p", "Dados de fora, de um formulário, de um ficheiro ou de uma API, entram sempre pela mesma porta e são sempre suspeitos. Valida ali, uma vez, e deixa o resto do programa confiar."],
             ["py", "class ErroDeValidacao(Exception):\n    pass\n\ndef validar_pedido(pedido):\n    erros = []\n    if not pedido.get(\"email\"):\n        erros.append(\"email em falta\")\n    if pedido.get(\"quantidade\", 0) <= 0:\n        erros.append(\"quantidade tem de ser positiva\")\n    if erros:\n        raise ErroDeValidacao(\"; \".join(erros))\n    return True\n\ntry:\n    validar_pedido({\"quantidade\": 0})\nexcept ErroDeValidacao as e:\n    print(\"pedido rejeitado:\", e)"],
             ["p", "Repara que junta todos os erros antes de levantar. Devolver um erro de cada vez obriga o utilizador a corrigir, submeter, corrigir, submeter. Isto é desenho de produto dentro de uma função."],
-            ["obra", "Em APIs, este padrão é o que separa um 500 de um 400 com mensagem útil. O `ErroDeValidacao` do teu domínio é apanhado na camada web e traduzido para uma resposta com o campo que falhou. Vais fazer isso no módulo 16."],
+            ["obra", "Em APIs, este padrão é o que separa um 500 de um 400 com mensagem útil. O `ErroDeValidacao` do teu domínio é apanhado na camada web e traduzido para uma resposta com o campo que falhou. Vais fazer isso no módulo 20."],
             ["aviso", "`raise ErroDeValidacao` sem parênteses funciona mas levanta a classe sem mensagem. E dentro de um `except`, usa `raise ... from erro` para não perderes o traceback original: quem depurar quer ver as duas pontas."],
             ["code", "try:\n    dados = json.loads(texto)\nexcept json.JSONDecodeError as erro:\n    raise ErroDeValidacao(\"ficheiro de configuração inválido\") from erro"]
           ],
@@ -457,11 +847,11 @@ window.CURSO = {
       ]
     },
     {
-      n: 6, fase: 2, titulo: "Ficheiros, JSON e CSV",
+      n: 9, fase: 2, titulo: "Ficheiros, JSON e CSV",
       objetivo: "Ler e escrever dados que sobrevivem ao fim do programa.",
       licoes: [
         {
-          id: "6.1", titulo: "pathlib e o gestor de contexto", min: 14, estado: "pronta",
+          id: "9.1", titulo: "pathlib e o gestor de contexto", min: 14, estado: "pronta",
           meta: "No fim: lês e escreves ficheiros com caminhos que funcionam em qualquer sistema.",
           blocos: [
             ["p", "Caminhos não são texto. Juntar pastas com `+` e barras à mão parte no Windows, parte com espaços e parte quando falta uma barra. `pathlib` trata disso e é a forma moderna."],
@@ -490,7 +880,7 @@ window.CURSO = {
           }
         },
         {
-          id: "6.2", titulo: "CSV e JSON na prática", min: 16, estado: "pronta",
+          id: "9.2", titulo: "CSV e JSON na prática", min: 16, estado: "pronta",
           meta: "No fim: lês um ficheiro sujo, agregas os dados e produzes um relatório.",
           blocos: [
             ["p", "CSV é a moeda de troca do mundo real: sai de qualquer folha de cálculo e de qualquer sistema antigo. JSON é a moeda de troca entre programas. Vais passar mais tempo a converter entre os dois do que gostarias."],
@@ -520,7 +910,7 @@ window.CURSO = {
           }
         },
         {
-          id: "6.3", titulo: "Registo com logging", min: 12, estado: "pronta",
+          id: "9.3", titulo: "Registo com logging", min: 12, estado: "pronta",
           meta: "No fim: substituis prints por registos com níveis que se conseguem ligar e desligar.",
           blocos: [
             ["p", "`print` serve para falar com um humano que está a olhar para o ecrã. Num serviço não há ninguém a olhar. `logging` escreve com hora, nível e origem, pode ir para ficheiro, e desliga-se sem apagar linhas de código."],
@@ -557,18 +947,18 @@ window.CURSO = {
       ]
     },
     {
-      n: 7, fase: 2, titulo: "Módulos, ambientes e dependências",
+      n: 10, fase: 2, titulo: "Módulos, ambientes e dependências",
       objetivo: "Deixar de ter um ficheiro gigante e de partir o Python do sistema.",
       licoes: [
         {
-          id: "7.1", titulo: "import, módulos e pacotes", min: 14, estado: "pronta",
+          id: "10.1", titulo: "import, módulos e pacotes", min: 14, estado: "pronta",
           meta: "No fim: divides um programa em ficheiros com fronteiras claras e sem importações circulares.",
           blocos: [
             ["p", "Um módulo é um ficheiro `.py`. Um pacote é uma pasta com módulos lá dentro. Importar é executar esse ficheiro uma vez e ficar com os nomes dele acessíveis. Não há mais mistério nenhum."],
             ["code", "vendas/\n  __init__.py\n  importador.py\n  relatorio.py\n  modelos.py\ntestes/\n  test_relatorio.py\nmain.py"],
             ["h", "As formas de importar"],
             ["code", "import json                          # nome completo: json.loads(...)\nimport pandas as pd                  # alias, convenção da biblioteca\nfrom pathlib import Path             # traz só o que precisas\nfrom vendas.relatorio import resumir # o teu próprio código\n\nfrom vendas.relatorio import *       # nunca faças isto"],
-            ["p", "O `import *` traz nomes que não sabes quais são, esconde de onde veio cada coisa e parte assim que o outro módulo crescer. É proibido em quase todos os projetos sérios, e o `ruff` do módulo 11 apanha-o."],
+            ["p", "O `import *` traz nomes que não sabes quais são, esconde de onde veio cada coisa e parte assim que o outro módulo crescer. É proibido em quase todos os projetos sérios, e o `ruff` do módulo 15 apanha-o."],
             ["h", "O guarda do __main__"],
             ["p", "Quando importas um módulo, o código no topo dele corre. Se esse ficheiro também serve de script, o que só deve correr na execução direta vai dentro do guarda."],
             ["py", "def resumir(vendas):\n    return sum(vendas)\n\nif __name__ == \"__main__\":\n    print(\"a correr como script:\", resumir([1, 2, 3]))"],
@@ -595,7 +985,7 @@ window.CURSO = {
           }
         },
         {
-          id: "7.2", titulo: "Ambientes virtuais e pip", min: 14, estado: "pronta",
+          id: "10.2", titulo: "Ambientes virtuais e pip", min: 14, estado: "pronta",
           meta: "No fim: crias um ambiente isolado por projeto e sabes explicar porque é obrigatório.",
           blocos: [
             ["p", "Instalar bibliotecas no Python do sistema é o caminho mais curto para dois projetos incompatíveis na mesma máquina. Um projeto quer a versão 1 de uma biblioteca, o outro a versão 3, e o sistema operativo quer a 2 para as próprias ferramentas dele."],
@@ -632,11 +1022,11 @@ window.CURSO = {
       ]
     },
     {
-      n: 8, fase: 2, titulo: "Objetos",
+      n: 11, fase: 2, titulo: "Objetos",
       objetivo: "Perceber classes o suficiente para ler o código dos outros.",
       licoes: [
         {
-          id: "8.1", titulo: "Classes, estado e métodos", min: 18, estado: "pronta",
+          id: "11.1", titulo: "Classes, estado e métodos", min: 18, estado: "pronta",
           meta: "No fim: modelas uma coisa com estado e comportamento, e sabes quando não vale a pena.",
           blocos: [
             ["p", "Uma classe junta dados e as operações que fazem sentido sobre esses dados. Se tens três funções que recebem sempre os mesmos quatro argumentos, provavelmente tens uma classe escondida."],
@@ -644,7 +1034,7 @@ window.CURSO = {
             ["p", "`__init__` corre quando crias o objeto e é onde se define o estado inicial. `self` é o próprio objeto e é sempre o primeiro parâmetro dos métodos. Não é opcional e não é magia: é o objeto passado explicitamente."],
             ["h", "Instância contra classe"],
             ["py", "class Conta:\n    banco = \"Caixa Central\"        # partilhado por todas as contas\n\n    def __init__(self, titular):\n        self.titular = titular      # próprio de cada conta\n\na = Conta(\"Ana\")\nb = Conta(\"Rui\")\nprint(a.banco, b.banco)\nConta.banco = \"Novo Banco\"\nprint(a.banco, b.banco)"],
-            ["aviso", "Nunca uses uma lista ou um dicionário como atributo de classe para guardar estado de instância. É o mesmo objeto para todos os objetos criados, tal como o argumento por omissão do módulo 4. Inicializa em `__init__`."],
+            ["aviso", "Nunca uses uma lista ou um dicionário como atributo de classe para guardar estado de instância. É o mesmo objeto para todos os objetos criados, tal como o argumento por omissão do módulo 6. Inicializa em `__init__`."],
             ["h", "Mostrar-se em condições"],
             ["p", "Sem `__repr__`, imprimir um objeto dá algo como `<Conta object at 0x7f2c>`. Com ele, dá informação. Escreve sempre um: é a diferença entre depurar em cinco minutos ou em uma hora."],
             ["py", "class Conta:\n    def __init__(self, titular, saldo=0):\n        self.titular = titular\n        self.saldo = saldo\n\n    def __repr__(self):\n        return f\"Conta(titular={self.titular!r}, saldo={self.saldo})\"\n\nprint(Conta(\"Ana\", 100))\nprint([Conta(\"Ana\", 100), Conta(\"Rui\", 5)])"],
@@ -665,12 +1055,12 @@ window.CURSO = {
           }
         },
         {
-          id: "8.2", titulo: "dataclasses", min: 12, estado: "pronta",
+          id: "11.2", titulo: "dataclasses", min: 12, estado: "pronta",
           meta: "No fim: modelas dados com quatro linhas em vez de trinta, com igualdade e repr de graça.",
           blocos: [
             ["p", "Grande parte das classes que vais escrever só guardam campos. Escrever `__init__`, `__repr__` e `__eq__` à mão para isso é trabalho repetido e é onde entram erros de distração. O decorador `@dataclass` gera tudo."],
             ["py", "from dataclasses import dataclass\n\n@dataclass\nclass Produto:\n    nome: str\n    preco: float\n    quantidade: int = 1\n\n    def total(self):\n        return round(self.preco * self.quantidade, 2)\n\np = Produto(\"teclado\", 39.9, 2)\nprint(p)\nprint(p.total())\nprint(Produto(\"rato\", 12.5) == Produto(\"rato\", 12.5))"],
-            ["p", "Repara em três coisas: o `print` mostra os campos, a comparação por valor funciona, e a anotação de tipo deixou de ser opcional, é ela que declara o campo. O módulo 4 acabou de se pagar."],
+            ["p", "Repara em três coisas: o `print` mostra os campos, a comparação por valor funciona, e a anotação de tipo deixou de ser opcional, é ela que declara o campo. O módulo 6 acabou de se pagar."],
             ["h", "Campos com valores por omissão"],
             ["aviso", "O mesmo problema do argumento mutável aparece aqui e o Python recusa-se a deixar. Uma lista como valor por omissão dá `ValueError: mutable default`. A solução é `field(default_factory=list)`."],
             ["py", "from dataclasses import dataclass, field\n\n@dataclass\nclass Encomenda:\n    cliente: str\n    itens: list[str] = field(default_factory=list)\n    notas: dict = field(default_factory=dict)\n\na = Encomenda(\"Ana\")\nb = Encomenda(\"Rui\")\na.itens.append(\"teclado\")\nprint(a)\nprint(b)"],
@@ -680,7 +1070,7 @@ window.CURSO = {
             ["h", "Ferramentas úteis"],
             ["py", "from dataclasses import dataclass, asdict, replace\n\n@dataclass\nclass Produto:\n    nome: str\n    preco: float\n\np = Produto(\"cabo\", 4.0)\nprint(asdict(p))\nprint(replace(p, preco=5.0))\nprint(p)"],
             ["obra", "Em vez de passar dicionários entre camadas e rezar para que a chave 'quantidade' esteja lá escrita da mesma maneira, converte para `dataclass` à entrada. O editor passa a completar os campos e um erro de escrita fica um `AttributeError` imediato em vez de um `KeyError` três funções à frente."],
-            ["p", "Quando os dados vêm de fora e precisam de validação a sério, o passo seguinte é o Pydantic, no módulo 16. As `dataclasses` não validam nada: `Produto(\"cabo\", \"muito caro\")` cria-se sem se queixar."]
+            ["p", "Quando os dados vêm de fora e precisam de validação a sério, o passo seguinte é o Pydantic, no módulo 20. As `dataclasses` não validam nada: `Produto(\"cabo\", \"muito caro\")` cria-se sem se queixar."]
           ],
           quiz: [
             { p: "Porque é que `itens: list = []` numa dataclass é recusado pelo Python?", o: ["Por causa dos tipos", "Porque a lista seria partilhada por todas as instâncias", "Porque listas não podem ser campos"], c: 1,
@@ -693,7 +1083,7 @@ window.CURSO = {
           }
         },
         {
-          id: "8.3", titulo: "Composição contra herança", min: 14, estado: "pronta",
+          id: "11.3", titulo: "Composição contra herança", min: 14, estado: "pronta",
           meta: "No fim: sabes porque é que a árvore de herança profunda é um erro caro e o que fazer em vez disso.",
           blocos: [
             ["p", "Herança diz 'isto é um daqueles'. Composição diz 'isto tem um daqueles'. A segunda frase é verdadeira muito mais vezes do que a primeira, e é a que se desmonta sem partir tudo."],
@@ -707,7 +1097,7 @@ window.CURSO = {
               "Testar uma filha obriga a montar a base inteira."
             ]],
             ["h", "Quando a herança é a resposta certa"],
-            ["p", "Quando é mesmo uma relação de tipo e a base é estável: exceções próprias, como no módulo 5, classes base de frameworks, e classes abstratas que definem um contrato. Uma camada, no máximo duas. A partir daí é dívida técnica."],
+            ["p", "Quando é mesmo uma relação de tipo e a base é estável: exceções próprias, como no módulo 8, classes base de frameworks, e classes abstratas que definem um contrato. Uma camada, no máximo duas. A partir daí é dívida técnica."],
             ["py", "class ErroDePagamento(Exception):\n    pass\n\nclass CartaoRecusado(ErroDePagamento):\n    pass\n\ntry:\n    raise CartaoRecusado(\"fundos insuficientes\")\nexcept ErroDePagamento as e:\n    print(type(e).__name__, e)"],
             ["h", "Injetar em vez de construir"],
             ["p", "Repara que o `Notificador` recebe o canal já feito em vez de o criar lá dentro. Isso chama-se injeção de dependências e é o que torna o código testável: no teste passas um canal falso que guarda a mensagem numa lista, e testas sem enviar nada a ninguém."],
@@ -717,7 +1107,7 @@ window.CURSO = {
           ],
           quiz: [
             { p: "Precisas de testar uma classe que envia emails a sério. Qual é o desenho que te salva?", o: ["Herdar dela no teste e reescrever o método", "Receber o canal de envio como argumento e passar um falso no teste", "Usar uma variável global para desligar o envio"], c: 1,
-              e: "Injeção de dependências. O teste passa um objeto que guarda a mensagem numa lista, corre em milissegundos e não depende de rede. É o módulo 14.2 inteiro." }
+              e: "Injeção de dependências. O teste passa um objeto que guarda a mensagem numa lista, corre em milissegundos e não depende de rede. É o módulo 18.2 inteiro." }
           ],
           exercicio: {
             enunciado: "Escreve a classe `Notificador` que recebe um `canal` no construtor e tem `enviar(mensagem)`, que delega no `canal.enviar(mensagem)` e devolve o que ele devolver. Antes de delegar, rejeita mensagens vazias com `ValueError`.",
@@ -728,11 +1118,11 @@ window.CURSO = {
       ]
     },
     {
-      n: 9, fase: 2, titulo: "Iteradores e geradores",
+      n: 12, fase: 2, titulo: "Iteradores e geradores",
       objetivo: "Processar mais dados do que a memória aguenta.",
       licoes: [
         {
-          id: "9.1", titulo: "yield e avaliação preguiçosa", min: 16, estado: "pronta",
+          id: "12.1", titulo: "yield e avaliação preguiçosa", min: 16, estado: "pronta",
           meta: "No fim: processas um ficheiro maior do que a memória da máquina sem o carregar todo.",
           blocos: [
             ["p", "Uma função com `yield` não devolve um valor: devolve um gerador. O corpo só corre quando alguém pede o próximo elemento, e pára exatamente na linha do `yield` até lhe pedirem outro."],
@@ -744,7 +1134,7 @@ window.CURSO = {
             ["h", "Encadear geradores"],
             ["p", "Cada passo é um gerador e nenhum guarda nada. Os dados atravessam a cadeia um a um, como numa linha de montagem. Este padrão é o que se usa para processar ficheiros grandes e fluxos de eventos."],
             ["py", "def numeros():\n    for n in range(1, 11):\n        yield n\n\ndef so_pares(fonte):\n    for n in fonte:\n        if n % 2 == 0:\n            yield n\n\ndef ao_quadrado(fonte):\n    for n in fonte:\n        yield n * n\n\nprint(list(ao_quadrado(so_pares(numeros()))))\nprint(sum(ao_quadrado(so_pares(numeros()))))"],
-            ["p", "`yield from` delega noutro iterável e evita um ciclo de repetição. Já o viste no módulo 14, na função que percorria as páginas de uma API."],
+            ["p", "`yield from` delega noutro iterável e evita um ciclo de repetição. Já o viste no módulo 18, na função que percorria as páginas de uma API."],
             ["py", "def tudo(*colecoes):\n    for c in colecoes:\n        yield from c\n\nprint(list(tudo([1, 2], (3, 4), \"ab\")))"],
             ["aviso", "Um gerador esgota-se: depois de o percorrer uma vez fica vazio, sem aviso nenhum. Se precisas de percorrer duas vezes, guarda numa lista com `list(...)` e assume o custo em memória, conscientemente."],
             ["py", "g = (n * n for n in range(4))\nprint(list(g))\nprint(list(g))"],
@@ -761,7 +1151,7 @@ window.CURSO = {
           }
         },
         {
-          id: "9.2", titulo: "itertools útil", min: 12, estado: "pronta",
+          id: "12.2", titulo: "itertools útil", min: 12, estado: "pronta",
           meta: "No fim: resolves agrupamentos e cortes com a biblioteca padrão em vez de ciclos à mão.",
           blocos: [
             ["p", "`itertools` é um conjunto de ferramentas que trabalham sobre iteráveis sem construir listas. Não precisas de as saber todas: quatro resolvem quase tudo o que vais encontrar."],
@@ -782,7 +1172,7 @@ window.CURSO = {
               "`collections.Counter` para contar ocorrências.",
               "`collections.defaultdict(list)` para agrupar sem ordenar, que é o que eu escolho em código de todos os dias.",
               "`zip(*lista)` para transpor pares em duas listas.",
-              "`enumerate` para posição e valor, do módulo 2."
+              "`enumerate` para posição e valor, do módulo 4."
             ]],
             ["py", "from collections import defaultdict\n\nvendas = [(\"Porto\", 80), (\"Lisboa\", 120), (\"Porto\", 20)]\n\npor_loja = defaultdict(list)\nfor loja, valor in vendas:\n    por_loja[loja].append(valor)\n\nprint(dict(por_loja))"],
             ["obra", "Em revisão de código, um ciclo de quinze linhas a agrupar dicionários vai receber o comentário 'isto é um defaultdict'. Não é pedantismo: menos código escrito à mão é menos código onde esconder um erro de contagem."]
@@ -800,13 +1190,208 @@ window.CURSO = {
       ]
     },
 
+    {
+      n: 13, fase: 2, titulo: "Algoritmos e complexidade",
+      objetivo: "A base algorítmica que aparece em entrevistas e no código lento do trabalho.",
+      licoes: [
+        {
+          id: "13.1", titulo: "Contar operações: ler O(n) sem matemática", min: 16, estado: "pronta",
+          meta: "No fim: olhas para um ciclo e dizes como é que ele se porta com mil vezes mais dados.",
+          blocos: [
+            ["p", "Complexidade não é matemática, é um hábito: contar quantas vezes a linha de dentro corre, em função do tamanho dos dados. Chama-se `n` ao tamanho e escreve-se o resultado como O de qualquer coisa. É tudo."],
+            ["py", "dados = list(range(200))\n\noperacoes = 0\nfor a in dados:\n    for b in dados:\n        operacoes += 1\n\nprint(\"n =\", len(dados))\nprint(\"operações =\", operacoes)\nprint(\"ou seja, n ao quadrado:\", len(dados) ** 2)"],
+            ["p", "Duplica o `200` para `400` e o número de operações fica quatro vezes maior. É isso, e só isso, que a notação captura: como é que o custo cresce quando os dados crescem."],
+            ["h", "A tabela que interessa"],
+            ["lista", [
+              "**O(1)**, constante: aceder a `lista[5]`, a `dicionario[\"chave\"]`, fazer `append`. O tamanho não importa.",
+              "**O(log n)**, logarítmico: pesquisa binária. Duplicar os dados acrescenta **um** passo.",
+              "**O(n)**, linear: percorrer tudo uma vez. `sum`, `max`, `x in lista`.",
+              "**O(n log n)**: ordenar. É o custo de `sorted` e é difícil de evitar.",
+              "**O(n²)**, quadrático: um ciclo dentro de outro sobre os mesmos dados. É aqui que os scripts morrem.",
+              "**O(2ⁿ)**: experimentar todas as combinações. Só serve para `n` muito pequeno."
+            ]],
+            ["code", "n = 1 000          n = 1 000 000\nO(1)          1                    1\nO(log n)     10                   20\nO(n)      1 000            1 000 000\nO(n log n) 10 000           20 000 000\nO(n²)  1 000 000  1 000 000 000 000"],
+            ["p", "Olha para a última célula. Um algoritmo quadrático sobre um milhão de registos não é lento: é impossível. Nenhuma máquina melhor te salva disso."],
+            ["h", "O custo das operações que já usas"],
+            ["lista", [
+              "`lista[i]`: constante. `lista.append(x)`: constante.",
+              "`x in lista`: linear, percorre até encontrar.",
+              "`x in set` e `x in dicionario`: constante, vai direto por dispersão.",
+              "`lista.insert(0, x)` e `lista.pop(0)`: lineares, empurram tudo o resto. Para uma fila usa `collections.deque`.",
+              "`sorted(lista)`: n log n.",
+              "`\"abc\" in texto`: proporcional ao tamanho do texto."
+            ]],
+            ["h", "A memória também conta"],
+            ["p", "`[x * 2 for x in milhao]` constrói uma lista com um milhão de elementos na memória. O gerador equivalente, com parênteses curvos, guarda um de cada vez. A complexidade de espaço é a mesma conversa, aplicada à memória, e é a diferença entre um script que corre e um que é morto pelo sistema."],
+            ["obra", "A pergunta quase garantida numa entrevista é 'qual é a complexidade da tua solução?'. Não querem uma demonstração: querem 'é linear, porque percorro a lista uma vez e cada consulta ao dicionário é constante'. Uma frase. Treina-a em voz alta nos exercícios deste módulo."],
+            ["aviso", "A complexidade conta operações, não segundos. Um ciclo linear com uma consulta à base de dados em cada volta é muito pior do que um ciclo quadrático em memória sobre cem elementos. Usa a notação para escolher algoritmos e o relógio para decidir se vale a pena (módulo 17.5)."]
+          ],
+          quiz: [
+            { p: "Tens duas listas de dez mil elementos e, para cada elemento de A, verificas `if x in B`. Quantas comparações no pior caso?", o: ["Vinte mil", "Cem milhões", "Dez mil"], c: 1,
+              e: "Dez mil elementos vezes uma procura linear de dez mil. Transformar B num `set` uma vez custa dez mil e faz as procuras caírem para constantes: cem milhões passam a vinte mil." }
+          ],
+          exercicio: {
+            enunciado: "Escreve `tem_duplicados(itens)`, que diz se há algum elemento repetido. Tem de ser linear: há um teste com cinco mil elementos e limite de tempo, que a solução com um ciclo dentro de outro não passa.",
+            inicio: "def tem_duplicados(itens):\n    pass\n",
+            testes: "verifica('sem duplicados', tem_duplicados([1, 2, 3]) is False)\nverifica('com duplicados', tem_duplicados([1, 2, 1]) is True)\nverifica('lista vazia', tem_duplicados([]) is False)\nverifica('um elemento', tem_duplicados([7]) is False)\nverifica('texto tambem', tem_duplicados(['a', 'b', 'a']) is True)\nverifica('duplicado no fim', tem_duplicados([1, 2, 3, 3]) is True)\nimport time as _tempo\n_grande = list(range(5000))\n_inicio = _tempo.perf_counter()\n_r = tem_duplicados(_grande)\n_demora = _tempo.perf_counter() - _inicio\nverifica('correto com muitos dados', _r is False)\nverifica('linear e nao quadratico', _demora < 0.5)"
+          }
+        },
+        {
+          id: "13.2", titulo: "Pesquisa: linear, binária e índices", min: 17, estado: "pronta",
+          meta: "No fim: escolhes entre percorrer, cortar ao meio e perguntar diretamente, e sabes justificar a escolha.",
+          blocos: [
+            ["p", "Há três maneiras de encontrar uma coisa, e a escolha entre elas é metade das decisões de desempenho que vais tomar: percorrer tudo, cortar ao meio, ou ir direto."],
+            ["h", "Percorrer: simples e linear"],
+            ["py", "def procurar(itens, alvo):\n    for i, item in enumerate(itens):\n        if item == alvo:\n            return i\n    return -1\n\nprint(procurar([\"ana\", \"rui\", \"eva\"], \"eva\"))"],
+            ["p", "Não precisa de nada: nem ordem, nem preparação. Para cem elementos é a resposta certa e não se fala mais nisso."],
+            ["h", "Cortar ao meio: pesquisa binária"],
+            ["p", "Se a lista estiver **ordenada**, comparas com o elemento do meio e deitas fora metade. Depois outra metade. Um milhão de elementos resolve-se em vinte comparações."],
+            ["py", "def binaria(ordenados, alvo):\n    baixo, alto = 0, len(ordenados) - 1\n    passos = 0\n    while baixo <= alto:\n        passos += 1\n        meio = (baixo + alto) // 2\n        if ordenados[meio] == alvo:\n            return meio, passos\n        if ordenados[meio] < alvo:\n            baixo = meio + 1\n        else:\n            alto = meio - 1\n    return -1, passos\n\nmilhao = list(range(1000000))\nprint(binaria(milhao, 999999))\nprint(binaria(milhao, -1))"],
+            ["aviso", "Os três bugs clássicos da pesquisa binária: usar `while baixo < alto` e falhar o último elemento; escrever `alto = meio` em vez de `meio - 1` e ficar num ciclo infinito; e esquecer que a lista tem de estar ordenada, o que devolve respostas erradas em silêncio, que é o pior tipo de erro."],
+            ["h", "O módulo bisect, que já faz isto"],
+            ["py", "import bisect\n\ndatas = [1, 3, 5, 7, 9, 11]\nprint(bisect.bisect_left(datas, 7))\nprint(bisect.bisect_left(datas, 6))\n\n# todos os valores entre 3 e 9, inclusive\ni = bisect.bisect_left(datas, 3)\nj = bisect.bisect_right(datas, 9)\nprint(datas[i:j])\n\nbisect.insort(datas, 6)\nprint(datas)"],
+            ["p", "Repara no último exemplo: pesquisa binária serve para intervalos, não só para 'existe ou não'. Encontrar todos os registos entre duas datas numa lista ordenada é isto, e é a razão de existir dos índices das bases de dados (módulo 19.1)."],
+            ["h", "Ir direto: o dicionário como índice"],
+            ["py", "clientes = [{\"id\": 3, \"nome\": \"Ana\"}, {\"id\": 7, \"nome\": \"Rui\"}]\n\n# construído uma vez, custa n\npor_id = {c[\"id\"]: c for c in clientes}\n\n# cada consulta passa a ser constante\nprint(por_id[7][\"nome\"])\nprint(por_id.get(99, \"não existe\"))"],
+            ["h", "A regra de decisão"],
+            ["lista", [
+              "Uma procura só, dados que mudam sempre: **linear**. Não construas nada.",
+              "Muitas procuras pelos mesmos dados: **dicionário de índice**, construído uma vez.",
+              "Precisas de ordem, intervalos, ou do vizinho mais próximo: **lista ordenada com `bisect`**.",
+              "Ordenar custa n log n. Só compensa se vais procurar muitas vezes, ou se já precisavas da ordem por outra razão."
+            ]],
+            ["obra", "A correção mais frequente que um júnior faz no primeiro mês é esta: um ciclo que procura numa lista dentro de outro ciclo, trocado por um dicionário construído antes. Quatro horas passam a dois minutos com quinze linhas. Sabe reconhecer o padrão e vais parecer mágico."],
+            ["aviso", "Construir um índice para o usar duas vezes é trabalho a mais. Custa memória e uma passagem pelos dados. A pergunta é sempre a mesma: quantas vezes é que eu vou procurar aqui dentro?"]
+          ],
+          quiz: [
+            { p: "Lista ordenada com um milhão de elementos. Quantos passos no pior caso com pesquisa binária?", o: ["Cerca de mil", "Cerca de vinte", "Um milhão"], c: 1,
+              e: "Cada passo deita metade fora. Dois elevado a vinte é mais de um milhão, portanto vinte cortes chegam. É por isso que O(log n) é praticamente de graça." }
+          ],
+          exercicio: {
+            enunciado: "Implementa `busca_binaria(ordenados, alvo)`, que devolve o índice de `alvo` na lista ordenada, ou `-1` se não existir. Não podes usar `.index()`, `in`, nem o módulo `bisect`: há um teste com uma lista grande e limite de tempo que uma procura linear não passa.",
+            inicio: "def busca_binaria(ordenados, alvo):\n    pass\n",
+            testes: "verifica('encontra no meio', busca_binaria([1, 3, 5, 7, 9], 5) == 2)\nverifica('encontra no inicio', busca_binaria([1, 3, 5], 1) == 0)\nverifica('encontra no fim', busca_binaria([1, 3, 5], 5) == 2)\nverifica('nao existe', busca_binaria([1, 3, 5], 4) == -1)\nverifica('menor que todos', busca_binaria([1, 3, 5], 0) == -1)\nverifica('maior que todos', busca_binaria([1, 3, 5], 9) == -1)\nverifica('lista vazia', busca_binaria([], 1) == -1)\nverifica('um elemento certo', busca_binaria([2], 2) == 0)\nverifica('um elemento errado', busca_binaria([2], 3) == -1)\nimport time as _tempo\n_g = list(range(0, 800000, 2))\n_inicio = _tempo.perf_counter()\n_r = busca_binaria(_g, 799998)\n_demora = _tempo.perf_counter() - _inicio\nverifica('indice certo em lista grande', _r == 399999)\nverifica('nao percorre a lista toda', _demora < 0.05)"
+          }
+        },
+        {
+          id: "13.3", titulo: "Ordenar: estabilidade, custo e chaves", min: 15, estado: "pronta",
+          meta: "No fim: sabes quanto custa ordenar, o que é uma ordenação estável e porque é que nunca escreves a tua.",
+          blocos: [
+            ["p", "Já sabes usar `sorted` com `key` (módulo 5.3). Esta aula é sobre o que está por baixo, que é o que te perguntam em entrevista e o que decide se o teu relatório demora um segundo ou um minuto."],
+            ["h", "Quanto custa"],
+            ["p", "Ordenar por comparações custa n log n, e está provado que não dá para fazer melhor. O `sorted` do Python usa Timsort, que é n log n no pior caso e quase linear quando os dados já vêm parcialmente ordenados, o que acontece muito na vida real."],
+            ["lista", [
+              "Mil elementos: cerca de dez mil comparações.",
+              "Um milhão: cerca de vinte milhões. Segundos, não horas.",
+              "Ordenar duas vezes os mesmos dados custa o dobro. Ordena uma vez e guarda."
+            ]],
+            ["h", "Estável quer dizer que os empates não se mexem"],
+            ["p", "Uma ordenação estável mantém a ordem original entre elementos com a mesma chave. O `sorted` do Python é estável, e isso dá-te um truque que quase ninguém conhece: para ordenar por vários critérios, podes ordenar várias vezes, do critério menos importante para o mais importante."],
+            ["py", "pessoas = [\n    {\"nome\": \"Rui\", \"dept\": \"vendas\"},\n    {\"nome\": \"Ana\", \"dept\": \"tecnico\"},\n    {\"nome\": \"Bea\", \"dept\": \"vendas\"},\n]\n\npor_nome = sorted(pessoas, key=lambda p: p[\"nome\"])\nfinal = sorted(por_nome, key=lambda p: p[\"dept\"])\nprint([(p[\"dept\"], p[\"nome\"]) for p in final])"],
+            ["p", "Dentro de cada departamento, os nomes ficaram por ordem, porque a segunda ordenação não desfez a primeira. Com um tuplo na chave fazias o mesmo numa linha; com duas passagens consegues misturar critérios que não cabem num tuplo, como um que precise de `reverse=True` sobre texto."],
+            ["h", "A chave é calculada uma vez por elemento"],
+            ["py", "import time\n\nregistos = [{\"nome\": f\"n{i}\", \"valor\": (i * 7919) % 1000} for i in range(20000)]\n\nt = time.perf_counter()\nsorted(registos, key=lambda r: r[\"valor\"])\nprint(f\"com key: {time.perf_counter() - t:.4f}s\")"],
+            ["p", "Isto chama-se decorate-sort-undecorate e o Python já o faz por ti: a função `key` corre n vezes, não n log n vezes. É por isso que `key` é sempre melhor do que uma função de comparação, e é por isso que `functools.cmp_to_key` só se usa para código antigo que já tinha um comparador."],
+            ["h", "Porque é que escreves uma ordenação uma vez na vida"],
+            ["p", "Para perceber o custo. Depois nunca mais: o `sorted` está escrito em C, é estável, e já viu mais casos limite do que tu alguma vez verás. Escrever a tua ordenação em código de produção é um sinal de alarme numa revisão."],
+            ["py", "def ordenacao_por_insercao(itens):\n    resultado = list(itens)\n    for i in range(1, len(resultado)):\n        atual = resultado[i]\n        j = i - 1\n        while j >= 0 and resultado[j] > atual:\n            resultado[j + 1] = resultado[j]\n            j -= 1\n        resultado[j + 1] = atual\n    return resultado\n\nprint(ordenacao_por_insercao([5, 2, 9, 1]))"],
+            ["p", "É quadrática: cada elemento pode ter de recuar até ao princípio. Para listas pequenas é rápida na prática, e é por isso que o Timsort a usa lá dentro, em pedaços curtos."],
+            ["obra", "Em entrevista, 'implementa uma ordenação' é quase sempre um teste de raciocínio, não de memória. A melhor resposta começa por 'em produção usava `sorted`, que é Timsort, n log n e estável; se quer ver-me implementar uma, faço inserção, que é quadrática mas simples'. Dizes as duas coisas e mostras que sabes escolher."],
+            ["aviso", "Ordenar uma lista de dicionários por uma chave que às vezes é `None` rebenta com `TypeError`. Trata a ausência na própria `key`, por exemplo `key=lambda r: (r[\"data\"] is None, r[\"data\"])`, que põe os vazios todos no fim."]
+          ],
+          quiz: [
+            { p: "O que ganhas com uma ordenação estável?", o: ["É mais rápida", "Elementos com a mesma chave mantêm a ordem que tinham, o que te deixa ordenar por critérios em passagens sucessivas", "Usa menos memória"], c: 1,
+              e: "Estabilidade é uma garantia de comportamento, não de velocidade. Sem ela, o resultado dos empates seria arbitrário e o teu relatório mudava de ordem entre execuções." }
+          ],
+          exercicio: {
+            enunciado: "Implementa `ordenar_por(registos, chave)`, que devolve uma lista nova ordenada pelo valor dessa chave, sem alterar a recebida. Tem de ser **estável**: empates mantêm a ordem original. Escreve o algoritmo à mão, por inserção: o `sorted` está bloqueado nos testes.",
+            inicio: "def ordenar_por(registos, chave):\n    pass\n",
+            testes: "_sorted_real = sorted\ndef _proibido(*a, **k):\n    raise AssertionError('escreve o algoritmo a mao, sem sorted()')\nsorted = _proibido\nverifica('ordena por chave', ordenar_por([{'n': 3}, {'n': 1}], 'n') == [{'n': 1}, {'n': 3}])\nverifica('estavel nos empates', [r['id'] for r in ordenar_por([{'n': 1, 'id': 'a'}, {'n': 1, 'id': 'b'}, {'n': 0, 'id': 'c'}], 'n')] == ['c', 'a', 'b'])\nverifica('lista vazia', ordenar_por([], 'n') == [])\nverifica('um elemento', ordenar_por([{'n': 5}], 'n') == [{'n': 5}])\nverifica('ja ordenada', ordenar_por([{'n': 1}, {'n': 2}], 'n') == [{'n': 1}, {'n': 2}])\nverifica('ordem inversa', ordenar_por([{'n': 3}, {'n': 2}, {'n': 1}], 'n') == [{'n': 1}, {'n': 2}, {'n': 3}])\nverifica('ordena texto', ordenar_por([{'x': 'b'}, {'x': 'a'}], 'x') == [{'x': 'a'}, {'x': 'b'}])\n_orig = [{'n': 2}, {'n': 1}]\nordenar_por(_orig, 'n')\nverifica('nao altera a lista recebida', _orig == [{'n': 2}, {'n': 1}])\nsorted = _sorted_real"
+          }
+        },
+        {
+          id: "13.4", titulo: "Recursão, e quando não usar", min: 16, estado: "pronta",
+          meta: "No fim: percorres estruturas encaixadas com recursão e sabes converter para ciclo quando o limite aperta.",
+          blocos: [
+            ["p", "Uma função recursiva chama-se a si própria. Precisa de duas coisas e falha sempre pela falta de uma delas: um caso base, que devolve sem chamar mais ninguém, e um passo que se aproxima do caso base."],
+            ["py", "def fatorial(n):\n    if n <= 1:        # caso base\n        return 1\n    return n * fatorial(n - 1)   # passo que aproxima\n\nprint(fatorial(5))"],
+            ["h", "Onde a recursão é mesmo a resposta certa"],
+            ["p", "Estruturas em árvore: JSON encaixado, pastas dentro de pastas, categorias com subcategorias, expressões. São coisas definidas em termos de si próprias, e o código que as percorre fica igual à definição."],
+            ["py", "def recolher(estrutura, campo):\n    encontrados = []\n    if isinstance(estrutura, dict):\n        for chave, valor in estrutura.items():\n            if chave == campo:\n                encontrados.append(valor)\n            encontrados.extend(recolher(valor, campo))\n    elif isinstance(estrutura, list):\n        for item in estrutura:\n            encontrados.extend(recolher(item, campo))\n    return encontrados\n\ndados = {\"nome\": \"raiz\", \"filhos\": [{\"nome\": \"a\", \"filhos\": [{\"nome\": \"b\", \"filhos\": []}]}]}\nprint(recolher(dados, \"nome\"))"],
+            ["h", "O limite"],
+            ["p", "Cada chamada ocupa uma entrada na pilha e o Python corta a partir de cerca de mil. Não há otimização de chamada final como noutras linguagens: `RecursionError` é o que recebes, e num servidor é o que mata o pedido."],
+            ["code", "import sys\nprint(sys.getrecursionlimit())   # 1000, tipicamente\n\ndef contar(n):\n    return 0 if n == 0 else 1 + contar(n - 1)\n\ncontar(10000)   # RecursionError: maximum recursion depth exceeded"],
+            ["aviso", "Aumentar o limite com `sys.setrecursionlimit` é a solução errada em quase todos os casos: continuas a gastar pilha a sério e o que ganhas é um estouro do interpretador em vez de uma exceção. Converte para ciclo."],
+            ["h", "Converter para ciclo com uma pilha explícita"],
+            ["py", "def recolher_iterativo(estrutura, campo):\n    encontrados = []\n    por_ver = [estrutura]\n    while por_ver:\n        atual = por_ver.pop()\n        if isinstance(atual, dict):\n            for chave, valor in atual.items():\n                if chave == campo:\n                    encontrados.append(valor)\n                por_ver.append(valor)\n        elif isinstance(atual, list):\n            por_ver.extend(atual)\n    return encontrados\n\ndados = {\"nome\": \"raiz\", \"filhos\": [{\"nome\": \"a\", \"filhos\": []}]}\nprint(recolher_iterativo(dados, \"nome\"))"],
+            ["p", "É a mesma ideia: a lista `por_ver` faz o papel da pilha de chamadas. Fica um pouco mais feio e deixa de ter limite de profundidade."],
+            ["h", "Memoização: recursão que repete trabalho"],
+            ["py", "import functools, time\n\ndef fib(n):\n    return n if n < 2 else fib(n - 1) + fib(n - 2)\n\n@functools.cache\ndef fib_rapido(n):\n    return n if n < 2 else fib_rapido(n - 1) + fib_rapido(n - 2)\n\nt = time.perf_counter(); fib(27); print(f\"sem cache: {time.perf_counter() - t:.3f}s\")\nt = time.perf_counter(); fib_rapido(27); print(f\"com cache: {time.perf_counter() - t:.5f}s\")"],
+            ["p", "A versão sem cache recalcula os mesmos valores milhares de vezes: é exponencial. O decorador `functools.cache` guarda o resultado de cada argumento e transforma-a em linear. Serve para qualquer função pura e cara."],
+            ["obra", "Em produção, a recursão aparece em três sítios: percorrer JSON de APIs, percorrer árvores de pastas ou de categorias, e escrever pequenos interpretadores. Tudo o resto costuma ficar mais claro com um ciclo, e o teu revisor vai preferir o ciclo."],
+            ["aviso", "Recursão sobre dados que vêm de fora é um risco de segurança: um JSON com dez mil níveis de encaixe rebenta o teu serviço sem esforço nenhum. Se percorres dados de terceiros, ou limitas a profundidade, ou usas a versão iterativa."]
+          ],
+          quiz: [
+            { p: "A tua função recursiva rebenta com `RecursionError` numa árvore de pastas muito funda. O que fazes?", o: ["Aumentas o limite com sys.setrecursionlimit", "Converte-la para um ciclo com uma pilha explícita", "Apanhas a exceção e ignoras"], c: 1,
+              e: "A pilha explícita não tem limite prático e o código fica quase igual. Aumentar o limite empurra o problema até o interpretador estoirar, e aí já não há exceção para apanhar." }
+          ],
+          exercicio: {
+            enunciado: "Escreve `soma_profunda(estrutura)`, que soma todos os números dentro de listas encaixadas a qualquer profundidade. Valores que não sejam números são ignorados, e `True` não conta como número.",
+            inicio: "def soma_profunda(estrutura):\n    pass\n",
+            testes: "verifica('lista simples', soma_profunda([1, 2, 3]) == 6)\nverifica('listas encaixadas', soma_profunda([1, [2, [3, [4]]]]) == 10)\nverifica('ignora texto', soma_profunda([1, 'dois', [3]]) == 4)\nverifica('lista vazia', soma_profunda([]) == 0)\nverifica('so listas vazias', soma_profunda([[], [[]]]) == 0)\nverifica('decimais', soma_profunda([1.5, [2.5]]) == 4.0)\nverifica('booleanos nao contam', soma_profunda([True, 1]) == 1)\nverifica('negativos', soma_profunda([[-2], 2]) == 0)"
+          }
+        },
+        {
+          id: "13.5", titulo: "Os cinco padrões que caem em entrevistas", min: 20, estado: "pronta",
+          meta: "No fim: reconheces a forma do problema em vez de tentares lembrar-te da solução.",
+          blocos: [
+            ["p", "A maioria dos exercícios técnicos para júnior de Python são cinco formas com roupas diferentes. Não se trata de decorar soluções: trata-se de reconhecer a forma nos primeiros trinta segundos."],
+            ["h", "1. Contar com um dicionário"],
+            ["py", "from collections import Counter\n\npalavras = [\"a\", \"b\", \"a\", \"c\", \"a\"]\nprint(Counter(palavras))\nprint(Counter(palavras).most_common(2))\n\n# à mão, que é o que te podem pedir\ncontagens = {}\nfor p in palavras:\n    contagens[p] = contagens.get(p, 0) + 1\nprint(contagens)"],
+            ["p", "Aparece como: elemento mais frequente, verificar anagramas, contar ocorrências, detetar duplicados. É linear e resolve quase sempre."],
+            ["h", "2. Conjunto de vistos"],
+            ["py", "def primeiro_repetido(itens):\n    vistos = set()\n    for item in itens:\n        if item in vistos:\n            return item\n        vistos.add(item)\n    return None\n\nprint(primeiro_repetido([1, 2, 3, 2, 1]))"],
+            ["p", "Troca uma procura linear por uma constante à custa de memória. É o truque mais rentável que existe."],
+            ["h", "3. Dois ponteiros"],
+            ["py", "def par_com_soma(ordenados, alvo):\n    esquerda, direita = 0, len(ordenados) - 1\n    while esquerda < direita:\n        soma = ordenados[esquerda] + ordenados[direita]\n        if soma == alvo:\n            return (ordenados[esquerda], ordenados[direita])\n        if soma < alvo:\n            esquerda += 1\n        else:\n            direita -= 1\n    return None\n\nprint(par_com_soma([1, 3, 4, 7, 11], 11))"],
+            ["p", "Serve em listas ordenadas: encontrar pares, juntar duas listas ordenadas, verificar palíndromos. Linear e sem memória extra."],
+            ["h", "4. Janela deslizante"],
+            ["py", "def maior_soma(numeros, k):\n    soma = sum(numeros[:k])\n    melhor = soma\n    for i in range(k, len(numeros)):\n        soma += numeros[i] - numeros[i - k]   # entra um, sai um\n        melhor = max(melhor, soma)\n    return melhor\n\nprint(maior_soma([1, 2, 5, 1, 3], 2))"],
+            ["p", "Sempre que o enunciado disser 'consecutivos', 'seguidos' ou 'num intervalo de tempo', é isto. A ideia é não recalcular: ajusta a soma com o que entra e o que sai."],
+            ["h", "5. Agrupar por chave"],
+            ["py", "from collections import defaultdict\n\nvendas = [(\"ana\", 10), (\"rui\", 5), (\"ana\", 7)]\npor_pessoa = defaultdict(list)\nfor nome, valor in vendas:\n    por_pessoa[nome].append(valor)\nprint(dict(por_pessoa))"],
+            ["p", "É o mais útil dos cinco no trabalho a sério: agrupar linhas por cliente, por dia, por categoria. `defaultdict(list)` poupa-te o `if chave not in dicionario`."],
+            ["h", "Como responder, em voz alta"],
+            ["lista", [
+              "Repete o enunciado por palavras tuas e confirma. Metade dos erros nasce aqui.",
+              "Dá um exemplo pequeno e a resposta esperada. Escreve-o.",
+              "Diz a solução de força bruta e a sua complexidade. Mostra que sabes que existe.",
+              "Propõe a melhoria e diz qual dos cinco padrões vais usar e porquê.",
+              "Escreve. Depois corre os casos limite em voz alta: vazio, um elemento, tudo igual."
+            ]],
+            ["obra", "Quase nenhuma empresa portuguesa pede a um júnior de Python para inverter árvores binárias. O que pedem é contar, agrupar, filtrar, e cruzar duas fontes de dados que não combinam. Os cinco padrões acima cobrem isso e cobrem o teu primeiro ano de trabalho."],
+            ["aviso", "Decorar duzentas soluções não funciona: numa entrevista dão-te a duzentas e uma. Reconhecer cinco formas funciona, porque a forma é o que se repete."]
+          ],
+          quiz: [
+            { p: "'Encontra o maior total de vendas em sete dias seguidos.' Que padrão é este?", o: ["Dois ponteiros", "Janela deslizante", "Agrupar por chave"], c: 1,
+              e: "'Seguidos' e um tamanho fixo é sempre janela deslizante. Somar cada janela do zero é quadrático; ajustar com o que entra e o que sai é linear." }
+          ],
+          exercicio: {
+            enunciado: "Escreve `maior_soma_janela(numeros, k)`, que devolve a maior soma de `k` elementos consecutivos. Se `k` for menor que 1 ou maior que a lista, levanta `ValueError`. Tem de ser linear: somar cada janela do princípio não passa o teste de tempo.",
+            inicio: "def maior_soma_janela(numeros, k):\n    pass\n",
+            testes: "verifica('janela no meio', maior_soma_janela([1, 2, 5, 1], 2) == 7)\nverifica('janela de um', maior_soma_janela([3, -1, 4], 1) == 4)\nverifica('janela igual a lista', maior_soma_janela([1, 2], 2) == 3)\nverifica('so negativos', maior_soma_janela([-5, -1, -3], 2) == -4)\nverifica('melhor janela no inicio', maior_soma_janela([9, 9, 1, 1], 2) == 18)\n_erro = 0\nfor _k in [0, -1, 3]:\n    try:\n        maior_soma_janela([1, 2], _k)\n    except ValueError:\n        _erro += 1\nverifica('k invalido levanta ValueError', _erro == 3)\nimport time as _tempo\n_g = list(range(30000))\n_inicio = _tempo.perf_counter()\n_r = maior_soma_janela(_g, 300)\n_demora = _tempo.perf_counter() - _inicio\nverifica('resultado certo com muitos dados', _r == sum(range(29700, 30000)))\nverifica('linear e nao quadratico', _demora < 1.0)"
+          }
+        }
+      ]
+    },
+
     /* ---------------- FASE 3 ---------------- */
     {
-      n: 10, fase: 3, titulo: "Testes",
+      n: 14, fase: 3, titulo: "Testes",
       objetivo: "A competência que mais depressa distingue um júnior contratável.",
       licoes: [
         {
-          id: "10.1", titulo: "pytest do zero", min: 20, estado: "pronta",
+          id: "14.1", titulo: "pytest do zero", min: 20, estado: "pronta",
           meta: "No fim: escreves testes que provam que o teu código faz o que dizes.",
           blocos: [
             ["p", "Um teste é uma função que chama o teu código e verifica o resultado. Nada mais. O valor não está no teste em si, está em poderes mudar o código amanhã e saber em dois segundos se partiste alguma coisa."],
@@ -824,7 +1409,7 @@ window.CURSO = {
           ],
           quiz: [
             { p: "O teu teste chama uma API real na internet. Qual é o problema?", o: ["Nenhum, testa a sério", "É lento e falha quando a rede ou a API falham, por razões que não são do teu código", "Só é problema se for paga"], c: 1,
-              e: "Testes têm de ser rápidos e determinísticos. Chamadas externas substituem-se por dublês (mocks), tema do módulo 13." }
+              e: "Testes têm de ser rápidos e determinísticos. Chamadas externas substituem-se por dublês (mocks), tema do módulo 18.2." }
           ],
           exercicio: {
             enunciado: "Escreve a função `media(notas)` que devolve a média arredondada a uma casa decimal e levanta `ValueError` se a lista estiver vazia.",
@@ -833,7 +1418,7 @@ window.CURSO = {
           }
         },
         {
-          id: "10.2", titulo: "Fixtures e organização da suite", min: 16, estado: "pronta",
+          id: "14.2", titulo: "Fixtures e organização da suite", min: 16, estado: "pronta",
           meta: "No fim: preparas dados de teste sem os repetir e mantens cada teste isolado dos outros.",
           blocos: [
             ["p", "Uma fixture é código que prepara o que o teste precisa: um objeto, uma base de dados temporária, um ficheiro. O pytest chama-a por ti quando o nome aparece como argumento do teste."],
@@ -843,7 +1428,7 @@ window.CURSO = {
             ["p", "Fixtures usadas por vários ficheiros vivem num `conftest.py` na pasta de testes. Não precisas de importar nada: o pytest encontra-as sozinho, incluindo nas subpastas."],
             ["code", "testes/\n  conftest.py          # fixtures partilhadas\n  test_carrinho.py\n  test_relatorio.py\n  dados/\n    vendas_exemplo.csv"],
             ["h", "Preparar e limpar"],
-            ["p", "Com `yield`, o que está antes corre para preparar e o que está depois corre para limpar, mesmo que o teste rebente. É o gerador do módulo 9 a servir de gestor de contexto."],
+            ["p", "Com `yield`, o que está antes corre para preparar e o que está depois corre para limpar, mesmo que o teste rebente. É o gerador do módulo 12 a servir de gestor de contexto."],
             ["code", "@pytest.fixture\ndef ficheiro_temporario(tmp_path):\n    caminho = tmp_path / \"vendas.csv\"\n    caminho.write_text(\"produto,valor\\nteclado,39.9\\n\", encoding=\"utf-8\")\n    yield caminho\n    # aqui limpava-se, se o tmp_path não o fizesse por nós"],
             ["p", "`tmp_path` é uma fixture que já vem no pytest: dá-te uma pasta temporária nova por teste e apaga-a no fim. Nunca escrevas ficheiros de teste na pasta do projeto."],
             ["h", "Âmbito"],
@@ -869,7 +1454,7 @@ window.CURSO = {
           }
         },
         {
-          id: "10.3", titulo: "Escrever o teste primeiro", min: 14, estado: "pronta",
+          id: "14.3", titulo: "Escrever o teste primeiro", min: 14, estado: "pronta",
           meta: "No fim: usas o ciclo vermelho, verde, limpar num problema real e percebes o que ele te dá.",
           blocos: [
             ["p", "Escrever o teste antes do código parece ao contrário e não é. O teste é a primeira utilização da função que vais escrever, e obriga-te a decidir a assinatura e o comportamento antes de te enterrares na implementação."],
@@ -904,15 +1489,101 @@ window.CURSO = {
             inicio: "def validar(password):\n    pass\n",
             testes: "verifica('password válida', validar('Segura123') == [])\nverifica('password curta', validar('Ab1') == ['curta'])\nverifica('sem algarismo', validar('Segurissima') == ['sem algarismo'])\nverifica('acumula os três problemas', validar('abc') == ['curta', 'sem algarismo', 'sem maiuscula'])\nverifica('password vazia', len(validar('')) == 3)"
           }
+        },
+        {
+          id: "14.4", titulo: "Testar o que depende do tempo, do acaso e do sistema", min: 16, estado: "pronta",
+          meta: "No fim: escreves testes que não falham às sextas-feiras nem no dia 1 de cada mês.",
+          blocos: [
+            ["p", "Três coisas partem suites de testes: o relógio, o acaso e tudo o que está fora do processo (ficheiros, rede, variáveis de ambiente). A solução é sempre a mesma ideia, com nomes diferentes: em vez de a função ir buscar essas coisas, recebe-as."],
+            ["h", "O relógio"],
+            ["py", "from datetime import datetime, timedelta\n\n# difícil de testar: vai buscar a hora lá dentro\ndef expirou_mau(criado_em):\n    return (datetime.now() - criado_em).days > 30\n\n# fácil de testar: a hora entra como argumento\ndef expirou(criado_em, agora=None):\n    agora = agora or datetime.now()\n    return (agora - criado_em) > timedelta(days=30)\n\nbase = datetime(2026, 1, 1)\nprint(expirou(base, base + timedelta(days=10)))\nprint(expirou(base, base + timedelta(days=40)))"],
+            ["p", "A segunda versão continua a funcionar igual em produção, onde ninguém passa `agora`. Mas no teste passas a hora que quiseres e testas o dia 31, o ano bissexto e a meia-noite sem esperar por eles."],
+            ["p", "Isto tem um nome pomposo, injeção de dependências, e é só isto: o que a função precisa, entra pela porta em vez de ser ido buscar."],
+            ["h", "O acaso"],
+            ["py", "import random\n\ndef sortear(itens, aleatorio=None):\n    aleatorio = aleatorio or random\n    return aleatorio.choice(itens)\n\nprevisivel = random.Random(42)\nprint(sortear([\"a\", \"b\", \"c\"], previsivel))\nprint(sortear([\"a\", \"b\", \"c\"], random.Random(42)))"],
+            ["p", "Com a mesma semente sai sempre o mesmo. O teste passa a ser determinístico sem deixar de exercitar o código a sério."],
+            ["h", "monkeypatch, quando não podes mudar a assinatura"],
+            ["code", "# codigo.py\nimport os\n\ndef destino():\n    return os.environ.get(\"PASTA_SAIDA\", \"/tmp\")\n\n# test_codigo.py\ndef test_usa_a_variavel_de_ambiente(monkeypatch):\n    monkeypatch.setenv(\"PASTA_SAIDA\", \"/dados\")\n    assert destino() == \"/dados\"\n\ndef test_sem_variavel_usa_o_valor_por_omissao(monkeypatch):\n    monkeypatch.delenv(\"PASTA_SAIDA\", raising=False)\n    assert destino() == \"/tmp\""],
+            ["p", "O `monkeypatch` do pytest substitui uma coisa durante o teste e repõe o original no fim, mesmo que o teste rebente. Serve para variáveis de ambiente, atributos de módulos e funções. Usa-o quando não controlas o código; quando controlas, prefere passar por argumento."],
+            ["h", "O sistema de ficheiros"],
+            ["p", "Não inventes um sistema de ficheiros falso: usa a fixture `tmp_path` (módulo 14.2), que te dá uma pasta a sério, nova por teste e apagada no fim. Ficheiros verdadeiros em sítio descartável são mais simples e mais fiéis."],
+            ["h", "O que se substitui e o que não"],
+            ["lista", [
+              "Substitui o que não é teu e é lento, pago ou instável: rede, APIs externas, relógio, acaso, envio de emails.",
+              "Não substituas a tua própria lógica de negócio. Um teste que substitui a função que devia estar a testar passa sempre e não prova nada.",
+              "Para chamadas HTTP há uma aula inteira, com dublês a sério: módulo 18.2."
+            ]],
+            ["obra", "Um teste que só falha no dia 1 de cada mês, ou depois das 23h, ou quando o computador está em Lisboa e não em São Paulo, existe em todas as empresas. Ninguém quer ser a pessoa que o escreveu, porque a suite perde credibilidade e a equipa começa a correr os testes com um encolher de ombros."],
+            ["aviso", "Bibliotecas que congelam o relógio resolvem o sintoma e escondem a causa: o código continua a ir buscar a hora a meio da lógica. Passar o relógio como argumento não precisa de biblioteca nenhuma e deixa o código melhor."]
+          ],
+          quiz: [
+            { p: "Um teste passa todo o ano e falha em dezembro. Qual é a causa mais provável?", o: ["Um bug do pytest", "A função vai buscar a data atual lá dentro e o teste assume o mês", "Falta de fixtures"], c: 1,
+              e: "Qualquer coisa que dependa de `datetime.now()` dentro da lógica é uma bomba com relógio. Passa a data como argumento e o teste escolhe o dia que quer exercitar." }
+          ],
+          exercicio: {
+            enunciado: "Torna `esta_expirado(criado_em, agora=None, dias=30)` testável. Devolve `True` se passaram **mais** de `dias` dias entre `criado_em` e `agora`. Quando `agora` não é dado, usa `datetime.now()`. Exatamente no limite ainda não expirou.",
+            inicio: "from datetime import datetime, timedelta\n\n\ndef esta_expirado(criado_em, agora=None, dias=30):\n    pass\n",
+            testes: "from datetime import datetime as _dt, timedelta as _td\n_base = _dt(2026, 1, 1)\nverifica('ainda valido', esta_expirado(_base, _base + _td(days=10)) is False)\nverifica('expirado', esta_expirado(_base, _base + _td(days=31)) is True)\nverifica('exatamente no limite ainda e valido', esta_expirado(_base, _base + _td(days=30)) is False)\nverifica('um segundo depois do limite ja expirou', esta_expirado(_base, _base + _td(days=30, seconds=1)) is True)\nverifica('prazo configuravel', esta_expirado(_base, _base + _td(days=8), dias=7) is True)\nverifica('sem agora usa o relogio', esta_expirado(_dt(2000, 1, 1)) is True)"
+          }
+        },
+        {
+          id: "14.5", titulo: "Quanto testar: limites, cobertura e o que não vale a pena", min: 16, estado: "pronta",
+          meta: "No fim: decides o que testar pelo risco, e sabes ler um relatório de cobertura sem te deixares enganar por ele.",
+          blocos: [
+            ["p", "'Testámos tudo' não existe. Uma função com dois inteiros já tem mais combinações do que átomos no universo. A pergunta certa não é quanto, é onde está o risco."],
+            ["h", "Os bugs vivem nas fronteiras"],
+            ["p", "Quase nenhum bug está no meio do intervalo. Estão no zero, no um, no último, no vazio, no limite exato. Escolhe os casos de teste a partir das fronteiras e apanhas a maioria com meia dúzia de asserções."],
+            ["lista", [
+              "Quantidade: nenhum, um, muitos.",
+              "Limites exatos: se a regra é 'mais de 30 dias', testa 29, 30 e 31. O erro está quase sempre entre `>` e `>=`.",
+              "Valores: zero, negativo, `None`, string vazia, texto onde devia ir número.",
+              "Coleções: vazia, com repetidos, já ordenada, ao contrário.",
+              "Texto: acentos, espaços à volta, maiúsculas, muito comprido."
+            ]],
+            ["code", "regra: desconto para compras acima de 100 euros\n\n99.99  -> sem desconto\n100.00 -> ?               <- a fronteira. pergunta a quem pediu.\n100.01 -> com desconto"],
+            ["h", "Cobertura"],
+            ["code", "python -m pip install pytest-cov\npytest --cov=meu_pacote --cov-report=term-missing"],
+            ["p", "A cobertura diz-te que linhas correram durante os testes. Não diz que estão certas: um teste sem uma única asserção dá cem por cento de cobertura e zero de garantia. Lê o relatório ao contrário: os ficheiros a zero por cento é que são a informação útil."],
+            ["lista", [
+              "Perseguir cem por cento leva a testes escritos para o número, que ninguém lê e que travam refatorações.",
+              "Oitenta por cento com asserções honestas vale mais do que cem por cento decorativos.",
+              "A coluna `missing` é a mais útil: mostra os ramos de erro que nunca foram exercitados, que é onde os bugs se escondem."
+            ]],
+            ["h", "O que testar sempre"],
+            ["lista", [
+              "Regras de negócio e cálculos: descontos, IVA, prazos, elegibilidade.",
+              "Validação e interpretação de dados que vêm de fora.",
+              "Tudo o que já esteve mal uma vez: cada bug corrigido leva um teste com o número do bilhete no nome.",
+              "Os caminhos de erro, não só o caminho feliz."
+            ]],
+            ["h", "O que não vale a pena"],
+            ["lista", [
+              "Getters e setters triviais, `dataclasses` sem lógica.",
+              "Bibliotecas de terceiros: presume-se que o `json` funciona.",
+              "Código gerado e migrações automáticas.",
+              "Detalhes internos de implementação, que partem os testes a cada refatoração sem apanhar bug nenhum."
+            ]],
+            ["obra", "A pergunta de entrevista é 'como decides o que testar?'. A resposta que funciona é curta: 'pelo risco. O que custa dinheiro ou confiança se estiver errado, e o que já esteve errado uma vez'. Quem responde 'testo tudo' mostra que nunca manteve uma suite."],
+            ["aviso", "Um teste que repete a fórmula da implementação passa sempre e não prova nada. Se o código faz `preco * 1.23` e o teste verifica `resultado == preco * 1.23`, testaste que o Python sabe multiplicar. Escreve o valor esperado à mão: `assert com_iva(100) == 123.0`."]
+          ],
+          quiz: [
+            { p: "O relatório diz cem por cento de cobertura. O que é que isso garante?", o: ["Que não há bugs", "Que todas as linhas correram durante os testes, nada mais", "Que os casos limite estão testados"], c: 1,
+              e: "Cobertura mede execução, não correção. Serve para encontrar zonas nunca exercitadas; não serve como prova de qualidade, e como objetivo de gestão produz testes vazios." }
+          ],
+          exercicio: {
+            enunciado: "Escreve `interpretar_intervalo(texto)`, que transforma `'3-7'` na lista `[3, 4, 5, 6, 7]` e `'5'` em `[5]`. Espaços à volta são ignorados. Se o início for maior que o fim, ou o texto não for válido, levanta `ValueError`. Repara nas fronteiras: os testes vão lá bater.",
+            inicio: "def interpretar_intervalo(texto):\n    pass\n",
+            testes: "verifica('intervalo normal', interpretar_intervalo('3-7') == [3, 4, 5, 6, 7])\nverifica('numero unico', interpretar_intervalo('5') == [5])\nverifica('inicio igual ao fim', interpretar_intervalo('4-4') == [4])\nverifica('espacos a volta', interpretar_intervalo('  2-3 ') == [2, 3])\nverifica('zero e valido', interpretar_intervalo('0-1') == [0, 1])\n_maus = ['7-3', 'a-b', '', '1-', '-', '2--3']\n_erros = 0\nfor _t in _maus:\n    try:\n        interpretar_intervalo(_t)\n    except ValueError:\n        _erros += 1\nverifica('entradas invalidas levantam ValueError', _erros == len(_maus))"
+          }
         }
       ]
     },
     {
-      n: 11, fase: 3, titulo: "Qualidade e ferramentas",
+      n: 15, fase: 3, titulo: "Qualidade e ferramentas",
       objetivo: "Entregar código que passa em revisão à primeira.",
       licoes: [
         {
-          id: "11.1", titulo: "ruff, formatação automática e mypy", min: 15, estado: "pronta",
+          id: "15.1", titulo: "ruff, formatação automática e mypy", min: 15, estado: "pronta",
           meta: "No fim: configuras as três ferramentas num projeto e percebes o que cada aviso quer dizer.",
           blocos: [
             ["p", "Três ferramentas, três trabalhos diferentes. O formatador arruma o código. O linter aponta problemas. O verificador de tipos prova que as peças encaixam. Nenhuma delas substitui testes, e as três juntas apanham antes da revisão o que faria perder tempo a um humano."],
@@ -925,7 +1596,7 @@ window.CURSO = {
               "`F401 imported but unused`: import a mais. Apaga, não comentes.",
               "`F841 local variable assigned but never used`: ou te esqueceste de a usar, ou há aqui um bug.",
               "`E501 line too long`: parte a linha. Quase sempre é uma expressão que devia ter nome.",
-              "`B006 mutable default argument`: o bug do módulo 4, apanhado automaticamente.",
+              "`B006 mutable default argument`: o bug do módulo 6, apanhado automaticamente.",
               "`B008 function call in default argument`: chamada avaliada uma vez, na definição."
             ]],
             ["h", "Formatar não é opinião"],
@@ -948,7 +1619,7 @@ window.CURSO = {
           }
         },
         {
-          id: "11.2", titulo: "pre-commit e integração contínua", min: 14, estado: "pronta",
+          id: "15.2", titulo: "pre-commit e integração contínua", min: 14, estado: "pronta",
           meta: "No fim: pões as verificações a correr sozinhas antes do commit e em cada push.",
           blocos: [
             ["p", "Uma verificação que depende de alguém se lembrar de a correr não é uma verificação. Há dois sítios onde isto se automatiza: no teu computador, antes do commit, e no servidor, a cada push."],
@@ -985,11 +1656,11 @@ window.CURSO = {
       ]
     },
     {
-      n: 12, fase: 3, titulo: "Git como se trabalha a sério",
+      n: 16, fase: 3, titulo: "Git como se trabalha a sério",
       objetivo: "O requisito que aparece em 100 por cento das vagas.",
       licoes: [
         {
-          id: "12.1", titulo: "Ramos, commits e histórico legível", min: 18, estado: "pronta",
+          id: "16.1", titulo: "Ramos, commits e histórico legível", min: 18, estado: "pronta",
           meta: "No fim: trabalhas em ramos, escreves mensagens que servem daqui a um ano e resolves conflitos sem pânico.",
           blocos: [
             ["p", "Git guarda fotografias do projeto. Um commit é uma fotografia com uma mensagem e um pai. Um ramo é um autocolante que aponta para um commit e anda para a frente quando fazes commits novos. Percebido isto, o resto é vocabulário."],
@@ -1032,7 +1703,7 @@ window.CURSO = {
           }
         },
         {
-          id: "12.2", titulo: "Pull requests e revisão de código", min: 16, estado: "pronta",
+          id: "16.2", titulo: "Pull requests e revisão de código", min: 16, estado: "pronta",
           meta: "No fim: abres um pull request que se revê em dez minutos e respondes a comentários como profissional.",
           blocos: [
             ["p", "Um pull request é um pedido para juntar o teu ramo ao principal, com discussão à volta. É também o sítio onde, num primeiro emprego, a tua reputação técnica se constrói ou se estraga."],
@@ -1077,11 +1748,66 @@ window.CURSO = {
       ]
     },
     {
-      n: 13, fase: 3, titulo: "Depuração e desempenho",
+      n: 17, fase: 3, titulo: "Depuração e desempenho",
       objetivo: "Encontrar o problema em minutos em vez de horas.",
       licoes: [
         {
-          id: "13.1", titulo: "Depurador em vez de prints", min: 14, estado: "pronta",
+          id: "17.1", titulo: "Método: reproduzir, isolar, corrigir", min: 16, estado: "pronta",
+          meta: "No fim: tens um processo para encontrar bugs em vez de mexeres no código à sorte.",
+          blocos: [
+            ["p", "A diferença entre quem resolve um bug em vinte minutos e quem demora dois dias raramente é saber mais Python. É ter método. O método tem quatro passos e não se salta nenhum, sobretudo quando há pressa."],
+            ["h", "1. Reproduzir"],
+            ["p", "Enquanto não conseguires provocar o erro à vontade, não estás a depurar: estás a adivinhar. Escreve os passos exatos, os dados exatos, a versão e o ambiente. Se não reproduz, o problema passa a ser esse, e é aí que trabalhas."],
+            ["lista", [
+              "Os mesmos dados. Pede o ficheiro, o identificador do pedido, o registo exato.",
+              "O mesmo ambiente. 'Na minha máquina funciona' costuma ser uma diferença de versão, de fuso horário ou de configuração.",
+              "Intermitente? Acrescenta registo suficiente para apanhar o estado quando acontecer, e espera. É trabalho válido.",
+              "Assim que reproduzires, guarda a receita. Vais precisar dela outra vez no fim, para provar que corrigiste."
+            ]],
+            ["h", "2. Isolar, cortando ao meio"],
+            ["p", "Um bug esconde-se num espaço: mil linhas de código, dez mil linhas de dados, duzentos commits. Não procures do princípio para o fim. Corta o espaço a meio e pergunta de que lado está. Dez perguntas chegam para mil hipóteses, que é a pesquisa binária do módulo 13.2 aplicada ao teu dia de trabalho."],
+            ["lista", [
+              "**Nos dados**: fica com metade do ficheiro. Ainda falha? Corta outra vez. Chegas a duas ou três linhas e a causa costuma saltar à vista.",
+              "**No código**: verifica o valor a meio do caminho. Está certo aqui? Então o problema está depois.",
+              "**No histórico**: `git bisect` encontra o commit que partiu, em log n passos. Precisa de um comando que diga bom ou mau, e por isso vale a pena ter o teste primeiro.",
+              "**No ambiente**: corre noutra máquina, noutro ambiente virtual, com outra versão."
+            ]],
+            ["code", "git bisect start\ngit bisect bad                 # o estado de agora está mau\ngit bisect good v1.4.0         # aqui ainda estava bom\n# o git faz checkout a meio; tu testas e dizes\ngit bisect good                # ou: git bisect bad\n# ... repete ~log2(n) vezes\ngit bisect reset"],
+            ["h", "3. Uma hipótese de cada vez, escrita"],
+            ["p", "Escreve a hipótese numa frase que se possa provar falsa: 'acredito que o campo `email` vem a `None` quando o registo veio do formulário antigo'. Depois testa **essa** frase, não o programa inteiro."],
+            ["aviso", "Mexer no código antes de ter uma hipótese é a definição de estar perdido. E se mudaste três coisas e passou a funcionar, não sabes qual foi, não aprendeste nada, e provavelmente introduziste dois bugs novos que ainda não viste."],
+            ["h", "4. Corrigir e provar"],
+            ["lista", [
+              "Escreve primeiro o teste que falha por causa do bug (módulo 14.3). É a prova de que percebeste.",
+              "Faz a correção mínima. Arrumar o ficheiro ao mesmo tempo esconde o que realmente mudou.",
+              "Corre a suite toda. As correções partem outras coisas com uma frequência desagradável.",
+              "Pergunta: 'onde é que este mesmo erro existe outra vez?'. Se foi um `or` a servir de omissão, procura os outros no projeto."
+            ]],
+            ["h", "As suposições que costumam estar erradas"],
+            ["lista", [
+              "'Os dados vêm limpos.' Nunca vêm.",
+              "'Esta função só é chamada uma vez.' Alguém a pôs num ciclo.",
+              "'Isto está ordenado.' Estava, até alguém trocar a consulta.",
+              "'O ficheiro está em UTF-8.' Veio do Excel.",
+              "'O serviço responde em menos de um segundo.' Hoje não.",
+              "'Isto não muda enquanto eu itero.' Muda."
+            ]],
+            ["h", "O pato de borracha"],
+            ["p", "Explicar o problema em voz alta, linha a linha, a um colega ou a um objeto, obriga-te a tornar explícitas as suposições que estavas a dar como certas. Metade dos bugs aparece a meio da frase, antes de o outro responder. Não é folclore: é a mesma razão por que escrever a hipótese funciona."],
+            ["obra", "Um bilhete de bug bem escrito tem cinco coisas: passos para reproduzir, resultado esperado, resultado obtido, versão e dados de exemplo. Quem escreve assim recebe correções; quem escreve 'não funciona' recebe perguntas e espera três dias. Escreve os teus bilhetes assim desde o primeiro."]
+          ],
+          quiz: [
+            { p: "Mexeste em três sítios, o bug desapareceu e vais fechar o bilhete. Qual é o problema?", o: ["Nenhum, o importante é funcionar", "Não sabes qual foi a correção, e as outras duas alterações podem ter criado problemas novos", "Devias ter mexido em mais sítios"], c: 1,
+              e: "Sem saber a causa não sabes se corrigiste ou se escondeste. Volta atrás, aplica uma alteração de cada vez, e fica com a que resolve, com um teste que o prove." }
+          ],
+          exercicio: {
+            enunciado: "Escreve `primeiro_mau(versoes, e_mau)`, a lógica do `git bisect`. `versoes` está ordenada da mais antiga para a mais recente e `e_mau(v)` devolve `False` até certo ponto e `True` daí para a frente. Devolve o índice da primeira versão má, ou `-1` se nenhuma for má. Não podes chamar `e_mau` para todas: há um teste que conta as chamadas.",
+            inicio: "def primeiro_mau(versoes, e_mau):\n    pass\n",
+            testes: "_chamadas = []\ndef _mau_a_partir_de(limite):\n    def f(v):\n        _chamadas.append(v)\n        return v >= limite\n    return f\nverifica('encontra a primeira ma', primeiro_mau(list(range(8)), _mau_a_partir_de(5)) == 5)\nverifica('todas mas', primeiro_mau(list(range(4)), _mau_a_partir_de(0)) == 0)\nverifica('nenhuma ma', primeiro_mau(list(range(4)), _mau_a_partir_de(99)) == -1)\nverifica('lista vazia', primeiro_mau([], _mau_a_partir_de(0)) == -1)\nverifica('a ultima e a primeira ma', primeiro_mau(list(range(5)), _mau_a_partir_de(4)) == 4)\n_chamadas.clear()\nprimeiro_mau(list(range(1024)), _mau_a_partir_de(700))\nverifica('procura por bissecao e nao uma a uma', len(_chamadas) <= 12)"
+          }
+        },
+        {
+          id: "17.2", titulo: "Depurador em vez de prints", min: 14, estado: "pronta",
           meta: "No fim: paras o programa a meio e inspecionas o estado em vez de adivinhar com prints.",
           blocos: [
             ["p", "O `print` é uma ferramenta legítima e é a primeira que usas. O problema é o ciclo: acrescentar print, correr, ler, apagar, acrescentar outro print. Com um depurador, paras uma vez e vês tudo o que quiseres, incluindo o que não te tinhas lembrado de imprimir."],
@@ -1108,7 +1834,7 @@ window.CURSO = {
               "Consegues reproduzir? Se não, o problema é reproduzir, e é aí que trabalhas.",
               "Qual é o input mínimo que ainda falha? Metade das vezes, encontras a causa a reduzir.",
               "O que é que tu assumes que pode não ser verdade? É quase sempre aí que está.",
-              "Escreve o teste que falha. Passa a ser o módulo 10.3 a partir daqui."
+              "Escreve o teste que falha. Passa a ser o módulo 14.3 a partir daqui."
             ]],
             ["obra", "Numa equipa, 'não consigo reproduzir' é uma resposta aceitável uma vez; à segunda, espera-se que peças os dados, a versão e os passos exatos. Um bilhete de bug com passos, resultado esperado e resultado obtido é um profissional a falar."],
             ["aviso", "`breakpoint()` esquecido no código pendura o programa em produção à espera de alguém escrever na consola. O `ruff` apanha isto com a regra T100. Configura-a e dorme descansado."],
@@ -1127,7 +1853,97 @@ window.CURSO = {
           }
         },
         {
-          id: "13.2", titulo: "Medir antes de otimizar", min: 12, estado: "pronta",
+          id: "17.3", titulo: "Catálogo dos bugs que o Python te deixa escrever", min: 18, estado: "pronta",
+          meta: "No fim: reconheces de imediato os erros que apanham toda a gente pelo menos uma vez.",
+          blocos: [
+            ["p", "Python é permissivo, e essa permissividade tem uma conta a pagar. Esta é a lista dos erros que aparecem em revisões de código todas as semanas, em todas as empresas. Lê-a uma vez com atenção e volta cá quando algo não fizer sentido."],
+            ["h", "1. Argumento por omissão mutável"],
+            ["py", "def registar(evento, historico=[]):\n    historico.append(evento)\n    return historico\n\nprint(registar(\"a\"))\nprint(registar(\"b\"))   # a lista é a mesma"],
+            ["p", "Já apareceu no módulo 3.4 e volta aqui porque é o número um da lista. A correção é `=None` e criar lá dentro."],
+            ["h", "2. Alterar uma lista enquanto a percorres"],
+            ["py", "numeros = [1, 2, 3, 4]\nfor n in list(numeros):\n    if n % 2 == 0:\n        numeros.remove(n)\nprint(numeros)\n\nmaus = [1, 2, 2, 3]\nfor n in maus:\n    if n == 2:\n        maus.remove(n)\nprint(maus)   # ficou um 2"],
+            ["h", "3. Funções criadas dentro de um ciclo"],
+            ["py", "funcoes = [lambda: i for i in range(3)]\nprint([f() for f in funcoes])   # 2, 2, 2\n\nfuncoes = [lambda i=i: i for i in range(3)]\nprint([f() for f in funcoes])"],
+            ["p", "A `lambda` guarda o **nome** `i`, não o valor que ele tinha. Quando as chamas, o ciclo já acabou e `i` vale a última coisa. Captura-se o valor com um argumento por omissão, ou com `functools.partial`."],
+            ["h", "4. `is` em vez de `==`"],
+            ["py", "a = 1000\nb = 1000\nprint(a == b, a is b)\n\nx = 5\ny = 5\nprint(x == y, x is y)   # True por acaso: inteiros pequenos são reutilizados"],
+            ["h", "5. Cópia rasa de estruturas encaixadas"],
+            ["py", "modelo = {\"nome\": \"\", \"tags\": []}\na = dict(modelo)\nb = dict(modelo)\na[\"tags\"].append(\"novo\")\nprint(b[\"tags\"])   # o 'novo' também está aqui"],
+            ["h", "6. Tapar nomes do Python"],
+            ["py", "lista = [3, 1, 2]\nlist = sorted(lista)   # a partir daqui, list() deixa de existir\nprint(list)\ntry:\n    print(list((1, 2)))\nexcept TypeError as e:\n    print(\"TypeError:\", e)"],
+            ["aviso", "O mesmo vale para ficheiros: um ficheiro teu chamado `json.py`, `random.py` ou `email.py` na pasta do projeto ganha ao módulo do Python e produz erros absurdos, do género 'module has no attribute loads'. Se um import começa a portar-se mal, procura um ficheiro teu com o mesmo nome."],
+            ["h", "7. Comparar floats com =="],
+            ["py", "print(0.1 + 0.2 == 0.3)\nimport math\nprint(math.isclose(0.1 + 0.2, 0.3))"],
+            ["h", "8. `except` que engole tudo"],
+            ["py", "def ler(valor):\n    try:\n        return int(valor)\n    except Exception:\n        return 0\n\nprint(ler(\"12\"), ler(\"doze\"))"],
+            ["p", "Devolver `0` para texto inválido esconde um problema de dados que vai aparecer num relatório errado três semanas depois. Apanha a exceção que esperas (`ValueError`), e deixa passar o que não esperas. `except:` sem tipo nenhum apanha até o `Ctrl+C`."],
+            ["h", "9. Atribuir a um nome global dentro de uma função"],
+            ["py", "contador = 0\n\ndef aumentar_errado():\n    try:\n        contador = contador + 1\n    except UnboundLocalError as e:\n        print(\"UnboundLocalError:\", e)\n\naumentar_errado()"],
+            ["p", "Atribuir a um nome dentro de uma função torna-o local em toda a função, mesmo nas linhas acima da atribuição. Ou usas `global` (raramente boa ideia), ou, melhor, recebes o valor e devolves o novo."],
+            ["h", "10. `return` dentro do ciclo, cedo demais"],
+            ["py", "def todos_positivos(numeros):\n    for n in numeros:\n        if n > 0:\n            return True     # responde ao primeiro, não a todos\n        return False\n\nprint(todos_positivos([1, -1]))\nprint(all(n > 0 for n in [1, -1]))"],
+            ["h", "Como se apanham estes sem ser à mão"],
+            ["lista", [
+              "`ruff` com as regras `B` (bugbear) apanha o número 1, o 3 e variantes do 8.",
+              "`mypy` apanha o número 4 e muitos erros de tipo antes de correr (módulo 15.1).",
+              "Testes com casos limite apanham o 2 e o 10.",
+              "Revisão de código apanha o 5, o 6 e o 9, porque um par de olhos que não escreveu aquilo lê o que lá está e não o que se queria escrever."
+            ]],
+            ["obra", "Ligar as regras `B` do `ruff` num projeto demora meia hora e evita bilhetes de bug durante anos. Se entrares numa equipa que não as tem ligadas, é uma proposta pequena, fácil de defender e que te faz ganhar reputação sem escreveres uma linha de lógica nova."],
+            ["aviso", "Quando encontrares um destes no código da empresa, não o corrijas em silêncio no meio de outra alteração. Faz um pull request próprio, com um teste que demonstra o problema. Uma correção explicada ensina a equipa; uma correção escondida num diff de trezentas linhas não é vista por ninguém."]
+          ],
+          quiz: [
+            { p: "`funcoes = [lambda: i for i in range(3)]` e depois chamas todas. O que sai?", o: ["0, 1, 2", "2, 2, 2", "Erro"], c: 1,
+              e: "As lambdas guardam o nome `i`, não o valor. Quando as chamas, o ciclo acabou e `i` vale 2. Captura-se o valor com `lambda i=i: i`." }
+          ],
+          exercicio: {
+            enunciado: "Esta fábrica de funções está errada: todas as funções devolvidas multiplicam pelo mesmo fator. Corrige-a para que `multiplicadores([2, 3])` devolva uma função que multiplica por 2 e outra que multiplica por 3.",
+            inicio: "def multiplicadores(fatores):\n    funcoes = []\n    for f in fatores:\n        funcoes.append(lambda x: x * f)\n    return funcoes\n",
+            testes: "_fs = multiplicadores([2, 3])\nverifica('a primeira multiplica por 2', _fs[0](10) == 20)\nverifica('a segunda multiplica por 3', _fs[1](10) == 30)\nverifica('uma funcao por fator', len(multiplicadores([1, 2, 3])) == 3)\nverifica('lista vazia', multiplicadores([]) == [])\n_um = multiplicadores([5])[0]\nverifica('continua a funcionar depois do ciclo', _um(4) == 20)\n_tres = multiplicadores([1, 2, 3])\nverifica('todos independentes', [f(1) for f in _tres] == [1, 2, 3])"
+          }
+        },
+        {
+          id: "17.4", titulo: "Depurar o que não corre na tua máquina", min: 16, estado: "pronta",
+          meta: "No fim: consegues perceber o que aconteceu num servidor a que não tens acesso interativo.",
+          blocos: [
+            ["p", "Em produção não pões um `breakpoint()`. Não há consola à tua espera, e mesmo que houvesse, parar o processo deixava os utilizadores pendurados. O que te resta são os rastos que o teu código deixou. É essa a verdadeira razão de existir do `logging` (módulo 9.3)."],
+            ["h", "Registos que servem para alguma coisa"],
+            ["code", "import logging\n\nlog = logging.getLogger(__name__)\n\ndef processar(pedido_id, linhas):\n    log.info(\"a processar pedido %s com %d linhas\", pedido_id, len(linhas))\n    try:\n        return [transformar(l) for l in linhas]\n    except ValueError:\n        log.exception(\"pedido %s: linha inválida\", pedido_id)\n        raise"],
+            ["lista", [
+              "Contexto, sempre: identificadores, contagens, o nome do ficheiro. 'Erro ao processar' não ajuda ninguém às três da manhã.",
+              "`log.exception(...)` dentro de um `except` inclui o traceback completo. `log.error(...)` sozinho perde-o.",
+              "Usa os marcadores `%s` do logging em vez de f-strings: a formatação só acontece se aquele nível estiver ligado.",
+              "Nunca registes palavras-passe, tokens, números de cartão ou dados pessoais. Os registos são copiados, enviados e guardados durante anos.",
+              "`INFO` para marcos, `WARNING` para o que é estranho mas recuperável, `ERROR` para o que falhou. `DEBUG` para o detalhe que só ligas quando estás a investigar."
+            ]],
+            ["h", "Correlacionar"],
+            ["p", "Com duzentos pedidos em simultâneo, as linhas de registo dos vários pedidos ficam intercaladas. Sem um identificador comum em todas as linhas do mesmo pedido, tens duzentas histórias misturadas e nenhuma legível. Gera um identificador à entrada e leva-o contigo."],
+            ["code", "2026-03-14 03:12:01 INFO  [req=7f3a] a processar pedido 9912 com 40 linhas\n2026-03-14 03:12:01 INFO  [req=91bc] a processar pedido 9913 com 12 linhas\n2026-03-14 03:12:02 ERROR [req=7f3a] linha 17 inválida: valor 'N/D'"],
+            ["h", "Falhar alto em vez de continuar errado"],
+            ["p", "Continuar com dados errados é pior do que parar. Um erro que rebenta é um bilhete de bug; um erro silencioso é um relatório errado que ninguém questiona. Quando converteres uma exceção noutra, mantém a causa com `raise ... from`."],
+            ["py", "def ler_config(valores):\n    try:\n        return int(valores[\"tentativas\"])\n    except KeyError as e:\n        raise ValueError(\"falta a chave 'tentativas' na configuração\") from e\n\ntry:\n    ler_config({})\nexcept ValueError as e:\n    print(type(e).__name__, e)\n    print(\"causa:\", type(e.__cause__).__name__)"],
+            ["h", "O que registar num trabalho por lotes"],
+            ["lista", [
+              "Início: o que vai processar, com que parâmetros e que versão do código.",
+              "Progresso, de vez em quando: 'processadas 10 000 de 240 000'. Num trabalho de horas, sem isto não sabes se está a correr ou pendurado.",
+              "Cada rejeição, com o número da linha e o motivo, não só a contagem.",
+              "Fim: 'lidas 240 000, aceites 239 610, rejeitadas 390, duração 12m'. Este resumo é o que te vão pedir de manhã."
+            ]],
+            ["obra", "A pergunta das nove da manhã é 'a importação de ontem à noite correu bem?'. Se a resposta só existe no teu terminal de ontem, a resposta é não. Um trabalho agendado que não deixa um resumo legível é um trabalho em que ninguém pode confiar, mesmo quando funciona."],
+            ["aviso", "`print` num servidor vai parar ao sítio que quem publicou decidiu, e às vezes é o nada. Não tem nível, não tem data, não tem origem, e não se desliga. Usa `logging` desde o primeiro ficheiro do projeto: dá o mesmo trabalho."]
+          ],
+          quiz: [
+            { p: "Um erro raro acontece em produção umas vezes por dia e não consegues reproduzir localmente. Primeiro passo?", o: ["Pôr um breakpoint no servidor", "Acrescentar registo com contexto suficiente para reconstruir o caso quando voltar a acontecer", "Reescrever a função"], c: 1,
+              e: "Sem reprodução não há depuração. Instrumentar para capturar o estado quando acontecer é o trabalho certo, e a espera faz parte dele." }
+          ],
+          exercicio: {
+            enunciado: "Escreve `resumo_erros(linhas)`, que recebe linhas de registo como `'2026-01-05 10:00:00 ERROR pagamento falhou'` e devolve um dicionário com o número de ocorrências por nível, apenas dos níveis que aparecem. Níveis válidos: DEBUG, INFO, WARNING, ERROR, CRITICAL. Linhas que não sigam o formato contam como `'INVALIDO'`.",
+            inicio: "def resumo_erros(linhas):\n    pass\n",
+            testes: "_linhas = ['2026-01-05 10:00:00 ERROR pagamento falhou', '2026-01-05 10:00:01 INFO pedido recebido', '2026-01-05 10:00:02 ERROR pagamento falhou', 'linha a toa']\nverifica('conta por nivel', resumo_erros(_linhas) == {'ERROR': 2, 'INFO': 1, 'INVALIDO': 1})\nverifica('sem linhas', resumo_erros([]) == {})\nverifica('so invalidas', resumo_erros(['xpto']) == {'INVALIDO': 1})\nverifica('nivel desconhecido e invalido', resumo_erros(['2026-01-05 10:00:00 XPTO algo']) == {'INVALIDO': 1})\nverifica('linha sem mensagem ainda conta', resumo_erros(['2026-01-05 10:00:00 WARNING']) == {'WARNING': 1})\nverifica('so os niveis presentes aparecem', 'DEBUG' not in resumo_erros(_linhas))"
+          }
+        },
+        {
+          id: "17.5", titulo: "Medir antes de otimizar", min: 12, estado: "pronta",
           meta: "No fim: medes onde o tempo se perde e escolhes a estrutura de dados certa em vez de adivinhar.",
           blocos: [
             ["p", "A intuição sobre desempenho está quase sempre errada. O tempo raramente está onde julgas: está numa consulta à base de dados dentro de um ciclo, numa procura linear repetida, ou numa conversão de dados que ninguém reparou. Mede primeiro."],
@@ -1171,11 +1987,11 @@ window.CURSO = {
 
     /* ---------------- FASE 4 ---------------- */
     {
-      n: 14, fase: 4, titulo: "Consumir APIs",
+      n: 18, fase: 4, titulo: "Consumir APIs",
       objetivo: "Ir buscar dados a outro sistema e não rebentar quando ele falha.",
       licoes: [
         {
-          id: "14.1", titulo: "HTTP, httpx e o que fazer quando corre mal", min: 20, estado: "pronta",
+          id: "18.1", titulo: "HTTP, httpx e o que fazer quando corre mal", min: 20, estado: "pronta",
           meta: "No fim: consomes uma API paginada com autenticação e tratamento de falhas.",
           blocos: [
             ["p", "Uma API é um servidor que responde a pedidos. Tu envias um método (`GET`, `POST`), um caminho e cabeçalhos. Ele responde com um código de estado e normalmente JSON. Todo o resto é detalhe."],
@@ -1187,7 +2003,7 @@ window.CURSO = {
             ["aviso", "Uma chave de API dentro de um commit é uma chave comprometida, mesmo que apagues no commit seguinte. Fica no histórico. Usa variáveis de ambiente e um `.env` que está no `.gitignore`. Recrutadores olham para isto."],
             ["h", "Paginação"],
             ["code", "def todos_os_alunos(cliente):\n    pagina = 1\n    while True:\n        r = cliente.get(\"/v1/alunos\", params={\"page\": pagina})\n        r.raise_for_status()\n        corpo = r.json()\n        if not corpo[\"resultados\"]:\n            return\n        yield from corpo[\"resultados\"]\n        pagina += 1"],
-            ["p", "Repara no `yield`: quem chama esta função recebe alunos um a um e nunca tem a coleção inteira em memória. É o módulo 9 a pagar-se a si próprio."],
+            ["p", "Repara no `yield`: quem chama esta função recebe alunos um a um e nunca tem a coleção inteira em memória. É o módulo 12 a pagar-se a si próprio."],
             ["obra", "Numa equipa vão pedir-te para tentar de novo quando a API devolve 429 ou 500, com espera crescente entre tentativas. Chama-se retry com backoff exponencial. Sabe o nome, mesmo antes de saber implementar."]
           ],
           quiz: [
@@ -1201,13 +2017,13 @@ window.CURSO = {
           }
         },
         {
-          id: "14.2", titulo: "Dublês de teste para chamadas externas", min: 14, estado: "pronta",
+          id: "18.2", titulo: "Dublês de teste para chamadas externas", min: 14, estado: "pronta",
           meta: "No fim: testas código que fala com a rede, sem rede, em milissegundos.",
           blocos: [
             ["p", "Um teste que chama uma API a sério é lento, falha quando a internet falha e devolve dados diferentes amanhã. Um dublê é um objeto que finge ser essa dependência e responde o que tu mandares."],
             ["h", "O mais simples: uma classe falsa"],
             ["py", "class RespostaFalsa:\n    def __init__(self, dados, estado=200):\n        self.dados = dados\n        self.status_code = estado\n\n    def raise_for_status(self):\n        if self.status_code >= 400:\n            raise RuntimeError(f\"HTTP {self.status_code}\")\n\n    def json(self):\n        return self.dados\n\nclass ClienteFalso:\n    def __init__(self, resposta):\n        self.resposta = resposta\n        self.pedidos = []\n\n    def get(self, caminho):\n        self.pedidos.append(caminho)\n        return self.resposta\n\ndef nomes(cliente):\n    r = cliente.get(\"/utilizadores\")\n    r.raise_for_status()\n    return [u[\"nome\"] for u in r.json()[\"resultados\"]]\n\nfalso = ClienteFalso(RespostaFalsa({\"resultados\": [{\"nome\": \"Ana\"}]}))\nprint(nomes(falso))\nprint(falso.pedidos)"],
-            ["p", "Repara em duas coisas. A função recebe o cliente como argumento, que é a injeção de dependências do módulo 8.3, e o dublê guarda o que lhe pediram, para poderes verificar o pedido além do resultado."],
+            ["p", "Repara em duas coisas. A função recebe o cliente como argumento, que é a injeção de dependências do módulo 11.3, e o dublê guarda o que lhe pediram, para poderes verificar o pedido além do resultado."],
             ["h", "unittest.mock, quando não te apetece escrever a classe"],
             ["py", "from unittest.mock import Mock\n\ndef nomes(cliente):\n    r = cliente.get(\"/utilizadores\")\n    r.raise_for_status()\n    return [u[\"nome\"] for u in r.json()[\"resultados\"]]\n\nresposta = Mock()\nresposta.json.return_value = {\"resultados\": [{\"nome\": \"Ana\"}, {\"nome\": \"Rui\"}]}\ncliente = Mock()\ncliente.get.return_value = resposta\n\nprint(nomes(cliente))\ncliente.get.assert_called_once_with(\"/utilizadores\")\nprint(resposta.raise_for_status.called)"],
             ["p", "Um `Mock` aceita qualquer atributo e qualquer chamada, e regista tudo. Isso é conveniente e é também o perigo: um erro de escrita no nome do método não rebenta, devolve outro `Mock`. Por isso existe `autospec`, que copia a assinatura do objeto real."],
@@ -1232,11 +2048,11 @@ window.CURSO = {
       ]
     },
     {
-      n: 15, fase: 4, titulo: "Bases de dados",
+      n: 19, fase: 4, titulo: "Bases de dados",
       objetivo: "Guardar dados a sério, não em ficheiros JSON.",
       licoes: [
         {
-          id: "15.1", titulo: "SQL que um programador precisa", min: 20, estado: "pronta",
+          id: "19.1", titulo: "SQL que um programador precisa", min: 20, estado: "pronta",
           meta: "No fim: escreves consultas com junções e agregações e percebes porque é que uma é lenta.",
           blocos: [
             ["p", "SQL não é uma tecnologia paralela ao Python: é metade do trabalho de backend. Dizes o que queres, não como se procura. O motor decide o caminho, e o teu trabalho é dar-lhe condições para escolher bem."],
@@ -1260,7 +2076,7 @@ window.CURSO = {
             ]],
             ["aviso", "`COUNT(*)` conta linhas, incluindo as que vieram vazias de um `LEFT JOIN`. `COUNT(coluna)` ignora nulos. Num `LEFT JOIN`, `COUNT(*)` dá 1 para clientes sem encomendas nenhumas, e alguém vai perguntar-te porque é que o relatório está errado."],
             ["h", "Índices, em duas frases"],
-            ["p", "Um índice é uma estrutura ordenada que evita ler a tabela toda, tal como o `set` do módulo 13.2 evita percorrer a lista. Cria índices nas colunas por que filtras e juntas com frequência. Cada índice acelera leituras e atrasa escritas, por isso não se indexa tudo."],
+            ["p", "Um índice é uma estrutura ordenada que evita ler a tabela toda, tal como o `set` do módulo 17.5 evita percorrer a lista. Cria índices nas colunas por que filtras e juntas com frequência. Cada índice acelera leituras e atrasa escritas, por isso não se indexa tudo."],
             ["code", "CREATE INDEX idx_encomendas_cliente ON encomendas (cliente_id);\n\nEXPLAIN QUERY PLAN\nSELECT * FROM encomendas WHERE cliente_id = 42;"],
             ["p", "`EXPLAIN` mostra o plano escolhido. Ver `SCAN TABLE` numa tabela grande é o sinal de que falta um índice; `SEARCH TABLE ... USING INDEX` é o que queres ver."],
             ["obra", "O pedido típico do primeiro mês: 'quantos clientes novos por mês no último ano, incluindo os meses a zero'. Envolve agregação, formatação de datas e um `LEFT JOIN` com uma tabela de meses. Se souberes escrever isto, já vales o ordenado."],
@@ -1277,7 +2093,7 @@ window.CURSO = {
           }
         },
         {
-          id: "15.2", titulo: "sqlite3 e SQLAlchemy", min: 18, estado: "pronta",
+          id: "19.2", titulo: "sqlite3 e SQLAlchemy", min: 18, estado: "pronta",
           meta: "No fim: falas com uma base de dados a partir de Python sem abrir uma porta a injeção de SQL.",
           blocos: [
             ["p", "O `sqlite3` vem com o Python e não precisa de servidor: a base de dados é um ficheiro. Para aprender, para testes e para muitas ferramentas internas, chega perfeitamente. O que aprenderes aqui aplica-se igual ao PostgreSQL, que é o que vais usar no emprego."],
@@ -1307,21 +2123,21 @@ window.CURSO = {
       ]
     },
     {
-      n: 16, fase: 4, titulo: "Construir uma API com FastAPI",
+      n: 20, fase: 4, titulo: "Construir uma API com FastAPI",
       objetivo: "O projeto que vai ficar no topo do teu portefólio.",
       licoes: [
         {
-          id: "16.1", titulo: "Primeiro endpoint e validação com Pydantic", min: 20, estado: "pronta",
+          id: "20.1", titulo: "Primeiro endpoint e validação com Pydantic", min: 20, estado: "pronta",
           meta: "No fim: percebes o que uma rota faz, e escreves a validação que separa um 422 de um 500.",
           blocos: [
             ["p", "Uma API é uma função com um endereço. O FastAPI trata do resto: descodifica o pedido, valida os dados, chama a tua função e converte o resultado em JSON. O teu trabalho continua a ser Python normal."],
             ["code", "pip install \"fastapi[standard]\"\nfastapi dev main.py"],
             ["code", "# main.py\nfrom fastapi import FastAPI\n\napp = FastAPI()\n\n@app.get(\"/saude\")\ndef saude():\n    return {\"estado\": \"ok\"}\n\n@app.get(\"/produtos/{produto_id}\")\ndef obter_produto(produto_id: int):\n    return {\"id\": produto_id, \"nome\": \"teclado\"}"],
-            ["p", "Repara na anotação `produto_id: int`. Não é decoração: é o que faz o FastAPI converter o texto do URL para inteiro e responder 422 automaticamente se alguém pedir `/produtos/abc`. As anotações do módulo 4.3 passaram a ter efeito em execução."],
+            ["p", "Repara na anotação `produto_id: int`. Não é decoração: é o que faz o FastAPI converter o texto do URL para inteiro e responder 422 automaticamente se alguém pedir `/produtos/abc`. As anotações do módulo 6.3 passaram a ter efeito em execução."],
             ["h", "Pydantic: o contrato dos dados"],
             ["code", "from pydantic import BaseModel, Field\n\nclass ProdutoNovo(BaseModel):\n    nome: str = Field(min_length=1, max_length=80)\n    preco: float = Field(gt=0)\n    quantidade: int = Field(default=1, ge=0)\n\n@app.post(\"/produtos\", status_code=201)\ndef criar_produto(produto: ProdutoNovo):\n    return {\"id\": 1, **produto.model_dump()}"],
-            ["p", "Uma `BaseModel` parece-se com a `dataclass` do módulo 8.2, com uma diferença decisiva: valida. Se o corpo do pedido trouxer `preco` a zero ou `nome` vazio, o cliente recebe 422 com a lista exata dos campos errados, e a tua função nem chega a correr."],
-            ["obra", "Esta é a fronteira de que falámos no módulo 5.2: dados de fora entram por um sítio, são validados uma vez, e a partir daí o resto do código confia. Sem essa fronteira, cada função passa a ter de se defender, e nenhuma o faz bem."],
+            ["p", "Uma `BaseModel` parece-se com a `dataclass` do módulo 11.2, com uma diferença decisiva: valida. Se o corpo do pedido trouxer `preco` a zero ou `nome` vazio, o cliente recebe 422 com a lista exata dos campos errados, e a tua função nem chega a correr."],
+            ["obra", "Esta é a fronteira de que falámos no módulo 8.2: dados de fora entram por um sítio, são validados uma vez, e a partir daí o resto do código confia. Sem essa fronteira, cada função passa a ter de se defender, e nenhuma o faz bem."],
             ["h", "Os códigos de resposta que tens de acertar"],
             ["lista", [
               "200 para uma leitura com sucesso, 201 para uma criação.",
@@ -1346,7 +2162,7 @@ window.CURSO = {
           }
         },
         {
-          id: "16.2", titulo: "CRUD completo com base de dados", min: 22, estado: "pronta",
+          id: "20.2", titulo: "CRUD completo com base de dados", min: 22, estado: "pronta",
           meta: "No fim: organizas uma API em camadas e devolves o erro certo quando o recurso não existe.",
           blocos: [
             ["p", "CRUD é criar, ler, atualizar e apagar. É o esqueleto de quase todas as aplicações de gestão, e é o que te vão pedir para escrever na primeira semana de trabalho."],
@@ -1361,9 +2177,9 @@ window.CURSO = {
             ["p", "Parece burocracia num projeto de trezentas linhas e é o que o salva às três mil. A prova prática: se testar a tua regra de negócio obriga a arrancar um servidor HTTP, as camadas estão coladas."],
             ["code", "# repositorio.py\nclass NaoEncontrado(Exception):\n    pass\n\nclass RepositorioProdutos:\n    def __init__(self, sessao):\n        self.sessao = sessao\n\n    def obter(self, produto_id):\n        produto = self.sessao.get(Produto, produto_id)\n        if produto is None:\n            raise NaoEncontrado(f\"produto {produto_id}\")\n        return produto"],
             ["code", "# rotas.py\n@app.get(\"/produtos/{produto_id}\", response_model=ProdutoSaida)\ndef ler(produto_id: int, repo: RepositorioProdutos = Depends(obter_repo)):\n    try:\n        return repo.obter(produto_id)\n    except NaoEncontrado:\n        raise HTTPException(status_code=404, detail=\"produto não existe\")"],
-            ["p", "O `Depends` é injeção de dependências, o mesmo padrão do módulo 8.3, agora dado pelo framework. No teste, substitui-se o repositório por um falso e testa-se a rota sem base de dados nenhuma."],
+            ["p", "O `Depends` é injeção de dependências, o mesmo padrão do módulo 11.3, agora dado pelo framework. No teste, substitui-se o repositório por um falso e testa-se a rota sem base de dados nenhuma."],
             ["h", "Erros que se transformam em respostas"],
-            ["p", "As exceções de domínio do módulo 5.2 sobem até à camada web e são traduzidas ali, num sítio só. Sem isso, cada rota repete o mesmo `try` e uma delas há de esquecer-se."],
+            ["p", "As exceções de domínio do módulo 8.2 sobem até à camada web e são traduzidas ali, num sítio só. Sem isso, cada rota repete o mesmo `try` e uma delas há de esquecer-se."],
             ["code", "@app.exception_handler(NaoEncontrado)\ndef tratar_nao_encontrado(pedido, exc):\n    return JSONResponse(status_code=404, content={\"detalhe\": str(exc)})"],
             ["aviso", "PUT substitui o recurso inteiro, PATCH altera só os campos enviados. Implementar PUT como se fosse PATCH é o bug silencioso que apaga os campos que o cliente não mandou. Decide qual suportas e documenta."],
             ["h", "Alterações de esquema"],
@@ -1381,7 +2197,7 @@ window.CURSO = {
           }
         },
         {
-          id: "16.3", titulo: "Testar a API", min: 16, estado: "pronta",
+          id: "20.3", titulo: "Testar a API", min: 16, estado: "pronta",
           meta: "No fim: testas rotas de ponta a ponta, com base de dados de teste, em segundos.",
           blocos: [
             ["p", "Testar uma API não obriga a arrancar servidor nem a abrir portas. O `TestClient` do FastAPI chama a aplicação diretamente em memória e devolve respostas a sério, com código de estado e corpo."],
@@ -1390,7 +2206,7 @@ window.CURSO = {
             ["code", "def test_criar_e_ler_produto():\n    criado = cliente.post(\"/produtos\", json={\"nome\": \"teclado\", \"preco\": 39.9})\n    assert criado.status_code == 201\n    produto_id = criado.json()[\"id\"]\n\n    lido = cliente.get(f\"/produtos/{produto_id}\")\n    assert lido.status_code == 200\n    assert lido.json()[\"nome\"] == \"teclado\"\n\ndef test_produto_inexistente_da_404():\n    assert cliente.get(\"/produtos/999999\").status_code == 404\n\ndef test_preco_invalido_da_422():\n    resposta = cliente.post(\"/produtos\", json={\"nome\": \"x\", \"preco\": -1})\n    assert resposta.status_code == 422"],
             ["p", "Três testes, três caminhos: o feliz, o inexistente e o inválido. É o mínimo por recurso, e já apanha a maioria das regressões que um júnior introduz."],
             ["h", "Base de dados de teste"],
-            ["p", "Os testes não podem tocar na base de dados real. Substitui-se a dependência que dá a sessão por uma que aponta para SQLite em memória, criada e destruída por teste. É a fixture do módulo 10.2 aplicada a uma API."],
+            ["p", "Os testes não podem tocar na base de dados real. Substitui-se a dependência que dá a sessão por uma que aponta para SQLite em memória, criada e destruída por teste. É a fixture do módulo 14.2 aplicada a uma API."],
             ["code", "@pytest.fixture\ndef cliente():\n    motor = create_engine(\"sqlite:///:memory:\")\n    Base.metadata.create_all(motor)\n\n    def sessao_de_teste():\n        with Session(motor) as s:\n            yield s\n\n    app.dependency_overrides[obter_sessao] = sessao_de_teste\n    yield TestClient(app)\n    app.dependency_overrides.clear()"],
             ["p", "`dependency_overrides` é o FastAPI a deixar-te trocar qualquer dependência no teste. Sem esse gancho, terias de mexer em variáveis globais, que é como se escrevem suites que só passam à primeira execução."],
             ["h", "A pirâmide, sem religião"],
@@ -1416,11 +2232,11 @@ window.CURSO = {
       ]
     },
     {
-      n: 17, fase: 4, titulo: "Concorrência",
+      n: 21, fase: 4, titulo: "Concorrência",
       objetivo: "Fazer 200 pedidos em 3 segundos em vez de 3 minutos.",
       licoes: [
         {
-          id: "17.1", titulo: "async e await sem misticismo", min: 18, estado: "pronta",
+          id: "21.1", titulo: "async e await sem misticismo", min: 18, estado: "pronta",
           meta: "No fim: sabes onde a assincronia ajuda mesmo e onde não faz diferença nenhuma.",
           blocos: [
             ["p", "Assincronia não torna o teu código mais rápido a calcular. Serve para uma coisa só: enquanto o programa espera por algo de fora, rede, disco ou base de dados, fazer outra coisa em vez de ficar parado."],
@@ -1456,14 +2272,14 @@ window.CURSO = {
       ]
     },
     {
-      n: 18, fase: 4, titulo: "Pôr no ar",
+      n: 22, fase: 4, titulo: "Pôr no ar",
       objetivo: "Software que só corre no teu portátil não conta.",
       licoes: [
         {
-          id: "18.1", titulo: "Docker para quem escreve Python", min: 20, estado: "pronta",
+          id: "22.1", titulo: "Docker para quem escreve Python", min: 20, estado: "pronta",
           meta: "No fim: empacotas a aplicação numa imagem que corre igual em qualquer máquina.",
           blocos: [
-            ["p", "Uma imagem é o teu código mais o sistema mínimo para o correr, tudo congelado. Um contentor é essa imagem em execução. O problema que isto resolve é o do módulo 7.2 levado ao limite: não é só a versão da biblioteca, é a versão do Python, do sistema e das bibliotecas do sistema."],
+            ["p", "Uma imagem é o teu código mais o sistema mínimo para o correr, tudo congelado. Um contentor é essa imagem em execução. O problema que isto resolve é o do módulo 10.2 levado ao limite: não é só a versão da biblioteca, é a versão do Python, do sistema e das bibliotecas do sistema."],
             ["code", "# Dockerfile\nFROM python:3.12-slim\n\nWORKDIR /app\n\nCOPY requirements.txt .\nRUN pip install --no-cache-dir -r requirements.txt\n\nCOPY . .\n\nENV PYTHONUNBUFFERED=1\nEXPOSE 8000\nCMD [\"uvicorn\", \"main:app\", \"--host\", \"0.0.0.0\", \"--port\", \"8000\"]"],
             ["code", "docker build -t vendas:0.1 .\ndocker run -p 8000:8000 --env-file .env vendas:0.1\ndocker logs -f <id>\ndocker exec -it <id> bash"],
             ["h", "Porque é que os requisitos são copiados primeiro"],
@@ -1478,7 +2294,7 @@ window.CURSO = {
             ["h", "Configuração por variáveis de ambiente"],
             ["p", "A mesma imagem tem de servir para desenvolvimento, testes e produção. O que muda entre eles é configuração, e a configuração entra por variáveis de ambiente, nunca dentro da imagem."],
             ["py", "import os\n\ndef config(ambiente):\n    if \"DATABASE_URL\" not in ambiente:\n        raise RuntimeError(\"falta DATABASE_URL\")\n    return {\n        \"base_de_dados\": ambiente[\"DATABASE_URL\"],\n        \"debug\": ambiente.get(\"DEBUG\", \"0\") == \"1\",\n        \"porta\": int(ambiente.get(\"PORT\", 8000)),\n    }\n\nprint(config({\"DATABASE_URL\": \"sqlite:///loja.db\", \"DEBUG\": \"1\"}))"],
-            ["p", "Repara que a função recebe o ambiente em vez de ler `os.environ` diretamente. É o mesmo truque do módulo 8.3: assim consegues testá-la com um dicionário, sem mexer no ambiente do processo."],
+            ["p", "Repara que a função recebe o ambiente em vez de ler `os.environ` diretamente. É o mesmo truque do módulo 11.3: assim consegues testá-la com um dicionário, sem mexer no ambiente do processo."],
             ["aviso", "Segredos não entram na imagem. Um `ENV API_KEY=...` no Dockerfile fica gravado na imagem e qualquer pessoa que a descarregue o consegue ler, mesmo que apagues numa camada seguinte. Passam-se em execução, ou vêm do gestor de segredos da plataforma."],
             ["h", "docker compose para o ambiente local"],
             ["code", "services:\n  api:\n    build: .\n    ports: [\"8000:8000\"]\n    env_file: .env\n    depends_on: [bd]\n  bd:\n    image: postgres:16\n    environment:\n      POSTGRES_PASSWORD: local\n    volumes:\n      - dados:/var/lib/postgresql/data\n\nvolumes:\n  dados:"],
@@ -1495,13 +2311,13 @@ window.CURSO = {
           }
         },
         {
-          id: "18.2", titulo: "Publicar e monitorizar", min: 16, estado: "pronta",
+          id: "22.2", titulo: "Publicar e monitorizar", min: 16, estado: "pronta",
           meta: "No fim: pões o serviço no ar e sabes, sem perguntar a ninguém, se está de pé.",
           blocos: [
             ["p", "Publicar é copiar a imagem para uma máquina que a corre, com a configuração daquele ambiente. As plataformas modernas fazem isso a partir de um push no git. O que é teu é o que vem a seguir: saber se aquilo está bem."],
             ["h", "O caminho até ao ar"],
             ["lista", [
-              "A CI corre linter, tipos e testes, como no módulo 11.2.",
+              "A CI corre linter, tipos e testes, como no módulo 15.2.",
               "Constrói a imagem e marca-a com a versão ou o identificador do commit.",
               "Aplica as migrações da base de dados antes de trocar a aplicação.",
               "Arranca a versão nova, confirma a rota de saúde, e só depois desliga a antiga.",
@@ -1513,7 +2329,7 @@ window.CURSO = {
             ["p", "Distinguir 'degradado' de 'em baixo' importa: sem cache o serviço responde mais devagar, sem base de dados não responde de todo. Quem monitoriza precisa de saber a diferença para decidir se acorda alguém."],
             ["h", "O que vale a pena observar"],
             ["lista", [
-              "Registos estruturados, do módulo 6.3, com um identificador por pedido para seguir o rasto.",
+              "Registos estruturados, do módulo 9.3, com um identificador por pedido para seguir o rasto.",
               "Métricas: pedidos por segundo, latência no percentil 95, percentagem de erros.",
               "Alertas sobre sintomas que o utilizador sente, não sobre CPU a 80 por cento.",
               "Rastreio de erros, tipo Sentry, que agrupa exceções e mostra o traceback com o contexto."
@@ -1537,13 +2353,191 @@ window.CURSO = {
       ]
     },
 
+    {
+      n: 23, fase: 4, titulo: "Programas que te vão pedir no trabalho",
+      objetivo: "Os pedidos reais que chegam a um júnior no primeiro trimestre.",
+      licoes: [
+        {
+          id: "23.1", titulo: "Uma ferramenta de linha de comandos", min: 18, estado: "pronta",
+          meta: "No fim: escreves um programa que outra pessoa consegue usar sem te perguntar nada.",
+          blocos: [
+            ["p", "O primeiro programa que te vão pedir para outra pessoa usar é quase sempre um comando: 'faz-me um script que exporte isto'. A diferença entre um script e uma ferramenta é previsibilidade: tem `--help`, aceita argumentos, devolve um código de saída honesto e não destrói nada sem avisar."],
+            ["h", "argparse, que já vem no Python"],
+            ["code", "import argparse\nimport sys\n\n\ndef construir_parser():\n    p = argparse.ArgumentParser(\n        prog=\"exportar\",\n        description=\"Exporta as vendas de um período para CSV ou JSON.\",\n    )\n    p.add_argument(\"ficheiro\", help=\"ficheiro de entrada\")\n    p.add_argument(\"--dias\", type=int, default=30, help=\"período a exportar\")\n    p.add_argument(\"--formato\", choices=[\"csv\", \"json\"], default=\"csv\")\n    p.add_argument(\"--dry-run\", action=\"store_true\", help=\"mostra o que faria, sem escrever\")\n    p.add_argument(\"-v\", \"--verbose\", action=\"store_true\")\n    return p\n\n\ndef main(argv=None):\n    args = construir_parser().parse_args(argv)\n    if args.dry_run:\n        print(f\"escreveria {args.ficheiro} em {args.formato}\", file=sys.stderr)\n        return 0\n    ...\n    return 0\n\n\nif __name__ == \"__main__\":\n    sys.exit(main())"],
+            ["p", "Com vinte linhas ganhaste `--help` escrito sozinho, conversão de tipos, validação de opções e mensagens de erro decentes. Escrever isto à mão com `sys.argv` é trabalho a mais e fica pior."],
+            ["py", "import argparse\n\np = argparse.ArgumentParser(prog=\"exportar\")\np.add_argument(\"ficheiro\")\np.add_argument(\"--dias\", type=int, default=30)\np.add_argument(\"--dry-run\", action=\"store_true\")\n\nprint(p.parse_args([\"vendas.csv\"]))\nprint(p.parse_args([\"vendas.csv\", \"--dias\", \"7\", \"--dry-run\"]))"],
+            ["h", "As regras que fazem uma ferramenta boa"],
+            ["lista", [
+              "O resultado vai para o `stdout`. As mensagens para a pessoa vão para o `stderr`. Assim, `programa > ficheiro.csv` guarda dados limpos e as mensagens continuam a aparecer no ecrã.",
+              "Código de saída: `0` correu bem, `1` falhou, `2` foi mal usado. É por aqui que o cron e o CI sabem se devem gritar.",
+              "`--dry-run` em tudo o que apaga, altera ou envia. E que seja o comportamento por omissão enquanto a ferramenta for nova.",
+              "Nada de `input()`: uma ferramenta tem de poder correr sem ninguém a olhar.",
+              "Segredos vêm de variáveis de ambiente, nunca de argumentos: a linha de comandos fica no histórico e aparece na lista de processos."
+            ]],
+            ["py", "import argparse\n\np = argparse.ArgumentParser()\nsub = p.add_subparsers(dest=\"comando\", required=True)\n\nimportar = sub.add_parser(\"importar\")\nimportar.add_argument(\"ficheiro\")\n\nlistar = sub.add_parser(\"listar\")\nlistar.add_argument(\"--limite\", type=int, default=10)\n\nprint(p.parse_args([\"importar\", \"dados.csv\"]))\nprint(p.parse_args([\"listar\", \"--limite\", \"3\"]))"],
+            ["obra", "`--dry-run` já salvou mais carreiras do que qualquer padrão de desenho. Quando escreveres uma ferramenta que apaga, migra ou envia, faz a versão que só mostra primeiro, mostra a saída a alguém, e só depois ligas a que age a sério."],
+            ["aviso", "Três coisas que a tua ferramenta vai encontrar no primeiro dia e quase ninguém trata: caminhos com espaços e acentos, ficheiros que não existem, e um `Ctrl+C` a meio. O primeiro resolve-se com `pathlib`, o segundo com uma mensagem clara e código 1, o terceiro apanhando `KeyboardInterrupt` para sair limpo."]
+          ],
+          quiz: [
+            { p: "A tua ferramenta imprime o relatório e também as mensagens de progresso no `stdout`. Qual é o problema?", o: ["Nenhum", "Quem redirecionar a saída para um ficheiro fica com as mensagens misturadas nos dados", "É mais lento"], c: 1,
+              e: "Dados para o `stdout`, conversa para o `stderr`. É o que permite encadear a tua ferramenta com outras, que é para isso que as ferramentas de linha de comandos servem." }
+          ],
+          exercicio: {
+            enunciado: "Escreve `construir_parser()`, que devolve um `ArgumentParser` com: um argumento posicional obrigatório `ficheiro`; a opção `--dias`, inteira, com omissão 30; a bandeira `--dry-run`, que fica `True` quando está presente; e a opção `--formato`, limitada a `csv` ou `json`, com omissão `csv`.",
+            inicio: "import argparse\n\n\ndef construir_parser():\n    pass\n",
+            testes: "_p = construir_parser()\n_a = _p.parse_args(['vendas.csv'])\nverifica('ficheiro posicional', _a.ficheiro == 'vendas.csv')\nverifica('dias por omissao', _a.dias == 30)\nverifica('dry_run por omissao e False', _a.dry_run is False)\nverifica('formato por omissao', _a.formato == 'csv')\n_b = _p.parse_args(['x.csv', '--dias', '7', '--dry-run', '--formato', 'json'])\nverifica('dias convertido para inteiro', _b.dias == 7 and isinstance(_b.dias, int))\nverifica('bandeira ativa', _b.dry_run is True)\nverifica('formato escolhido', _b.formato == 'json')\n_recusou = False\ntry:\n    _p.parse_args(['x.csv', '--formato', 'xml'])\nexcept SystemExit:\n    _recusou = True\nverifica('formato invalido e rejeitado', _recusou)\n_sem_ficheiro = False\ntry:\n    _p.parse_args([])\nexcept SystemExit:\n    _sem_ficheiro = True\nverifica('ficheiro e obrigatorio', _sem_ficheiro)"
+          }
+        },
+        {
+          id: "23.2", titulo: "Um relatório a partir de dados que ninguém limpou", min: 20, estado: "pronta",
+          meta: "No fim: produzes um relatório fiável a partir de um ficheiro sujo, e dizes o que deitaste fora.",
+          blocos: [
+            ["p", "O pedido é sempre parecido: 'pega neste ficheiro e diz-me os totais por produto'. O ficheiro tem colunas vazias, datas em três formatos, vírgulas decimais, linhas repetidas e um cabeçalho com um espaço a mais. Isto não é azar: é o estado normal dos dados."],
+            ["h", "O caminho: ler, normalizar, validar, agregar, escrever"],
+            ["code", "import csv\nfrom pathlib import Path\n\n\ndef ler(caminho):\n    # utf-8-sig come o BOM que o Excel põe à cabeça\n    with Path(caminho).open(encoding=\"utf-8-sig\", newline=\"\") as f:\n        return list(csv.DictReader(f, delimiter=\";\"))"],
+            ["lista", [
+              "`newline=\"\"` no `open` é obrigatório com o módulo `csv`, senão partes-te com quebras de linha dentro de campos.",
+              "`encoding=\"utf-8-sig\"` para ficheiros do Excel; `utf-8` para tudo o resto; e pergunta a origem quando os acentos vierem partidos.",
+              "`DictReader` dá-te dicionários com os nomes das colunas. Normaliza os nomes: `.strip().lower()`.",
+              "O separador em Portugal é muitas vezes `;`, porque a vírgula é decimal."
+            ]],
+            ["h", "Normalizar antes de validar"],
+            ["py", "def a_numero(bruto):\n    \"\"\"Aceita '1 234,56', '1234.56' e ' 12 '. Devolve None se não der.\"\"\"\n    if bruto is None:\n        return None\n    limpo = bruto.strip().replace(\" \", \"\").replace(\"\\u00a0\", \"\")\n    if limpo.count(\",\") == 1 and limpo.count(\".\") == 0:\n        limpo = limpo.replace(\",\", \".\")\n    else:\n        limpo = limpo.replace(\",\", \"\")\n    try:\n        return float(limpo)\n    except ValueError:\n        return None\n\nfor bruto in [\"39,90\", \"1 234,56\", \"1,234.56\", \" 12 \", \"N/D\", \"\"]:\n    print(repr(bruto), \"->\", a_numero(bruto))"],
+            ["h", "Nunca deites uma linha fora em silêncio"],
+            ["p", "Cada linha rejeitada leva o número da linha e o motivo. No fim entregas duas coisas: o relatório e a lista de rejeições. É a diferença entre um número em que se confia e um número que alguém vai ter de auditar."],
+            ["py", "def processar(linhas):\n    totais, rejeitadas = {}, []\n    for i, linha in enumerate(linhas, start=1):\n        produto = (linha.get(\"produto\") or \"\").strip()\n        if not produto:\n            rejeitadas.append((i, \"produto em falta\"))\n            continue\n        valor = a_numero(linha.get(\"valor\"))\n        if valor is None:\n            rejeitadas.append((i, \"valor inválido\"))\n            continue\n        totais[produto] = round(totais.get(produto, 0.0) + valor, 2)\n    return totais, rejeitadas\n\n\ndef a_numero(bruto):\n    try:\n        return float((bruto or \"\").strip().replace(\",\", \".\"))\n    except ValueError:\n        return None\n\n\nlinhas = [{\"produto\": \"teclado\", \"valor\": \"39,90\"}, {\"produto\": \"\", \"valor\": \"5\"}]\nprint(processar(linhas))"],
+            ["h", "Escrever o resultado"],
+            ["code", "import csv\n\nwith open(\"relatorio.csv\", \"w\", encoding=\"utf-8\", newline=\"\") as f:\n    escritor = csv.writer(f, delimiter=\";\")\n    escritor.writerow([\"produto\", \"total\"])\n    for produto, total in sorted(totais.items()):\n        escritor.writerow([produto, f\"{total:.2f}\"])"],
+            ["obra", "Entregar 'processei 10 000 linhas' sem dizer que 400 foram ignoradas é pior do que não entregar nada, porque alguém vai tomar decisões com o número. 'Processei 9 600, rejeitei 400, aqui está o ficheiro com os motivos' é a mesma meia hora de trabalho e é a diferença entre um júnior e um estagiário."],
+            ["aviso", "`1.234,56` e `1,234.56` são o mesmo número escrito por países diferentes, e `1.234` pode ser mil duzentos e trinta e quatro ou um vírgula dois três quatro. Não adivinhes: pergunta a origem do ficheiro e escreve a regra no código, com um comentário."]
+          ],
+          quiz: [
+            { p: "O relatório dá um total 30% abaixo do esperado e ninguém percebe porquê. O que faltou ao programa?", o: ["Mais testes de desempenho", "Registar e devolver as linhas rejeitadas com o motivo", "Usar pandas"], c: 1,
+              e: "Sem a lista de rejeições não há forma de saber se faltam dados ou se o cálculo está errado. As rejeições são parte do resultado, não um detalhe interno." }
+          ],
+          exercicio: {
+            enunciado: "Escreve `processar(linhas)`, que recebe dicionários com `produto` e `valor`. O valor pode vir com vírgula decimal e espaços à volta; o nome do produto pode vir com espaços. Devolve o par `(totais, rejeitadas)`: `totais` é produto para soma arredondada a duas casas, e `rejeitadas` é uma lista de `(numero_da_linha, motivo)` com `'produto em falta'` ou `'valor invalido'`. A primeira linha é a número 1.",
+            inicio: "def processar(linhas):\n    pass\n",
+            testes: "_linhas = [\n    {'produto': 'teclado', 'valor': '39,90'},\n    {'produto': ' teclado ', 'valor': ' 10.10 '},\n    {'produto': '', 'valor': '5'},\n    {'produto': 'rato', 'valor': 'x'},\n]\n_totais, _rejeitadas = processar(_linhas)\nverifica('soma por produto', _totais == {'teclado': 50.0})\nverifica('duas rejeicoes', len(_rejeitadas) == 2)\nverifica('motivo de produto em falta', _rejeitadas[0] == (3, 'produto em falta'))\nverifica('motivo de valor invalido', _rejeitadas[1] == (4, 'valor invalido'))\n_t2, _r2 = processar([])\nverifica('sem linhas', _t2 == {} and _r2 == [])\n_t3, _r3 = processar([{'produto': 'rato', 'valor': '1'}, {'produto': 'ana', 'valor': '2'}])\nverifica('produtos diferentes somam em separado', _t3 == {'rato': 1.0, 'ana': 2.0})\n_t4, _r4 = processar([{'produto': 'x'}])\nverifica('valor em falta tambem e rejeitado', _r4 == [(1, 'valor invalido')])"
+          }
+        },
+        {
+          id: "23.3", titulo: "Importar dados sem estragar nada", min: 18, estado: "pronta",
+          meta: "No fim: escreves uma importação que se pode correr duas vezes sem duplicar nada.",
+          blocos: [
+            ["p", "Trazer dados de outro sistema para o nosso é das tarefas mais comuns e das mais fáceis de fazer mal. A pergunta que te vão fazer na revisão, e que decide tudo, é: **o que acontece se isto correr duas vezes?**"],
+            ["h", "Idempotência"],
+            ["p", "Uma operação idempotente dá o mesmo resultado à primeira e à décima vez. Sem isto, qualquer falha a meio deixa-te sem saída: se voltares a correr, duplicas; se não voltares, ficas a meio."],
+            ["lista", [
+              "Encontra a **chave natural**: o que identifica o registo nos dois sistemas. Um NIF, um código de artigo, um identificador externo. Nunca a posição na lista.",
+              "Para cada registo que chega: existe? é diferente? Cria, atualiza ou ignora, e conta cada caso.",
+              "Nunca um `INSERT` cego. Ou é `upsert`, ou é procurar antes.",
+              "Não apagues o que desapareceu da origem: marca como inativo, com data. Apagar é irreversível e a origem pode estar com um problema."
+            ]],
+            ["h", "Ensaio antes da corrida"],
+            ["code", "$ importar --ficheiro clientes.csv --dry-run\nliria criar      412\nliria atualizar   38\nsem alterações  1150\nrejeitadas         6  (ver rejeitadas.csv)\n\n$ importar --ficheiro clientes.csv\ncriados 412, atualizados 38, iguais 1150, rejeitados 6, 14s"],
+            ["p", "O ensaio percorre tudo e não escreve nada. É a forma mais barata de descobrir que a coluna que julgavas ser o identificador tem duplicados."],
+            ["h", "Falhar a meio"],
+            ["lista", [
+              "**Transacional**: tudo ou nada, com um `commit` no fim. Simples, e só serve enquanto couber numa transação razoável.",
+              "**Retomável**: processa em lotes, com `commit` por lote e um registo de onde ia. Se rebentar ao lote 37, recomeças no 37.",
+              "Escolhe uma das duas **antes** de escrever. Uma importação sem nenhuma das duas deixa metade dos dados lá dentro e ninguém sabe qual metade."
+            ]],
+            ["h", "Registo de auditoria"],
+            ["p", "Guarda quem correu, quando, com que ficheiro, e o resumo. Daqui a seis meses, quando alguém perguntar porque é que o cliente 4471 tem o nome errado, a resposta está nesse registo ou não existe."],
+            ["obra", "'O que acontece se correr duas vezes?' é a pergunta que distingue quem já levou com isto de quem ainda não. Ter a resposta preparada, antes de a fazerem, é das formas mais rápidas de ganhar confiança numa equipa nova."],
+            ["aviso", "Comparar registos com `==` num dicionário que traz campos voláteis, como a data da última sincronização, faz com que tudo pareça diferente e atualizes tudo em todas as corridas. Compara só os campos que interessam ao negócio."]
+          ],
+          quiz: [
+            { p: "A importação rebenta a meio e já criou metade dos registos. O que devia estar no desenho desde o início?", o: ["Um try/except à volta de tudo", "Ou uma transação, ou lotes com registo de progresso para poder retomar", "Correr mais depressa"], c: 1,
+              e: "Um `except` que engole o erro deixa-te na mesma situação, mas sem mensagem. O que resolve é decidir de antemão se a operação é atómica ou retomável." }
+          ],
+          exercicio: {
+            enunciado: "Escreve `aplicar(existentes, novos)`, o coração de uma importação idempotente. Ambos são dicionários id para registo. Devolve `(resultado, resumo)`, em que `resultado` é o estado final e `resumo` conta `criados`, `atualizados` e `iguais`. Registos iguais não contam como atualização, e `existentes` não pode ser alterado.",
+            inicio: "def aplicar(existentes, novos):\n    pass\n",
+            testes: "_ex = {'1': {'nome': 'Ana'}, '2': {'nome': 'Rui'}}\n_novos = {'1': {'nome': 'Ana'}, '2': {'nome': 'Rui Silva'}, '3': {'nome': 'Eva'}}\n_res, _resumo = aplicar(_ex, _novos)\nverifica('resultado completo', _res == {'1': {'nome': 'Ana'}, '2': {'nome': 'Rui Silva'}, '3': {'nome': 'Eva'}})\nverifica('contagens certas', _resumo == {'criados': 1, 'atualizados': 1, 'iguais': 1})\nverifica('nao altera os existentes', _ex == {'1': {'nome': 'Ana'}, '2': {'nome': 'Rui'}})\n_res2, _resumo2 = aplicar(_res, _novos)\nverifica('correr outra vez nao muda nada', _res2 == _res)\nverifica('segunda passagem nao cria nem atualiza', _resumo2 == {'criados': 0, 'atualizados': 0, 'iguais': 3})\nverifica('sem novos nao mexe em nada', aplicar(_ex, {}) == (_ex, {'criados': 0, 'atualizados': 0, 'iguais': 0}))\n_vazio, _rv = aplicar({}, {'9': {'nome': 'Nova'}})\nverifica('importar para vazio cria tudo', _vazio == {'9': {'nome': 'Nova'}} and _rv['criados'] == 1)"
+          }
+        },
+        {
+          id: "23.4", titulo: "Uma tarefa agendada que não falha em silêncio", min: 16, estado: "pronta",
+          meta: "No fim: desenhas um trabalho automático que se sabe se correu, se falhou, e que se pode reprocessar.",
+          blocos: [
+            ["p", "Mais cedo do que julgas vais escrever algo que corre às três da manhã sem ninguém a ver: o relatório diário, a sincronização, a limpeza. As exigências são diferentes das de um programa que uma pessoa corre e vigia."],
+            ["h", "As cinco propriedades"],
+            ["lista", [
+              "**Sabe-se que correu**: deixa um registo com início, fim e contagens.",
+              "**Sabe-se que falhou**: código de saída diferente de zero e alerta para onde alguém olha. Uma falha silenciosa é pior do que não ter a tarefa.",
+              "**Não corre duas vezes ao mesmo tempo**: se a corrida de hoje ainda vai a meio quando começa a de amanhã, tens duas a escrever nos mesmos dados.",
+              "**Reprocessável**: recebe a data como parâmetro em vez de perguntar 'que dia é hoje?'.",
+              "**Limitada no tempo**: um `timeout` em tudo o que fala com a rede, senão uma chamada pendurada bloqueia a tarefa para sempre."
+            ]],
+            ["h", "A data como argumento, não como 'hoje'"],
+            ["code", "# mau: só sabe processar o dia de hoje\npython3 relatorio.py\n\n# bom: reprocessa qualquer dia, incluindo o que falhou ontem\npython3 relatorio.py --data 2026-03-14"],
+            ["p", "Isto parece um detalhe e é a diferença entre 'a tarefa falhou ontem, corre outra vez com a data de ontem' e 'a tarefa falhou ontem, os dados desse dia perderam-se'."],
+            ["h", "Não correr duas vezes"],
+            ["py", "from pathlib import Path\n\nclass JaEstaACorrer(Exception):\n    pass\n\ndef adquirir(caminho):\n    ficheiro = Path(caminho)\n    try:\n        # x = criar em exclusivo: falha se já existir\n        ficheiro.open(\"x\").close()\n        return True\n    except FileExistsError:\n        raise JaEstaACorrer(f\"já existe {caminho}\")\n\nprint(\"esta é a ideia: um ficheiro de bloqueio criado em exclusivo\")\nprint(\"no fim, em finally, apaga-se\")"],
+            ["aviso", "Um ficheiro de bloqueio que não é apagado quando o processo é morto deixa a tarefa bloqueada para sempre. Apaga-o num `finally`, e guarda lá dentro o número do processo e a hora, para alguém poder decidir se é um bloqueio válido ou um resto de uma morte súbita. Em sistemas com várias máquinas, o bloqueio tem de viver na base de dados, não no disco local."],
+            ["h", "Agendar"],
+            ["code", "# cron: minuto hora dia mês dia-da-semana\n# todos os dias às 03:15, com registo e alerta em caso de falha\n15 3 * * * /opt/app/.venv/bin/python /opt/app/relatorio.py --data $(date -d yesterday +\\%F) >> /var/log/relatorio.log 2>&1"],
+            ["lista", [
+              "Caminhos absolutos: o cron não tem o teu `PATH` nem a tua pasta atual.",
+              "O Python do ambiente virtual, não o do sistema.",
+              "`2>&1` para os erros irem para o mesmo registo.",
+              "Guarda e agenda em UTC. Mostra em hora local. A mudança da hora existe e cai sempre num domingo de madrugada."
+            ]],
+            ["obra", "Se a tua tarefa falhar e ninguém souber durante três semanas, os dados errados já foram para relatórios, e alguém já decidiu com eles. Por isso, um trabalho agendado sem alerta de falha é considerado incompleto na revisão, mesmo que o código esteja impecável."]
+          ],
+          quiz: [
+            { p: "A tarefa diária falhou esta noite. O que te permite recuperar sem perder dados?", o: ["Correr outra vez amanhã", "Receber a data como parâmetro, para poder reprocessar o dia que falhou", "Aumentar o timeout"], c: 1,
+              e: "Se a tarefa só sabe processar 'hoje', o dia que falhou não volta. A data como argumento transforma uma falha num comando." }
+          ],
+          exercicio: {
+            enunciado: "Escreve `deve_correr(ultima, agora, intervalo_min)`, que decide se a tarefa deve arrancar. Devolve `True` se nunca correu (`ultima` é `None`) ou se já passou pelo menos `intervalo_min` minutos. Se `agora` for anterior a `ultima`, o relógio andou para trás: levanta `ValueError`.",
+            inicio: "from datetime import datetime, timedelta\n\n\ndef deve_correr(ultima, agora, intervalo_min):\n    pass\n",
+            testes: "from datetime import datetime as _dt, timedelta as _td\n_u = _dt(2026, 1, 5, 3, 0)\nverifica('nunca correu', deve_correr(None, _u, 60) is True)\nverifica('ainda nao passou o intervalo', deve_correr(_u, _u + _td(minutes=30), 60) is False)\nverifica('passou o intervalo', deve_correr(_u, _u + _td(minutes=61), 60) is True)\nverifica('exatamente no intervalo corre', deve_correr(_u, _u + _td(minutes=60), 60) is True)\nverifica('mesmo instante nao corre', deve_correr(_u, _u, 60) is False)\nverifica('intervalo zero corre sempre', deve_correr(_u, _u, 0) is True)\n_erro = False\ntry:\n    deve_correr(_u, _u - _td(minutes=1), 60)\nexcept ValueError:\n    _erro = True\nverifica('relogio para tras levanta ValueError', _erro)"
+          }
+        },
+        {
+          id: "23.5", titulo: "Juntar dois sistemas e explicar as diferenças", min: 18, estado: "pronta",
+          meta: "No fim: produzes uma reconciliação que diz quais são as diferenças e porquê, não só quantas.",
+          blocos: [
+            ["p", "'O site diz 1204 encomendas, o sistema de faturação diz 1198. Descobre as seis.' Este pedido vai chegar-te, e a parte difícil não é programar: é normalizar duas realidades que foram construídas por equipas diferentes."],
+            ["h", "Antes de comparar, normaliza"],
+            ["lista", [
+              "A chave: um sistema tem `ENC-00123`, o outro tem `123`. Escreve uma função que converte os dois para a mesma forma e testa-a.",
+              "Texto: espaços, maiúsculas, acentos. Nomes de clientes nunca coincidem à primeira.",
+              "Datas: fusos horários e o que conta como 'dia'. Uma encomenda das 23:50 em Lisboa é do dia seguinte em UTC.",
+              "Dinheiro: cêntimos ou `Decimal` dos dois lados, e a mesma regra de arredondamento (módulo 3.1)."
+            ]],
+            ["h", "As três diferenças possíveis"],
+            ["py", "def reconciliar(a, b, tolerancia=0.01):\n    so_em_a = sorted(set(a) - set(b))\n    so_em_b = sorted(set(b) - set(a))\n    diferentes = []\n    for chave in sorted(set(a) & set(b)):\n        if abs(a[chave] - b[chave]) > tolerancia:\n            diferentes.append((chave, a[chave], b[chave]))\n    return {\"so_em_a\": so_em_a, \"so_em_b\": so_em_b, \"diferentes\": diferentes}\n\nsite = {\"1\": 10.0, \"2\": 20.0, \"3\": 5.0}\nfaturacao = {\"1\": 10.005, \"2\": 25.0, \"4\": 1.0}\nprint(reconciliar(site, faturacao))"],
+            ["p", "Repara na tolerância. Sem ela, um cêntimo de arredondamento diferente entre os dois sistemas produz centenas de diferenças fantasma e o relatório passa a ser inútil."],
+            ["h", "Entregar o resultado"],
+            ["p", "Um número não é uma resposta. O que te vão pedir a seguir é sempre 'porquê', portanto agrupa as diferenças por causa provável antes de entregares."],
+            ["code", "6 diferenças:\n  4  só no site        todas depois das 23:00 de ontem  -> ainda não sincronizadas\n  1  só na faturação   encomenda manual criada pelo apoio\n  1  valor diferente   0,02 EUR  -> arredondamento do IVA linha a linha vs no total"],
+            ["obra", "Ninguém quer 'há 6 diferenças'. Querem a tabela acima. Apresentar uma reconciliação com as causas agrupadas é o tipo de trabalho que faz um responsável lembrar-se do teu nome, e custa-te mais meia hora do que entregar o número."],
+            ["aviso", "Uma reconciliação é uma fotografia de um instante. Se os dois sistemas estiverem a mudar enquanto comparas, geras diferenças que não existem. Fixa uma janela temporal explícita e escreve-a no relatório: 'encomendas criadas até 2026-03-14 00:00 UTC'."]
+          ],
+          quiz: [
+            { p: "Comparaste os totais dos dois sistemas com `==` e apareceram 800 diferenças, todas de cêntimos. Qual é a causa mais provável?", o: ["Um dos sistemas está corrompido", "Arredondamento e comparação de floats sem tolerância", "Faltam dados"], c: 1,
+              e: "Regras de arredondamento diferentes, ou floats comparados diretamente, produzem diferenças fantasma em massa. Compara em cêntimos, ou com uma tolerância explícita e escrita no relatório." }
+          ],
+          exercicio: {
+            enunciado: "Escreve `reconciliar(a, b, tolerancia=0.01)`. Recebe dois dicionários id para valor e devolve um dicionário com `'so_em_a'`, `'so_em_b'` (listas de ids ordenadas) e `'diferentes'` (lista de `(id, valor_a, valor_b)` ordenada por id), considerando iguais os valores cuja diferença não ultrapassa a tolerância.",
+            inicio: "def reconciliar(a, b, tolerancia=0.01):\n    pass\n",
+            testes: "_a = {'1': 10.0, '2': 20.0, '3': 5.0}\n_b = {'1': 10.005, '2': 25.0, '4': 1.0}\n_r = reconciliar(_a, _b)\nverifica('so em a', _r['so_em_a'] == ['3'])\nverifica('so em b', _r['so_em_b'] == ['4'])\nverifica('diferencas acima da tolerancia', _r['diferentes'] == [('2', 20.0, 25.0)])\nverifica('dentro da tolerancia nao conta', ('1', 10.0, 10.005) not in _r['diferentes'])\nverifica('tudo vazio', reconciliar({}, {}) == {'so_em_a': [], 'so_em_b': [], 'diferentes': []})\nverifica('tolerancia configuravel', reconciliar({'1': 10.0}, {'1': 11.0}, tolerancia=2)['diferentes'] == [])\nverifica('diferenca negativa tambem conta', reconciliar({'1': 5.0}, {'1': 1.0})['diferentes'] == [('1', 5.0, 1.0)])\n_muitos = reconciliar({'b': 1.0, 'a': 1.0}, {})\nverifica('so_em_a vem ordenado', _muitos['so_em_a'] == ['a', 'b'])"
+          }
+        }
+      ]
+    },
+
     /* ---------------- FASE 5 ---------------- */
     {
-      n: 19, fase: 5, titulo: "Projeto final",
+      n: 24, fase: 5, titulo: "Projeto final",
       objetivo: "Uma peça de software completa que aguenta perguntas.",
       licoes: [
         {
-          id: "19.1", titulo: "Escolher um projeto que não seja o de toda a gente", min: 14, estado: "pronta",
+          id: "24.1", titulo: "Escolher um projeto que não seja o de toda a gente", min: 14, estado: "pronta",
           meta: "No fim: escolhes um projeto de portefólio com critérios em vez de com entusiasmo.",
           blocos: [
             ["p", "Quem recruta vê a mesma lista todas as semanas: gestor de tarefas, clone do Twitter, previsão do tempo, bot de Discord. Não são maus projetos, são invisíveis. O objetivo do portefólio não é provar que sabes seguir um tutorial, é dar assunto de conversa técnica."],
@@ -1569,7 +2563,7 @@ window.CURSO = {
             ["h", "Como o vais mostrar"],
             ["lista", [
               "Repositório público, com README que explica o problema antes da tecnologia.",
-              "Alguns testes a passar e a CI verde do módulo 11.2.",
+              "Alguns testes a passar e a CI verde do módulo 15.2.",
               "Commits pequenos e datados ao longo de semanas, e não um só commit com tudo.",
               "Se for uma API ou um site, um sítio onde a pessoa possa clicar e ver a funcionar."
             ]]
@@ -1585,7 +2579,7 @@ window.CURSO = {
           }
         },
         {
-          id: "19.2", titulo: "README, licença e histórico de commits", min: 14, estado: "pronta",
+          id: "24.2", titulo: "README, licença e histórico de commits", min: 14, estado: "pronta",
           meta: "No fim: o teu repositório explica-se sozinho a quem tem trinta segundos.",
           blocos: [
             ["p", "Quem recruta abre o repositório, lê o README e decide em menos de um minuto se continua. Esse ficheiro é a capa do teu trabalho técnico, e a maior parte dos candidatos deixa lá o texto gerado por omissão."],
@@ -1603,7 +2597,7 @@ window.CURSO = {
             ["p", "Sem licença, ninguém pode legalmente usar o teu código, nem para experimentar. Um ficheiro `LICENSE` com MIT resolve, é o que a maior parte dos projetos pequenos usa, e mostra que sabes que a questão existe."],
             ["h", "O histórico conta uma história"],
             ["lista", [
-              "Commits pequenos, ao longo de semanas, com mensagens no formato do módulo 12.1.",
+              "Commits pequenos, ao longo de semanas, com mensagens no formato do módulo 16.1.",
               "Ramos com pull requests, mesmo trabalhando sozinho: mostra o processo e dá-te prática.",
               "Sem ficheiros gerados, sem `.venv`, sem `.env` com segredos. Um `.gitignore` desde o primeiro commit.",
               "Se apagares e recriares o repositório para 'ficar limpo', apagas a prova de que trabalhaste ao longo do tempo."
@@ -1630,11 +2624,11 @@ window.CURSO = {
       ]
     },
     {
-      n: 20, fase: 5, titulo: "Recrutamento",
+      n: 25, fase: 5, titulo: "Recrutamento",
       objetivo: "Passar da candidatura à proposta.",
       licoes: [
         {
-          id: "20.1", titulo: "CV e perfil para vagas de Python", min: 14, estado: "pronta",
+          id: "25.1", titulo: "CV e perfil para vagas de Python", min: 14, estado: "pronta",
           meta: "No fim: lês um anúncio como quem sabe o que lá está e respondes a cada requisito.",
           blocos: [
             ["p", "Um anúncio de emprego não é uma lista de exigências: é uma lista de desejos escrita por várias pessoas. Costuma ter três camadas, e saber separá-las é o que evita não te candidatares a uma vaga que era tua."],
@@ -1677,7 +2671,7 @@ window.CURSO = {
           }
         },
         {
-          id: "20.2", titulo: "Código ao vivo e perguntas técnicas", min: 18, estado: "pronta",
+          id: "25.2", titulo: "Código ao vivo e perguntas técnicas", min: 18, estado: "pronta",
           meta: "No fim: escreves código com alguém a ver sem entrar em pânico, e falas enquanto pensas.",
           blocos: [
             ["p", "Numa entrevista com código, a solução ótima não é o que está a ser avaliado. Está a ser avaliado como pensas, se percebes o problema antes de escrever, e como é trabalhar contigo durante quarenta minutos."],
@@ -1695,12 +2689,12 @@ window.CURSO = {
             ["obra", "É perfeitamente aceitável dizer 'não sei' e continuar: 'não sei de cor a assinatura, mas é a função do módulo itertools que agrupa consecutivos, e verificava na documentação'. Quem entrevista sabe que ninguém programa sem documentação. O que ninguém quer é alguém que inventa com confiança."],
             ["h", "As perguntas de Python que caem sempre"],
             ["lista", [
-              "Lista contra tuplo contra set, e porque é que o set é rápido a procurar. Módulo 3.",
-              "O argumento por omissão mutável. Módulo 4.2.",
-              "`is` contra `==`, e porque é que `None` se compara com `is`. Módulo 2.1.",
-              "Geradores e porque poupam memória. Módulo 9.1.",
-              "Como testarias código que depende de uma API externa. Módulo 14.2.",
-              "Porque é que não se constrói SQL com f-strings. Módulo 15.2."
+              "Lista contra tuplo contra set, e porque é que o set é rápido a procurar. Módulo 5.",
+              "O argumento por omissão mutável. Módulo 6.2.",
+              "`is` contra `==`, e porque é que `None` se compara com `is`. Módulo 4.1.",
+              "Geradores e porque poupam memória. Módulo 12.1.",
+              "Como testarias código que depende de uma API externa. Módulo 18.2.",
+              "Porque é que não se constrói SQL com f-strings. Módulo 19.2."
             ]],
             ["p", "Estão todas neste curso, o que não é coincidência: são as que separam quem escreveu Python de quem leu sobre Python."],
             ["h", "O problema clássico, resolvido bem"],
@@ -1719,7 +2713,7 @@ window.CURSO = {
           }
         },
         {
-          id: "20.3", titulo: "Os primeiros 90 dias", min: 12, estado: "pronta",
+          id: "25.3", titulo: "Os primeiros 90 dias", min: 12, estado: "pronta",
           meta: "No fim: sabes como pedir ajuda, ler código alheio e entregar o primeiro pull request.",
           blocos: [
             ["p", "Ninguém espera que produzas na primeira semana. Espera-se que aprendas depressa, que não partas nada em silêncio e que sejas fácil de ajudar. Estas três coisas são competências, e treinam-se."],
@@ -1731,7 +2725,7 @@ window.CURSO = {
             ["lista", [
               "Começa pelos testes: dizem o que o código promete fazer, sem teoria.",
               "Segue um pedido de ponta a ponta, do ponto de entrada até à base de dados. Uma vez chega para perceber a arquitetura.",
-              "Usa o depurador do módulo 13.1 num caso real em vez de ler linha a linha.",
+              "Usa o depurador do módulo 17.2 num caso real em vez de ler linha a linha.",
               "`git log` num ficheiro confuso explica muitas vezes porque é que ele é assim.",
               "Não proponhas reescrever nada no primeiro mês. Ainda não sabes que restrições produziram aquilo."
             ]],
