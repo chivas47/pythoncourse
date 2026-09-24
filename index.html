@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Caderno de Python</title>
-<meta name="description" content="Curso de Python do básico ao avançado, com prática a correr no browser, orientado para o primeiro emprego.">
+<meta name="description" content="Curso de Python passo a passo, do primeiro comando no terminal ao primeiro emprego. Lês no browser, programas no teu editor, com testes e git como numa equipa.">
 <meta name="theme-color" content="#FBFAF7">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -61,14 +61,6 @@ header{padding:26px 20px 18px var(--rail);position:relative}
 .n-margem{position:absolute;left:0;width:var(--rail);text-align:center;
   font-family:"IBM Plex Mono";font-size:16px;color:var(--margem);padding-top:4px}
 
-/* consola do topo */
-.consola{border:1px solid var(--tinta);background:#fff;margin:8px 0 26px;max-width:660px}
-.consola-topo{display:flex;justify-content:space-between;align-items:center;
-  padding:8px 12px;border-bottom:1px solid var(--linha);font-family:"IBM Plex Sans";font-size:16px;color:var(--suave)}
-.consola-corpo{font-family:"IBM Plex Mono";font-size:17px;padding:14px 12px;white-space:pre-wrap;word-break:break-word}
-.prompt{color:var(--margem)}
-.cursor{display:inline-block;width:9px;height:19px;background:var(--tinta);vertical-align:-3px;animation:pisca 1.1s steps(1) infinite}
-@keyframes pisca{50%{opacity:0}}
 
 /* botões */
 button{font-family:"IBM Plex Sans";font-size:17px;cursor:pointer}
@@ -149,6 +141,40 @@ nav a.on{color:var(--tinta);box-shadow:inset 0 3px 0 var(--margem)}
   h1{font-size:38px}
 }
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* terminal da página inicial */
+.terminal{background:#16233B;color:#E8ECF3;border:1px solid var(--tinta);margin:8px 0 26px;max-width:660px}
+.terminal-topo{display:flex;justify-content:space-between;padding:8px 12px;border-bottom:1px solid #2C3B57;
+  font-family:"IBM Plex Sans";font-size:15px;color:#A9B3C4}
+.terminal pre{color:#E8ECF3;font-size:16px;white-space:pre-wrap;word-break:break-word}
+.terminal .ok{color:#7FD4A4}
+.terminal .p{color:#F4A38F}
+
+/* exemplos: prever antes de ver */
+.prever{font-family:"IBM Plex Sans";font-size:15px;color:var(--suave);margin:-12px 0 6px}
+
+/* exercício */
+.ex-cab{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.ex-cab .pasta{font-family:"IBM Plex Mono";color:var(--suave);font-size:16px}
+.ficheiro{font-family:"IBM Plex Mono";font-size:17px;font-weight:500;margin:22px 0 6px;display:flex;
+  flex-wrap:wrap;gap:4px 10px;align-items:baseline}
+.ficheiro small{font-family:"IBM Plex Sans";font-weight:400;color:var(--suave);font-size:15px}
+.ex .bloco-code{margin-bottom:8px}
+.ex .acoes{padding:0 0 8px}
+.btn.peq{padding:7px 12px;min-height:40px;font-size:16px}
+details{margin:6px 0 10px}
+summary{cursor:pointer;font-family:"IBM Plex Sans";font-size:17px;padding:6px 0;color:var(--tinta)}
+summary::marker{color:var(--margem)}
+.rotina{list-style:none;padding:0;margin:8px 0 18px;max-width:none}
+.rotina li{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-bottom:1px solid var(--linha);margin:0}
+.rotina input{width:22px;height:22px;margin-top:4px;flex:none;accent-color:var(--verde)}
+.rotina label{font-family:"IBM Plex Sans";font-size:17px;line-height:1.5}
+.rotina code{overflow-wrap:anywhere}
+.fallback{border-top:1px dashed var(--linha);margin-top:18px;padding-top:6px}
+.fallback p{font-family:"IBM Plex Sans";font-size:16px;color:var(--suave)}
+.tarefa .ex-cab{background:var(--caixa)}
+.res pre{white-space:pre-wrap;margin:0 0 4px 22px;padding:0;font-size:15px;color:var(--suave)}
+h3{font-family:"IBM Plex Sans";font-size:19px;font-weight:600;margin:24px 0 8px}
 </style>
 </head>
 <body>
@@ -169,21 +195,469 @@ nav a.on{color:var(--tinta);box-shadow:inset 0 3px 0 var(--margem)}
   <a href="#/percurso" id="nav-percurso">Percurso</a>
 </nav>
 
-<script src="curso.js"></script>
+<script src="curso/indice.js"></script>
+<script src="curso/m01.js"></script>
+<script src="curso/m02.js"></script>
+<script src="curso/m03.js"></script>
+<script src="curso/m04.js"></script>
+<script src="curso/m05.js"></script>
+<!-- Corredor de testes para a verificação no browser. É Python, lido pelo motor quando é preciso. -->
+<script type="text/x-python" id="corredor">
+# Corredor de testes do Caderno.
+# Um subconjunto do pytest para o browser, onde o pytest verdadeiro não está instalado.
+# Suporta: funções e classes test_*, assert, pytest.raises, pytest.approx,
+# pytest.mark.parametrize, pytest.fixture (com yield), e as fixtures
+# tmp_path, capsys, monkeypatch e caplog.
+import builtins
+import collections
+import importlib
+import inspect
+import io
+import itertools
+import json
+import linecache
+import logging
+import os
+import sys
+import tempfile
+import traceback
+import types
+from pathlib import Path
+
+
+class _Ignorado(Exception):
+    pass
+
+
+class _Raises:
+    def __init__(self, excecao, match=None):
+        self.excecao = excecao
+        self.match = match
+        self.value = None
+        self.type = None
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, tipo, valor, tb):
+        nomes = getattr(self.excecao, "__name__", None) or " ou ".join(e.__name__ for e in self.excecao)
+        if tipo is None:
+            raise AssertionError(f"era esperado {nomes} e não foi levantado nada")
+        if not issubclass(tipo, self.excecao):
+            return False
+        if self.match is not None:
+            import re
+            if not re.search(self.match, str(valor)):
+                raise AssertionError(f"a mensagem {str(valor)!r} não corresponde a {self.match!r}")
+        self.value = valor
+        self.type = tipo
+        return True
+
+
+class _Approx:
+    def __init__(self, esperado, rel=None, abs=None):
+        self.esperado = esperado
+        self.rel = 1e-6 if rel is None else rel
+        self.abs = 1e-12 if abs is None else abs
+
+    def _perto(self, a, b):
+        if isinstance(b, (list, tuple)):
+            return isinstance(a, (list, tuple)) and len(a) == len(b) and all(self._perto(x, y) for x, y in zip(a, b))
+        if isinstance(b, dict):
+            return isinstance(a, dict) and a.keys() == b.keys() and all(self._perto(a[k], b[k]) for k in b)
+        try:
+            return a == b or abs(a - b) <= max(self.rel * abs(b), self.abs)
+        except TypeError:
+            return False
+
+    def __eq__(self, outro):
+        return self._perto(outro, self.esperado)
+
+    def __repr__(self):
+        return f"approx({self.esperado!r})"
+
+
+class _Mark:
+    def parametrize(self, nomes, valores, ids=None):
+        def decorar(f):
+            f.__dict__.setdefault("_parametros", []).insert(0, (nomes, list(valores), ids))
+            return f
+        return decorar
+
+    def __getattr__(self, nome):
+        def marca(*a, **k):
+            if len(a) == 1 and callable(a[0]) and not k:
+                return a[0]
+            return lambda f: f
+        return marca
+
+
+def _fixture(f=None, **opcoes):
+    def decorar(fn):
+        fn._e_fixture = True
+        return fn
+    return decorar(f) if callable(f) else decorar
+
+
+def _fail(msg=""):
+    raise AssertionError(msg)
+
+
+def _skip(msg=""):
+    raise _Ignorado(msg)
+
+
+def _modulo_pytest():
+    m = types.ModuleType("pytest")
+    m.raises = _Raises
+    m.approx = _Approx
+    m.mark = _Mark()
+    m.fixture = _fixture
+    m.fail = _fail
+    m.skip = _skip
+    m.__caderno__ = True
+    return m
+
+
+_NADA = object()
+
+
+class _MonkeyPatch:
+    def __init__(self):
+        self._desfazer = []
+
+    def _alvo(self, alvo, nome):
+        if isinstance(alvo, str) and nome is _NADA:
+            caminho, _, atributo = alvo.rpartition(".")
+            partes = caminho.split(".")
+            obj = importlib.import_module(partes[0])
+            for i, p in enumerate(partes[1:], 1):
+                try:
+                    obj = getattr(obj, p)
+                except AttributeError:
+                    obj = importlib.import_module(".".join(partes[: i + 1]))
+            return obj, atributo
+        return alvo, nome
+
+    def setattr(self, alvo, nome, valor=_NADA, raising=True):
+        if valor is _NADA:
+            alvo, nome, valor = (*self._alvo(alvo, _NADA), nome)
+        antigo = getattr(alvo, nome, _NADA)
+        if antigo is _NADA and raising:
+            raise AttributeError(f"{alvo!r} não tem o atributo {nome!r}")
+        self._desfazer.append(lambda: setattr(alvo, nome, antigo) if antigo is not _NADA else delattr(alvo, nome))
+        setattr(alvo, nome, valor)
+
+    def delattr(self, alvo, nome=_NADA, raising=True):
+        alvo, nome = self._alvo(alvo, nome)
+        if not hasattr(alvo, nome):
+            if raising:
+                raise AttributeError(nome)
+            return
+        antigo = getattr(alvo, nome)
+        self._desfazer.append(lambda: setattr(alvo, nome, antigo))
+        delattr(alvo, nome)
+
+    def setitem(self, d, chave, valor):
+        antigo = d.get(chave, _NADA)
+        self._desfazer.append(lambda: d.__setitem__(chave, antigo) if antigo is not _NADA else d.pop(chave, None))
+        d[chave] = valor
+
+    def delitem(self, d, chave, raising=True):
+        if chave not in d:
+            if raising:
+                raise KeyError(chave)
+            return
+        antigo = d[chave]
+        self._desfazer.append(lambda: d.__setitem__(chave, antigo))
+        del d[chave]
+
+    def setenv(self, nome, valor, prepend=None):
+        self.setitem(os.environ, nome, str(valor))
+
+    def delenv(self, nome, raising=True):
+        self.delitem(os.environ, nome, raising)
+
+    def chdir(self, caminho):
+        antigo = os.getcwd()
+        self._desfazer.append(lambda: os.chdir(antigo))
+        os.chdir(caminho)
+
+    def syspath_prepend(self, caminho):
+        antigo = list(sys.path)
+        self._desfazer.append(lambda: sys.path.__setitem__(slice(None), antigo))
+        sys.path.insert(0, str(caminho))
+
+    def undo(self):
+        while self._desfazer:
+            self._desfazer.pop()()
+
+
+_Captura = collections.namedtuple("CaptureResult", "out err")
+
+
+class _Capsys:
+    def __init__(self, corredor):
+        self._c = corredor
+
+    def readouterr(self):
+        out, err = self._c.saida.getvalue(), self._c.erros.getvalue()
+        self._c.saida.seek(0)
+        self._c.saida.truncate()
+        self._c.erros.seek(0)
+        self._c.erros.truncate()
+        return _Captura(out, err)
+
+
+class _Caplog(logging.Handler):
+    def __init__(self):
+        super().__init__(0)
+        self.records = []
+        self._niveis = []
+        logging.getLogger().addHandler(self)
+
+    def emit(self, registo):
+        self.records.append(registo)
+
+    @property
+    def messages(self):
+        return [r.getMessage() for r in self.records]
+
+    @property
+    def text(self):
+        return "\n".join(f"{r.levelname} {r.name}:{r.getMessage()}" for r in self.records)
+
+    @property
+    def record_tuples(self):
+        return [(r.name, r.levelno, r.getMessage()) for r in self.records]
+
+    def clear(self):
+        self.records.clear()
+
+    def set_level(self, nivel, logger=None):
+        alvo = logging.getLogger(logger)
+        self._niveis.append((alvo, alvo.level))
+        alvo.setLevel(nivel)
+
+    def fechar(self):
+        logging.getLogger().removeHandler(self)
+        for alvo, nivel in reversed(self._niveis):
+            alvo.setLevel(nivel)
+
+
+def _input_sem_resposta(pergunta=""):
+    raise OSError("input() foi chamado sem o teste lhe dar uma resposta")
+
+
+def _nome_bonito(nome):
+    nome = nome[5:] if nome.startswith("test_") else nome
+    return nome.replace("_", " ").strip()
+
+
+class Corredor:
+    def __init__(self, pasta, ficheiro_testes):
+        self.pasta = os.path.abspath(str(pasta))
+        self.ficheiro_testes = ficheiro_testes
+        self.saida = io.StringIO()
+        self.erros = io.StringIO()
+        self.resultados = []
+        self.impresso = []
+
+    def _linha_do_teste(self, tb):
+        caminho = os.path.join(self.pasta, self.ficheiro_testes)
+        quadro_teste = None
+        while tb is not None:
+            if os.path.abspath(tb.tb_frame.f_code.co_filename) == caminho:
+                quadro_teste = (tb.tb_frame, tb.tb_lineno)
+            tb = tb.tb_next
+        if quadro_teste is None:
+            return None, "", ""
+        quadro, n = quadro_teste
+        linha = linecache.getline(caminho, n).strip()
+        return n, linha, self._explicar(linha, quadro)
+
+    def _explicar(self, linha, quadro):
+        # Mostra o valor obtido quando o assert é uma comparação simples, como faz o pytest.
+        import ast
+        try:
+            no = ast.parse(linha).body[0]
+            teste = no.test
+            if not isinstance(teste, ast.Compare) or len(teste.ops) != 1:
+                return ""
+            esquerda = eval(compile(ast.Expression(teste.left), "<assert>", "eval"), quadro.f_globals, quadro.f_locals)
+            direita = eval(compile(ast.Expression(teste.comparators[0]), "<assert>", "eval"), quadro.f_globals, quadro.f_locals)
+        except Exception:
+            return ""
+        curto = lambda v: (repr(v)[:300] + "...") if len(repr(v)) > 300 else repr(v)
+        return f"obtido:   {curto(esquerda)}\nesperado: {curto(direita)}"
+
+    def _onde_no_aluno(self, tb):
+        for quadro in reversed(traceback.extract_tb(tb)):
+            nome = os.path.basename(quadro.filename)
+            if os.path.dirname(os.path.abspath(quadro.filename)) == os.path.abspath(self.pasta) and nome != self.ficheiro_testes:
+                return f"{nome}, linha {quadro.lineno}: {(quadro.line or '').strip()}"
+        return ""
+
+    def _fixture(self, nome, modulo, cache, finais, parametros):
+        if nome in parametros:
+            return parametros[nome]
+        if nome in cache:
+            return cache[nome]
+        if nome == "tmp_path":
+            valor = Path(tempfile.mkdtemp(dir=self.pasta_temporaria))
+        elif nome == "capsys":
+            valor = _Capsys(self)
+        elif nome == "monkeypatch":
+            valor = _MonkeyPatch()
+            finais.append(valor.undo)
+        elif nome == "caplog":
+            valor = _Caplog()
+            finais.append(valor.fechar)
+        else:
+            f = getattr(modulo, nome, None)
+            if f is None or not getattr(f, "_e_fixture", False):
+                raise LookupError(f"fixture '{nome}' não encontrada")
+            args = {p: self._fixture(p, modulo, cache, finais, parametros) for p in inspect.signature(f).parameters}
+            valor = f(**args)
+            if inspect.isgenerator(valor):
+                gerador = valor
+                valor = next(gerador)
+                finais.append(lambda: next(gerador, None))
+        cache[nome] = valor
+        return valor
+
+    def _casos(self, f):
+        grupos = getattr(f, "_parametros", [])
+        if not grupos:
+            return [({}, "")]
+        expandidos = []
+        for nomes, valores, ids in grupos:
+            chaves = [n.strip() for n in nomes.split(",")] if isinstance(nomes, str) else list(nomes)
+            opcoes = []
+            for i, v in enumerate(valores):
+                v = (v,) if len(chaves) == 1 else tuple(v)
+                ident = ids[i] if ids else "-".join(str(x) for x in v)
+                opcoes.append((dict(zip(chaves, v)), ident))
+            expandidos.append(opcoes)
+        casos = []
+        for combinacao in itertools.product(*expandidos):
+            parametros = {}
+            for p, _ in combinacao:
+                parametros.update(p)
+            casos.append((parametros, "-".join(i for _, i in combinacao)))
+        return casos
+
+    def _correr_um(self, nome, f, modulo, parametros, ident):
+        titulo = _nome_bonito(nome.rpartition(".")[2]) + (f" [{ident}]" if ident else "")
+        cache, finais = {}, []
+        resultado = {"nome": titulo, "ok": False, "detalhe": ""}
+        self.impresso.append(self.saida.getvalue())
+        for buffer in (self.saida, self.erros):
+            buffer.seek(0)
+            buffer.truncate()
+        try:
+            args = {p: self._fixture(p, modulo, cache, finais, parametros) for p in inspect.signature(f).parameters if p != "self"}
+            f(**args)
+            resultado["ok"] = True
+        except _Ignorado as e:
+            resultado.update(ok=True, detalhe=f"ignorado: {e}")
+        except AssertionError as e:
+            linha_n, linha, valores = self._linha_do_teste(e.__traceback__)
+            msg = str(e).strip()
+            partes = [f"linha {linha_n}: {linha}" if linha_n else "", msg, valores]
+            resultado["detalhe"] = "\n".join(p for p in partes if p)
+        except Exception as e:
+            onde = self._onde_no_aluno(e.__traceback__)
+            resultado["detalhe"] = f"{type(e).__name__}: {e}" + (f"\nem {onde}" if onde else "")
+        finally:
+            for fim in reversed(finais):
+                try:
+                    fim()
+                except Exception:
+                    pass
+        self.resultados.append(resultado)
+
+    def correr(self):
+        self.pasta_temporaria = tempfile.mkdtemp()
+        nomes_locais = [p[:-3] for p in os.listdir(self.pasta) if p.endswith(".py")]
+        for n in nomes_locais:
+            sys.modules.pop(n, None)
+        if "pytest" not in sys.modules or getattr(sys.modules["pytest"], "__caderno__", False):
+            sys.modules["pytest"] = _modulo_pytest()
+        caminho_antigo, pasta_antiga = list(sys.path), os.getcwd()
+        stdout, stderr, entrada = sys.stdout, sys.stderr, builtins.input
+        sys.path.insert(0, self.pasta)
+        os.chdir(self.pasta)
+        importlib.invalidate_caches()
+        sys.stdout, sys.stderr = self.saida, self.erros
+        builtins.input = _input_sem_resposta
+        erro_import = None
+        try:
+            modulo = importlib.import_module(self.ficheiro_testes[:-3])
+            for nome, obj in list(vars(modulo).items()):
+                if nome.startswith("test") and inspect.isfunction(obj):
+                    for parametros, ident in self._casos(obj):
+                        self._correr_um(nome, obj, modulo, parametros, ident)
+                elif nome.startswith("Test") and inspect.isclass(obj):
+                    for metodo, f in list(vars(obj).items()):
+                        if metodo.startswith("test") and inspect.isfunction(f):
+                            for parametros, ident in self._casos(f):
+                                self._correr_um(f"{nome}.{metodo}", getattr(obj(), metodo), modulo, parametros, ident)
+        except BaseException as e:
+            onde = self._onde_no_aluno(e.__traceback__)
+            if isinstance(e, SyntaxError):
+                onde = f"{os.path.basename(e.filename or '')}, linha {e.lineno}: {(e.text or '').strip()}"
+            erro_import = f"{type(e).__name__}: {e}" + (f"\nem {onde}" if onde else "")
+        finally:
+            sys.stdout, sys.stderr, builtins.input = stdout, stderr, entrada
+            sys.path[:] = caminho_antigo
+            os.chdir(pasta_antiga)
+            for n in nomes_locais:
+                sys.modules.pop(n, None)
+        self.impresso.append(self.saida.getvalue() + self.erros.getvalue())
+        return {"resultados": self.resultados, "erro": erro_import, "saida": "".join(self.impresso).strip()}
+
+
+def correr_testes(pasta, ficheiro_testes):
+    return json.dumps(Corredor(pasta, ficheiro_testes).correr(), ensure_ascii=False)
+</script>
 <script>
 const PYV = "0.27.2"; // versão do motor de Python; para atualizar, muda só aqui
 const app = document.getElementById('app');
-const esc = s => String(s).replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 
 /* ---------- memória local ---------- */
 const CH = 'caderno-py:';
 const guarda = (k,v) => { try{ localStorage.setItem(CH+k, JSON.stringify(v)); }catch(e){} };
 const le = (k,d) => { try{ const v = localStorage.getItem(CH+k); return v ? JSON.parse(v) : d; }catch(e){ return d; } };
+
+// O curso foi renumerado quando ganhou os passos intermédios. Isto traz o progresso antigo para os números novos.
+const RENUMERACAO_V2 = {
+  '1.1':'1.2','1.2':'1.3','1.3':'11.4','2.1':'2.1','2.2':'2.6','2.3':'2.8',
+  '3.1':'9.1','3.2':'9.2','3.3':'9.3','3.4':'9.4','4.1':'4.3','4.2':'5.5','4.3':'7.5',
+  '5.1':'7.2','5.2':'7.4','5.3':'8.3','6.1':'3.2','6.2':'8.1','6.3':'8.4',
+  '7.1':'11.1','7.2':'11.2','7.3':'11.3','8.1':'10.2','8.2':'10.3',
+  '9.1':'12.2','9.2':'12.3','9.3':'12.5','10.1':'13.2','10.2':'13.3',
+  '11.1':'14.2','11.2':'14.3','11.3':'14.5','12.1':'15.2','12.2':'15.3',
+  '13.1':'18.1','13.2':'18.2','13.3':'18.3','13.4':'18.4','13.5':'18.5',
+  '14.1':'19.1','14.2':'19.2','14.3':'19.3','14.4':'19.4','14.5':'19.5',
+  '15.1':'20.1','15.2':'20.3','16.1':'21.1','16.2':'21.2',
+  '17.1':'22.1','17.2':'22.2','17.3':'22.3','17.4':'22.4','17.5':'22.5',
+  '18.1':'23.1','18.2':'23.2','19.1':'24.1','19.2':'24.2','20.1':'25.1','20.2':'25.2','20.3':'25.3',
+  '21.1':'26.2','22.1':'27.1','22.2':'27.2','23.1':'28.1','23.2':'28.2','23.3':'28.3','23.4':'28.4','23.5':'28.5',
+  '24.1':'29.1','24.2':'29.2','25.1':'30.1','25.2':'30.2','25.3':'30.3'
+};
 let feitas = le('feitas', {});
+if(le('versao', 1) < 2){
+  const novas = {};
+  for(const id of Object.keys(feitas)) if(RENUMERACAO_V2[id]) novas[RENUMERACAO_V2[id]] = true;
+  feitas = novas; guarda('feitas', feitas); guarda('versao', 2);
+}
 const marcar = id => { feitas[id] = true; guarda('feitas', feitas); pintarBarra(); };
 
 const todasLicoes = () => CURSO.modulos.flatMap(m => m.licoes.map(l => ({...l, mod:m})));
 const prontas = () => todasLicoes().filter(l => l.estado === 'pronta');
+const posicao = id => todasLicoes().findIndex(l => l.id === id);
 function pintarBarra(){
   const t = prontas().length || 1;
   const f = prontas().filter(l => feitas[l.id]).length;
@@ -205,11 +679,11 @@ function realce(src){
   }
   return out + esc(src.slice(ult));
 }
-const emLinha = t => esc(t).replace(/`([^`]+)`/g, '<code>$1</code>');
+const emLinha = t => esc(t).replace(/`([^`]+)`/g, '<code>$1</code>').replace(/\*\*([^*]+)\*\*/g, '<b>$1</b>').replace(/\n/g, '<br>');
 
-/* ---------- motor de Python ---------- */
+/* ---------- motor de Python (só para ver resultados e para a verificação de recurso) ---------- */
 let motor = null;
-function carregarMotor(aviso){
+function carregarMotor(){
   if(motor) return motor;
   motor = new Promise((res, rej) => {
     const s = document.createElement('script');
@@ -221,38 +695,41 @@ function carregarMotor(aviso){
     s.onerror = () => { motor = null; rej(new Error('Sem ligação ao motor de Python. Verifica a internet e tenta outra vez.')); };
     document.head.appendChild(s);
   });
-  if(aviso) aviso('A carregar o Python (só na primeira vez, cerca de 6 MB)...');
   return motor;
 }
-async function correrPython(codigo, testes){
+async function correrPython(codigo){
   const py = await carregarMotor();
   const saida = [];
   py.setStdout({ batched: t => saida.push(t) });
   py.setStderr({ batched: t => saida.push(t) });
   const ns = py.runPython('{}');
-  let erro = null, resultados = [];
-  try{
-    py.runPython(codigo, { globals: ns });
-    if(testes){
-      py.runPython('_res = []\ndef verifica(nome, cond):\n    _res.append((nome, bool(cond)))\n', { globals: ns });
-      // se os testes rebentarem a meio, guardamos na mesma o que já tinha corrido
-      try{ py.runPython(testes, { globals: ns }); }
-      finally{
-        const r = ns.get('_res');
-        if(r){ resultados = r.toJs().map(t => ({ nome:t[0], ok:t[1] })); r.destroy(); }
-      }
-    }
-  }catch(e){ erro = String(e.message || e).trim(); }
+  let erro = null;
+  try{ py.runPython(codigo, { globals: ns }); }
+  catch(e){ erro = String(e.message || e).trim().split('\n').filter(l => !l.includes('/lib/python3')).join('\n'); }
   ns.destroy();
-  return { saida: saida.join('\n'), erro, resultados };
+  return { saida: saida.join('\n'), erro };
+}
+let corredorPronto = false;
+async function correrTestes(ficheiros, ficheiroTestes){
+  const py = await carregarMotor();
+  if(!corredorPronto){ py.runPython(document.getElementById('corredor').textContent); corredorPronto = true; }
+  const pasta = '/tmp/caderno/' + Math.random().toString(36).slice(2, 10);
+  py.FS.mkdirTree(pasta);
+  for(const [nome, conteudo] of Object.entries(ficheiros)) py.FS.writeFile(`${pasta}/${nome}`, conteudo);
+  const correr = py.globals.get('correr_testes');
+  const r = JSON.parse(correr(pasta, ficheiroTestes));
+  correr.destroy();
+  return r;
 }
 
 /* ---------- blocos ---------- */
+let contador = 0;
+const novoId = () => 'c' + (++contador);
 function blocoCode(codigo, corrivel){
-  const id = 'c' + Math.random().toString(36).slice(2, 8);
+  const id = novoId();
   return `<div class="bloco-code"><pre id="${id}">${realce(codigo)}</pre></div>` +
-    (corrivel ? `<div class="acoes"><button class="btn claro" data-correr="${id}">Correr</button>
-       <button class="btn claro" data-copiar="${id}">Copiar</button></div>
+    (corrivel ? `<p class="prever">Escreve-o no teu REPL e prevê o resultado. Depois confirma.</p>
+       <div class="acoes"><button class="btn claro peq" data-correr="${id}">Ver o resultado</button></div>
        <div class="saida" id="s-${id}" hidden></div>` : '');
 }
 function renderBlocos(blocos){
@@ -272,13 +749,18 @@ function renderBlocos(blocos){
 /* ---------- vistas ---------- */
 function vistaIndice(){
   document.getElementById('sub').textContent =
-    `${CURSO.modulos.length} módulos, ${prontas().length} aulas, prática a correr no browser.`;
-  const consola = `
-   <div class="consola">
-     <div class="consola-topo"><span>consola de Python</span><span>corre no teu telemóvel</span></div>
-     <div class="consola-corpo" id="repl-saida"><span class="prompt">&gt;&gt;&gt; </span>print("olá, primeiro emprego")<span class="cursor"></span></div>
-     <div style="padding:0 12px 12px"><button class="btn" id="repl-btn">Correr esta linha</button></div>
-   </div>`;
+    `${CURSO.modulos.length} módulos, ${prontas().length} aulas. Lês aqui, programas no teu computador.`;
+  const terminal = `
+   <div class="terminal">
+     <div class="terminal-topo"><span>o teu terminal, a meio do curso</span><span>caderno-python</span></div>
+     <pre><span class="p">$</span> python -m pytest m04/test_notas.py
+....                                      [100%]
+<span class="ok">4 passed in 0.02s</span>
+<span class="p">$</span> git commit -m "Resolver o exercício 4.3"</pre>
+   </div>
+   <p>Cada aula tem uma parte para ler aqui e uma parte para fazer no teu computador: crias o ficheiro no editor,
+   corres os testes no terminal e guardas o trabalho no git. É a mesma rotina que vais ter numa equipa,
+   repetida em cada exercício até deixar de custar.</p>`;
   const fases = CURSO.fases.map(f => {
     const mods = CURSO.modulos.filter(m => m.fase === f.id).map(m => {
       const done = m.licoes.filter(l => l.estado === 'pronta' && feitas[l.id]).length;
@@ -289,19 +771,7 @@ function vistaIndice(){
     return `<section class="fase"><div class="fase-cab"><h2>${esc(f.nome)}</h2></div>
       <p class="mini" style="margin:8px 0 4px">${esc(f.nota)}</p>${mods}</section>`;
   }).join('');
-  app.innerHTML = consola + fases;
-  document.getElementById('repl-btn').onclick = async e => {
-    const alvo = document.getElementById('repl-saida');
-    e.target.disabled = true; e.target.textContent = 'A carregar...';
-    try{
-      const r = await correrPython('print("olá, primeiro emprego")');
-      alvo.innerHTML = '<span class="prompt">&gt;&gt;&gt; </span>print("olá, primeiro emprego")\n' + esc(r.saida) + '<span class="prompt">&gt;&gt;&gt; </span><span class="cursor"></span>';
-      e.target.remove();
-    }catch(err){
-      alvo.innerHTML += '\n' + esc(err.message);
-      e.target.disabled = false; e.target.textContent = 'Tentar outra vez';
-    }
-  };
+  app.innerHTML = terminal + fases;
 }
 
 function vistaModulo(n){
@@ -316,6 +786,11 @@ function vistaModulo(n){
       <span class="dur">${l.min}m</span></a>`).join('');
 }
 
+function vizinhas(l){
+  const todas = todasLicoes(), i = todas.findIndex(x => x.id === l.id);
+  return [todas[i - 1], todas[i + 1]];
+}
+
 function vistaLicao(id){
   const l = todasLicoes().find(x => x.id === id);
   if(!l) return vistaIndice();
@@ -326,69 +801,151 @@ function vistaLicao(id){
       <p class="aviso"><span class="rotulo">Ainda por escrever</span>Esta aula está planeada mas o conteúdo não está feito. O plano acima é o que ela vai cobrir.</p>`;
     return;
   }
+  const [antes, depois] = vizinhas(l);
   app.innerHTML = `<p class="mini"><a href="#/m/${l.mod.n}">Módulo ${l.mod.n}</a></p>
     <h1>${esc(l.titulo)}</h1><p class="mini" style="margin-bottom:22px">${esc(l.meta)}</p>
     ${renderBlocos(l.blocos)}
-    ${l.exercicio ? caixaExercicio(l) : ''}
     ${l.quiz ? caixaQuiz(l) : ''}
-    <p style="margin-top:34px"><button class="btn" id="concluir">${feitas[l.id] ? 'Aula concluída' : 'Marcar como concluída'}</button></p>`;
-  ligarBotoes();
+    ${l.exercicio ? caixaExercicio(l) : ''}
+    ${l.tarefa ? caixaTarefa(l) : ''}
+    <p style="margin-top:34px"><button class="btn" id="concluir">${feitas[l.id] ? 'Aula concluída' : 'Marcar como concluída'}</button></p>
+    <p class="mini" style="display:flex;justify-content:space-between;gap:12px;margin-top:26px">
+      <span>${antes ? `<a href="#/l/${antes.id}">${esc(antes.id)} ${esc(antes.titulo)}</a>` : ''}</span>
+      <span style="text-align:right">${depois ? `<a href="#/l/${depois.id}">${esc(depois.id)} ${esc(depois.titulo)}</a>` : ''}</span></p>`;
+  ligarBotoes(l);
   const b = document.getElementById('concluir');
   b.onclick = () => { marcar(l.id); b.textContent = 'Aula concluída'; };
 }
 
+/* A pasta de cada módulo dentro do caderno: m01, m02, ... */
+const pastaDe = l => 'm' + String(l.mod.n).padStart(2, '0');
+const nomeTestes = ex => ex.ficheiroTestes || 'test_' + ex.ficheiro;
+const depoisDe = (l, id) => posicao(id) >= 0 && posicao(l.id) >= posicao(id);
+
+function passosRotina(l){
+  const ex = l.exercicio, pasta = pastaDe(l), r = CURSO.rotina;
+  const passos = [
+    `No terminal, entra em <code>${esc(CURSO.pasta)}</code> e ativa o ambiente: <code>source .venv/bin/activate</code> (no Windows: <code>.venv\\Scripts\\activate</code>).`,
+    `Cria a pasta <code>${pasta}</code> se ainda não existir e, lá dentro, o ficheiro <code>${esc(ex.ficheiro)}</code> no editor.`,
+    `Cria <code>${pasta}/${esc(nomeTestes(ex))}</code> com os testes, sem os alterar.` +
+      (ex.apoio ? ` Cria também ${Object.keys(ex.apoio).map(n => `<code>${pasta}/${esc(n)}</code>`).join(' e ')}.` : ''),
+    ex.script
+      ? `Corre o programa e olha para o que ele faz: <code>python ${pasta}/${esc(ex.ficheiro)}</code>.`
+      : `Experimenta à mão antes dos testes: <code>python -i ${pasta}/${esc(ex.ficheiro)}</code> e chama as tuas funções no <code>&gt;&gt;&gt;</code>.`,
+    `Corre os testes até ficarem todos verdes: <code>python -m pytest ${pasta}/${esc(nomeTestes(ex))}</code>.`
+  ];
+  if(depoisDe(l, r.ruff)) passos.push(`Arruma antes de guardar: <code>ruff format ${pasta}</code> e <code>ruff check ${pasta}</code> sem avisos.`);
+  if(depoisDe(l, r.git)) passos.push(`Guarda no git: <code>git add ${pasta}</code> e <code>git commit -m "Resolver o exercício ${esc(l.id)}"</code>.`);
+  return passos;
+}
+
+function listaVerificavel(l, passos){
+  const marcados = le('passos:' + l.id, {});
+  return `<ol class="rotina">` + passos.map((p, i) =>
+    `<li><input type="checkbox" id="p-${i}" data-passo="${i}" ${marcados[i] ? 'checked' : ''}><label for="p-${i}">${p}</label></li>`).join('') + `</ol>`;
+}
+
+function blocoFicheiro(nome, papel, conteudo, aberto){
+  const id = novoId();
+  const corpo = `<div class="bloco-code"><pre id="${id}">${realce(conteudo)}</pre></div>
+      <div class="acoes"><button class="btn claro peq" data-copiar="${id}">Copiar</button>
+      <button class="btn claro peq" data-descarregar="${id}" data-nome="${esc(nome.split('/').pop())}">Descarregar</button></div>`;
+  return `<p class="ficheiro">${esc(nome)} <small>${esc(papel)}</small></p>` +
+    (aberto ? corpo : `<details><summary>Ver o ficheiro</summary>${corpo}</details>`);
+}
+
 function caixaExercicio(l){
+  const ex = l.exercicio, pasta = pastaDe(l);
+  const apoio = Object.entries(ex.apoio || {}).map(([nome, cont]) =>
+    blocoFicheiro(`${pasta}/${nome}`, 'ficheiro de apoio, copia tal e qual', cont, false)).join('');
+  const recurso = ex.soLocal
+    ? `<p>Este exercício só corre no teu computador: usa coisas que o Python do browser não tem.</p>`
+    : `<details><summary>Não tens o computador contigo? Verificar no browser</summary>
+        <p>É um recurso para emergências. Corre os mesmos testes, mais devagar, e não substitui o teu editor.</p>
+        <textarea id="editor" spellcheck="false" autocapitalize="off" autocorrect="off">${esc(ex.inicio || '')}</textarea>
+        <div class="teclas" id="teclas"></div>
+        <button class="btn" id="testar">Correr os testes aqui</button>
+        <div class="res" id="res"></div></details>`;
   return `<div class="ex" id="ex">
-    <div class="ex-cab">Exercício</div>
+    <div class="ex-cab"><span>Exercício, no teu computador</span><span class="pasta">${esc(CURSO.pasta)}/${pasta}/</span></div>
     <div class="ex-corpo">
-      <p style="margin-bottom:12px">${emLinha(l.exercicio.enunciado)}</p>
-      <textarea id="editor" spellcheck="false" autocapitalize="off" autocorrect="off">${esc(l.exercicio.inicio || '')}</textarea>
-      <div class="teclas" id="teclas"></div>
-      <button class="btn" id="testar">Correr testes</button>
-      <div class="res" id="res"></div>
+      <p style="margin-bottom:12px">${emLinha(ex.enunciado)}</p>
+      ${blocoFicheiro(`${pasta}/${ex.ficheiro}`, 'o teu código, começa assim', ex.inicio || '', true)}
+      ${apoio}
+      ${blocoFicheiro(`${pasta}/${nomeTestes(ex)}`, 'os testes, que não se alteram', ex.testes, false)}
+      <h3>A rotina</h3>
+      ${listaVerificavel(l, passosRotina(l))}
+      <button class="btn" id="passou">${feitas[l.id] ? 'Feito' : 'Os testes passam no meu computador'}</button>
+      <div class="fallback">${recurso}</div>
+    </div></div>`;
+}
+
+function caixaTarefa(l){
+  const t = l.tarefa;
+  return `<div class="ex tarefa" id="ex">
+    <div class="ex-cab"><span>Tarefa, no teu computador</span></div>
+    <div class="ex-corpo">
+      <p style="margin-bottom:12px">${emLinha(t.enunciado)}</p>
+      ${listaVerificavel(l, t.passos.map(emLinha))}
+      <button class="btn" id="passou">${feitas[l.id] ? 'Feito' : 'Fiz tudo'}</button>
     </div></div>`;
 }
 
 function caixaQuiz(l){
   return `<div class="quiz"><h2>Verificação</h2>` + l.quiz.map((q, i) =>
     `<p>${emLinha(q.p)}</p>` + q.o.map((o, j) =>
-      `<button class="opc" data-q="${i}" data-o="${j}">${esc(o)}</button>`).join('') +
+      `<button class="opc" data-q="${i}" data-o="${j}">${emLinha(o)}</button>`).join('') +
     `<p class="mini" id="expl-${i}" hidden>${emLinha(q.e)}</p>`).join('') + `</div>`;
 }
 
 function vistaPraticar(){
   document.getElementById('sub').textContent = 'Todos os exercícios do curso, num sítio só.';
   const lst = prontas().filter(l => l.exercicio);
-  app.innerHTML = `<h1>Praticar</h1><p>Cada exercício corre testes a sério contra o teu código. Podes fazê-los fora de ordem.</p>` +
+  app.innerHTML = `<h1>Praticar</h1>
+    <p>Cada exercício é um ficheiro teu e um ficheiro de testes, na pasta do módulo. No fim do curso,
+    <code>python -m pytest</code> na raiz do caderno corre a suite inteira: são ${lst.length} exercícios a provar que o que aprendeste continua a funcionar.</p>` +
     lst.map(l => `<a class="licao" href="#/l/${l.id}"><span class="id">${feitas[l.id] ? 'v' : l.id}</span>
-      <span class="tt">${esc(l.titulo)}<br><span class="mini">Módulo ${l.mod.n}</span></span></a>`).join('');
+      <span class="tt">${esc(l.titulo)}<br><span class="mini">${pastaDe(l)}/${esc(l.exercicio.ficheiro)}</span></span></a>`).join('');
 }
 
 function vistaPercurso(){
   const t = prontas().length, f = prontas().filter(l => feitas[l.id]).length;
   document.getElementById('sub').textContent = `${f} de ${t} aulas concluídas`;
   app.innerHTML = `<h1>Percurso</h1>
-    <p>Aulas escritas: ${t}. Concluídas: ${f}. Estão todas escritas, com exercício e testes: podes fazê-las por ordem ou ir buscar o que precisas.</p>
+    <p>Aulas: ${t}. Concluídas: ${f}. Estão por ordem: cada uma usa só o que as anteriores ensinaram.
+    Se saltares, volta atrás quando um exercício pedir uma coisa que não reconheces.</p>
     <h2>O que precisas de mostrar a quem recruta</h2>
     <ul>
       <li>Um repositório com testes a passar e um README que explica o problema, não a tecnologia.</li>
-      <li>Histórico de commits pequenos e legíveis, feitos ao longo de semanas.</li>
-      <li>Um projeto que consumas dados reais e trate falhas.</li>
+      <li>Histórico de commits pequenos e legíveis, feitos ao longo de semanas. O teu caderno já é isso.</li>
+      <li>Um projeto que consuma dados reais e trate falhas.</li>
       <li>Saber explicar em voz alta uma decisão que tomaste e o que rejeitaste.</li>
     </ul>
     <p style="margin-top:26px"><button class="btn claro" id="limpar">Apagar o meu progresso</button></p>`;
   document.getElementById('limpar').onclick = () => {
-    if(confirm('Apagar o progresso guardado neste dispositivo?')){ feitas = {}; guarda('feitas', {}); pintarBarra(); vistaPercurso(); }
+    if(confirm('Apagar o progresso guardado neste dispositivo?')){
+      feitas = {}; guarda('feitas', {});
+      try{ Object.keys(localStorage).filter(k => k.startsWith(CH + 'passos:')).forEach(k => localStorage.removeItem(k)); }catch(e){}
+      pintarBarra(); vistaPercurso();
+    }
   };
 }
 
 /* ---------- interações ---------- */
-function ligarBotoes(){
+function descarregar(nome, conteudo){
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([conteudo], { type: 'text/x-python' }));
+  a.download = nome;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+}
+
+function ligarBotoes(l){
   document.querySelectorAll('[data-correr]').forEach(b => {
     b.onclick = async () => {
       const pre = document.getElementById(b.dataset.correr);
       const out = document.getElementById('s-' + b.dataset.correr);
-      out.hidden = false; out.className = 'saida'; out.textContent = 'A carregar o Python (só na primeira vez)...';
+      out.hidden = false; out.className = 'saida'; out.textContent = 'A carregar o Python (só na primeira vez, cerca de 6 MB)...';
       b.disabled = true;
       try{
         const r = await correrPython(pre.textContent);
@@ -406,6 +963,21 @@ function ligarBotoes(){
       setTimeout(() => b.textContent = 'Copiar', 1500);
     };
   });
+  document.querySelectorAll('[data-descarregar]').forEach(b => {
+    b.onclick = () => descarregar(b.dataset.nome, document.getElementById(b.dataset.descarregar).textContent);
+  });
+  document.querySelectorAll('[data-passo]').forEach(c => {
+    c.onchange = () => {
+      const marcados = le('passos:' + l.id, {});
+      marcados[c.dataset.passo] = c.checked;
+      guarda('passos:' + l.id, marcados);
+    };
+  });
+  const passou = document.getElementById('passou');
+  if(passou) passou.onclick = () => {
+    marcar(l.id); passou.textContent = 'Feito';
+    document.getElementById('concluir').textContent = 'Aula concluída';
+  };
 
   const ed = document.getElementById('editor');
   if(ed){
@@ -419,25 +991,21 @@ function ligarBotoes(){
     ed.addEventListener('keydown', e => {
       if(e.key === 'Tab'){ e.preventDefault(); inserir(ed, '    '); }
     });
-    const l = todasLicoes().find(x => x.id === location.hash.split('/')[2]);
     document.getElementById('testar').onclick = async ev => {
       const res = document.getElementById('res');
-      res.innerHTML = '<div>A carregar o Python (só na primeira vez)...</div>';
+      const ex = l.exercicio;
+      res.innerHTML = '<div>A carregar o Python (só na primeira vez, cerca de 6 MB)...</div>';
       ev.target.disabled = true;
       try{
-        const r = await correrPython(ed.value, l.exercicio.testes);
-        if(r.erro){
-          res.innerHTML = r.resultados.map(x =>
-            `<div class="${x.ok ? 'ok' : 'mau'}">${x.ok ? 'v' : 'x'} ${esc(x.nome)}</div>`).join('') +
-            `<div class="mau">O código rebentou:</div><pre style="padding:8px 0;font-size:16px">${esc(r.erro)}</pre>`;
-        }else{
-          const passou = r.resultados.every(x => x.ok) && r.resultados.length > 0;
-          res.innerHTML = r.resultados.map(x =>
-            `<div class="${x.ok ? 'ok' : 'mau'}">${x.ok ? 'v' : 'x'} ${esc(x.nome)}</div>`).join('') +
-            (r.saida ? `<pre style="padding:8px 0;font-size:16px">${esc(r.saida)}</pre>` : '') +
-            (passou ? '<div class="ok" style="margin-top:8px">Todos os testes passam.</div>' : '');
-          if(passou) marcar(l.id);
-        }
+        const r = await correrTestes({ ...(ex.apoio || {}), [ex.ficheiro]: ed.value, [nomeTestes(ex)]: ex.testes }, nomeTestes(ex));
+        const linhas = r.resultados.map(x =>
+          `<div class="${x.ok ? 'ok' : 'mau'}">${x.ok ? 'v' : 'x'} ${esc(x.nome)}</div>` +
+          (x.detalhe && !x.ok ? `<pre>${esc(x.detalhe)}</pre>` : '')).join('');
+        const passou = !r.erro && r.resultados.length > 0 && r.resultados.every(x => x.ok);
+        res.innerHTML = linhas +
+          (r.erro ? `<div class="mau">Os testes nem chegaram a correr:</div><pre>${esc(r.erro)}</pre>` : '') +
+          (r.saida ? `<pre style="padding:8px 0;font-size:16px">${esc(r.saida)}</pre>` : '') +
+          (passou ? '<div class="ok" style="margin-top:8px">Todos os testes passam. Agora passa a solução para o teu editor e corre-os lá.</div>' : '');
       }catch(e){ res.innerHTML = `<div class="mau">${esc(e.message)}</div>`; }
       ev.target.disabled = false;
     };
@@ -446,8 +1014,7 @@ function ligarBotoes(){
   document.querySelectorAll('.opc').forEach(b => {
     b.onclick = () => {
       const q = +b.dataset.q, o = +b.dataset.o;
-      const lic = todasLicoes().find(x => x.id === location.hash.split('/')[2]);
-      const certa = lic.quiz[q].c;
+      const certa = l.quiz[q].c;
       document.querySelectorAll(`.opc[data-q="${q}"]`).forEach(x => {
         if(+x.dataset.o === certa) x.classList.add('certa');
       });
