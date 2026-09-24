@@ -214,6 +214,18 @@ h3{font-family:"IBM Plex Sans";font-size:19px;font-weight:600;margin:24px 0 8px}
 <script src="curso/m16.js"></script>
 <script src="curso/m17.js"></script>
 <script src="curso/m18.js"></script>
+<script src="curso/m19.js"></script>
+<script src="curso/m20.js"></script>
+<script src="curso/m21.js"></script>
+<script src="curso/m22.js"></script>
+<script src="curso/m23.js"></script>
+<script src="curso/m24.js"></script>
+<script src="curso/m25.js"></script>
+<script src="curso/m26.js"></script>
+<script src="curso/m27.js"></script>
+<script src="curso/m28.js"></script>
+<script src="curso/m29.js"></script>
+<script src="curso/m30.js"></script>
 <!-- Corredor de testes para a verificação no browser. É Python, lido pelo motor quando é preciso. -->
 <script type="text/x-python" id="corredor">
 # Corredor de testes do Caderno.
@@ -719,6 +731,7 @@ async function correrPython(codigo){
   const saida = [];
   py.setStdout({ batched: t => saida.push(t) });
   py.setStderr({ batched: t => saida.push(t) });
+  try{ await py.loadPackagesFromImports(codigo); }catch(e){}
   const ns = py.runPython('{}');
   let erro = null;
   try{ py.runPython(codigo, { globals: ns }); }
@@ -730,6 +743,8 @@ let corredorPronto = false;
 async function correrTestes(ficheiros, ficheiroTestes){
   const py = await carregarMotor();
   if(!corredorPronto){ py.runPython(document.getElementById('corredor').textContent); corredorPronto = true; }
+  // módulos da biblioteca padrão que o Pyodide traz à parte, como o sqlite3
+  try{ await py.loadPackagesFromImports(Object.values(ficheiros).join('\n')); }catch(e){}
   const pasta = '/tmp/caderno/' + Math.random().toString(36).slice(2, 10);
   py.FS.mkdirTree(pasta);
   for(const [nome, conteudo] of Object.entries(ficheiros)) py.FS.writeFile(`${pasta}/${nome}`, conteudo);
