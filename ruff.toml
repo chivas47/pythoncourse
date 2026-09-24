@@ -1,0 +1,8 @@
+# Regras do ruff para as soluções de referência (ferramentas/solucoes).
+# Fixadas aqui para o resultado não mudar quando sai uma versão nova do ruff com outras regras por omissão.
+# São as regras que o aluno tem por omissão no seu caderno, como ensinado na aula 8.5.
+target-version = "py311"
+line-length = 88
+
+[lint]
+select = ["E4", "E7", "E9", "F"]
