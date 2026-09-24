@@ -513,7 +513,7 @@ print(falso.enviadas)`],
         ],
         quiz: [
           { p: "Precisas de testar uma classe que envia emails a sério. Qual é o desenho que te salva?", o: ["Herdar dela no teste e reescrever o método","Receber o canal de envio como argumento e passar um falso no teste","Usar uma variável global para desligar o envio"], c: 1,
-            e: "Injeção de dependências. O teste passa um objeto que guarda a mensagem numa lista, corre em milissegundos e não depende de rede. É o aula 23.2 inteiro." }
+            e: "Injeção de dependências. O teste passa um objeto que guarda a mensagem numa lista, corre em milissegundos e não depende de rede. É a aula 23.2 inteira." }
         ],
         exercicio: {
           ficheiro: "notificador.py",

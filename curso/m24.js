@@ -38,7 +38,7 @@ ORDER BY encomendas DESC;`],
           ]],
           ["aviso", "`COUNT(*)` conta linhas, incluindo as que vieram vazias de um `LEFT JOIN`. `COUNT(coluna)` ignora nulos. Num `LEFT JOIN`, `COUNT(*)` dá 1 para clientes sem encomendas nenhumas, e alguém vai perguntar-te porque é que o relatório está errado."],
           ["h", "Índices, em duas frases"],
-          ["p", "Um índice é uma estrutura ordenada que evita ler a tabela toda, tal como o `set` do aula 22.5 evita percorrer a lista. Cria índices nas colunas por que filtras e juntas com frequência. Cada índice acelera leituras e atrasa escritas, por isso não se indexa tudo."],
+          ["p", "Um índice é uma estrutura ordenada que evita ler a tabela toda, tal como o `set` da aula 22.5 evita percorrer a lista. Cria índices nas colunas por que filtras e juntas com frequência. Cada índice acelera leituras e atrasa escritas, por isso não se indexa tudo."],
           ["code", String.raw`CREATE INDEX idx_encomendas_cliente ON encomendas (cliente_id);
 
 EXPLAIN QUERY PLAN

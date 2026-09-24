@@ -17,7 +17,7 @@ CURSO.modulos.push({
             "Assim que reproduzires, guarda a receita. Vais precisar dela outra vez no fim, para provar que corrigiste."
           ]],
           ["h", "2. Isolar, cortando ao meio"],
-          ["p", "Um bug esconde-se num espaço: mil linhas de código, dez mil linhas de dados, duzentos commits. Não procures do princípio para o fim. Corta o espaço a meio e pergunta de que lado está. Dez perguntas chegam para mil hipóteses, que é a pesquisa binária do aula 18.2 aplicada ao teu dia de trabalho."],
+          ["p", "Um bug esconde-se num espaço: mil linhas de código, dez mil linhas de dados, duzentos commits. Não procures do princípio para o fim. Corta o espaço a meio e pergunta de que lado está. Dez perguntas chegam para mil hipóteses, que é a pesquisa binária da aula 18.2 aplicada ao teu dia de trabalho."],
           ["lista", [
             "**Nos dados**: fica com metade do ficheiro. Ainda falha? Corta outra vez. Chegas a duas ou três linhas e a causa costuma saltar à vista.",
             "**No código**: verifica o valor a meio do caminho. Está certo aqui? Então o problema está depois.",
@@ -128,7 +128,7 @@ def test_procura_por_bissecao_e_nao_uma_a_uma():
             "Consegues reproduzir? Se não, o problema é reproduzir, e é aí que trabalhas.",
             "Qual é o input mínimo que ainda falha? Metade das vezes, encontras a causa a reduzir.",
             "O que é que tu assumes que pode não ser verdade? É quase sempre aí que está.",
-            "Escreve o teste que falha. Passa a ser o aula 19.3 a partir daqui."
+            "Escreve o teste que falha. Passa a ser a aula 19.3 a partir daqui."
           ]],
           ["obra", "Numa equipa, 'não consigo reproduzir' é uma resposta aceitável uma vez; à segunda, espera-se que peças os dados, a versão e os passos exatos. Um bilhete de bug com passos, resultado esperado e resultado obtido é um profissional a falar."],
           ["aviso", "`breakpoint()` esquecido no código pendura o programa em produção à espera de alguém escrever na consola. O `ruff` apanha isto com a regra T100. Configura-a e dorme descansado."],
@@ -196,7 +196,7 @@ def test_caso_maior():
 
 print(registar("a"))
 print(registar("b"))   # a lista é a mesma`],
-          ["p", "Já apareceu no aula 9.4 e volta aqui porque é o número um da lista. A correção é `=None` e criar lá dentro."],
+          ["p", "Já apareceu na aula 9.4 e volta aqui porque é o número um da lista. A correção é `=None` e criar lá dentro."],
           ["h", "2. Alterar uma lista enquanto a percorres"],
           ["py", String.raw`numeros = [1, 2, 3, 4]
 for n in list(numeros):

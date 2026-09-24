@@ -22,7 +22,7 @@ def saude():
 @app.get("/produtos/{produto_id}")
 def obter_produto(produto_id: int):
     return {"id": produto_id, "nome": "teclado"}`],
-          ["p", "Repara na anotação `produto_id: int`. Não é decoração: é o que faz o FastAPI converter o texto do URL para inteiro e responder 422 automaticamente se alguém pedir `/produtos/abc`. As anotações do aula 8.4 passaram a ter efeito em execução."],
+          ["p", "Repara na anotação `produto_id: int`. Não é decoração: é o que faz o FastAPI converter o texto do URL para inteiro e responder 422 automaticamente se alguém pedir `/produtos/abc`. As anotações da aula 8.4 passaram a ter efeito em execução."],
           ["h", "Pydantic: o contrato dos dados"],
           ["code", String.raw`from pydantic import BaseModel, Field
 
@@ -34,8 +34,8 @@ class ProdutoNovo(BaseModel):
 @app.post("/produtos", status_code=201)
 def criar_produto(produto: ProdutoNovo):
     return {"id": 1, **produto.model_dump()}`],
-          ["p", "Uma `BaseModel` parece-se com a `dataclass` do aula 14.3, com uma diferença decisiva: valida. Se o corpo do pedido trouxer `preco` a zero ou `nome` vazio, o cliente recebe 422 com a lista exata dos campos errados, e a tua função nem chega a correr."],
-          ["obra", "Esta é a fronteira de que falámos no aula 10.3: dados de fora entram por um sítio, são validados uma vez, e a partir daí o resto do código confia. Sem essa fronteira, cada função passa a ter de se defender, e nenhuma o faz bem."],
+          ["p", "Uma `BaseModel` parece-se com a `dataclass` da aula 14.3, com uma diferença decisiva: valida. Se o corpo do pedido trouxer `preco` a zero ou `nome` vazio, o cliente recebe 422 com a lista exata dos campos errados, e a tua função nem chega a correr."],
+          ["obra", "Esta é a fronteira de que falámos na aula 10.3: dados de fora entram por um sítio, são validados uma vez, e a partir daí o resto do código confia. Sem essa fronteira, cada função passa a ter de se defender, e nenhuma o faz bem."],
           ["h", "Os códigos de resposta que tens de acertar"],
           ["lista", [
             "200 para uma leitura com sucesso, 201 para uma criação.",
@@ -131,9 +131,9 @@ def ler(produto_id: int, repo: RepositorioProdutos = Depends(obter_repo)):
         return repo.obter(produto_id)
     except NaoEncontrado:
         raise HTTPException(status_code=404, detail="produto não existe")`],
-          ["p", "O `Depends` é injeção de dependências, o mesmo padrão do aula 14.5, agora dado pelo framework. No teste, substitui-se o repositório por um falso e testa-se a rota sem base de dados nenhuma."],
+          ["p", "O `Depends` é injeção de dependências, o mesmo padrão da aula 14.5, agora dado pelo framework. No teste, substitui-se o repositório por um falso e testa-se a rota sem base de dados nenhuma."],
           ["h", "Erros que se transformam em respostas"],
-          ["p", "As exceções de domínio do aula 10.3 sobem até à camada web e são traduzidas ali, num sítio só. Sem isso, cada rota repete o mesmo `try` e uma delas há de esquecer-se."],
+          ["p", "As exceções de domínio da aula 10.3 sobem até à camada web e são traduzidas ali, num sítio só. Sem isso, cada rota repete o mesmo `try` e uma delas há de esquecer-se."],
           ["code", String.raw`@app.exception_handler(NaoEncontrado)
 def tratar_nao_encontrado(pedido, exc):
     return JSONResponse(status_code=404, content={"detalhe": str(exc)})`],
@@ -235,7 +235,7 @@ def test_preco_invalido_da_422():
     assert resposta.status_code == 422`],
           ["p", "Três testes, três caminhos: o feliz, o inexistente e o inválido. É o mínimo por recurso, e já apanha a maioria das regressões que um júnior introduz."],
           ["h", "Base de dados de teste"],
-          ["p", "Os testes não podem tocar na base de dados real. Substitui-se a dependência que dá a sessão por uma que aponta para SQLite em memória, criada e destruída por teste. É a fixture do aula 19.2 aplicada a uma API."],
+          ["p", "Os testes não podem tocar na base de dados real. Substitui-se a dependência que dá a sessão por uma que aponta para SQLite em memória, criada e destruída por teste. É a fixture da aula 19.2 aplicada a uma API."],
           ["code", String.raw`@pytest.fixture
 def cliente():
     motor = create_engine("sqlite:///:memory:")

@@ -339,7 +339,7 @@ if __name__ == "__main__":
             "`input(\"Nome: \")` pergunta à pessoa. Devolve sempre texto e só serve quando há uma pessoa a olhar.",
             "`sys.argv` são os argumentos da linha de comandos: `python3 relatorio.py 10,20` põe `['relatorio.py', '10,20']`.",
             "Variáveis de ambiente (`os.environ`) para configuração e segredos.",
-            "Num programa a sério, argumentos tratam-se com `argparse`, que está no aula 28.1."
+            "Num programa a sério, argumentos tratam-se com `argparse`, que está na aula 28.1."
           ]],
           ["obra", "Scripts que fazem `input()` não correm em automatismos. No servidor, às três da manhã, ninguém escreve nada: o programa fica a olhar para o vazio até alguém o matar. Tudo o que um programa precisa de saber entra por argumentos ou por variáveis de ambiente."],
           ["h", "Código de saída"],

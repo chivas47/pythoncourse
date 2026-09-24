@@ -43,7 +43,7 @@ def test_varios_descontos(preco, pct, esperado):
         ],
         quiz: [
           { p: "O teu teste chama uma API real na internet. Qual é o problema?", o: ["Nenhum, testa a sério","É lento e falha quando a rede ou a API falham, por razões que não são do teu código","Só é problema se for paga"], c: 1,
-            e: "Testes têm de ser rápidos e determinísticos. Chamadas externas substituem-se por dublês (mocks), tema do aula 23.2." }
+            e: "Testes têm de ser rápidos e determinísticos. Chamadas externas substituem-se por dublês (mocks), tema da aula 23.2." }
         ],
         exercicio: {
           ficheiro: "medias.py",

@@ -98,7 +98,7 @@ from pathlib import Path             # traz só o que precisas
 from vendas.relatorio import resumir # o teu próprio código
 
 from vendas.relatorio import *       # nunca faças isto`],
-          ["p", "O `import *` traz nomes que não sabes quais são, esconde de onde veio cada coisa e parte assim que o outro módulo crescer. É proibido em quase todos os projetos sérios, e o `ruff` do módulo 20 apanha-o."],
+          ["p", "O `import *` traz nomes que não sabes quais são, esconde de onde veio cada coisa e parte assim que o outro módulo crescer. É proibido em quase todos os projetos sérios, e o `ruff` apanha-o."],
           ["h", "O guarda do __main__"],
           ["p", "Quando importas um módulo, o código no topo dele corre. Se esse ficheiro também serve de script, o que só deve correr na execução direta vai dentro do guarda."],
           ["py", String.raw`def resumir(vendas):

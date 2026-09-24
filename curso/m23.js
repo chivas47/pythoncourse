@@ -105,7 +105,7 @@ def nomes(cliente):
 falso = ClienteFalso(RespostaFalsa({"resultados": [{"nome": "Ana"}]}))
 print(nomes(falso))
 print(falso.pedidos)`],
-          ["p", "Repara em duas coisas. A função recebe o cliente como argumento, que é a injeção de dependências do aula 14.5, e o dublê guarda o que lhe pediram, para poderes verificar o pedido além do resultado."],
+          ["p", "Repara em duas coisas. A função recebe o cliente como argumento, que é a injeção de dependências da aula 14.5, e o dublê guarda o que lhe pediram, para poderes verificar o pedido além do resultado."],
           ["h", "unittest.mock, quando não te apetece escrever a classe"],
           ["py", String.raw`from unittest.mock import Mock
 

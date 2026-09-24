@@ -173,7 +173,7 @@ A minha hipótese é C. Faz sentido, ou estou a olhar para o lado errado?`],
           ["lista", [
             "Começa pelos testes: dizem o que o código promete fazer, sem teoria.",
             "Segue um pedido de ponta a ponta, do ponto de entrada até à base de dados. Uma vez chega para perceber a arquitetura.",
-            "Usa o depurador do aula 22.2 num caso real em vez de ler linha a linha.",
+            "Usa o depurador da aula 22.2 num caso real em vez de ler linha a linha.",
             "`git log` num ficheiro confuso explica muitas vezes porque é que ele é assim.",
             "Não proponhas reescrever nada no primeiro mês. Ainda não sabes que restrições produziram aquilo."
           ]],

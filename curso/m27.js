@@ -7,7 +7,7 @@ CURSO.modulos.push({
         id: "27.1", titulo: "Docker para quem escreve Python", min: 20, estado: "pronta",
         meta: "No fim: empacotas a aplicação numa imagem que corre igual em qualquer máquina.",
         blocos: [
-          ["p", "Uma imagem é o teu código mais o sistema mínimo para o correr, tudo congelado. Um contentor é essa imagem em execução. O problema que isto resolve é o do aula 13.3 levado ao limite: não é só a versão da biblioteca, é a versão do Python, do sistema e das bibliotecas do sistema."],
+          ["p", "Uma imagem é o teu código mais o sistema mínimo para o correr, tudo congelado. Um contentor é essa imagem em execução. O problema que isto resolve é o da aula 13.3 levado ao limite: não é só a versão da biblioteca, é a versão do Python, do sistema e das bibliotecas do sistema."],
           ["code", String.raw`# Dockerfile
 FROM python:3.12-slim
 
@@ -48,7 +48,7 @@ def config(ambiente):
     }
 
 print(config({"DATABASE_URL": "sqlite:///loja.db", "DEBUG": "1"}))`],
-          ["p", "Repara que a função recebe o ambiente em vez de ler `os.environ` diretamente. É o mesmo truque do aula 14.5: assim consegues testá-la com um dicionário, sem mexer no ambiente do processo."],
+          ["p", "Repara que a função recebe o ambiente em vez de ler `os.environ` diretamente. É o mesmo truque da aula 14.5: assim consegues testá-la com um dicionário, sem mexer no ambiente do processo."],
           ["aviso", "Segredos não entram na imagem. Um `ENV API_KEY=...` no Dockerfile fica gravado na imagem e qualquer pessoa que a descarregue o consegue ler, mesmo que apagues numa camada seguinte. Passam-se em execução, ou vêm do gestor de segredos da plataforma."],
           ["h", "docker compose para o ambiente local"],
           ["code", String.raw`services:
@@ -117,7 +117,7 @@ def test_porta_invalida():
           ["p", "Publicar é copiar a imagem para uma máquina que a corre, com a configuração daquele ambiente. As plataformas modernas fazem isso a partir de um push no git. O que é teu é o que vem a seguir: saber se aquilo está bem."],
           ["h", "O caminho até ao ar"],
           ["lista", [
-            "A CI corre linter, tipos e testes, como no aula 20.3.",
+            "A CI corre linter, tipos e testes, como na aula 20.3.",
             "Constrói a imagem e marca-a com a versão ou o identificador do commit.",
             "Aplica as migrações da base de dados antes de trocar a aplicação.",
             "Arranca a versão nova, confirma a rota de saúde, e só depois desliga a antiga.",
@@ -139,7 +139,7 @@ print(estado_saude({"base_de_dados": False, "cache": True}))`],
           ["p", "Distinguir 'degradado' de 'em baixo' importa: sem cache o serviço responde mais devagar, sem base de dados não responde de todo. Quem monitoriza precisa de saber a diferença para decidir se acorda alguém."],
           ["h", "O que vale a pena observar"],
           ["lista", [
-            "Registos estruturados, do aula 12.5, com um identificador por pedido para seguir o rasto.",
+            "Registos estruturados, da aula 12.5, com um identificador por pedido para seguir o rasto.",
             "Métricas: pedidos por segundo, latência no percentil 95, percentagem de erros.",
             "Alertas sobre sintomas que o utilizador sente, não sobre CPU a 80 por cento.",
             "Rastreio de erros, tipo Sentry, que agrupa exceções e mostra o traceback com o contexto."

@@ -30,7 +30,7 @@ CURSO.modulos.push({
           ["h", "Como o vais mostrar"],
           ["lista", [
             "Repositório público, com README que explica o problema antes da tecnologia.",
-            "Alguns testes a passar e a CI verde do aula 20.3.",
+            "Alguns testes a passar e a CI verde da aula 20.3.",
             "Commits pequenos e datados ao longo de semanas, e não um só commit com tudo.",
             "Se for uma API ou um site, um sítio onde a pessoa possa clicar e ver a funcionar."
           ]]
@@ -87,7 +87,7 @@ def test_dicionario_vazio_falha_em_tudo():
           ["p", "Sem licença, ninguém pode legalmente usar o teu código, nem para experimentar. Um ficheiro `LICENSE` com MIT resolve, é o que a maior parte dos projetos pequenos usa, e mostra que sabes que a questão existe."],
           ["h", "O histórico conta uma história"],
           ["lista", [
-            "Commits pequenos, ao longo de semanas, com mensagens no formato do aula 21.1.",
+            "Commits pequenos, ao longo de semanas, com mensagens no formato da aula 21.1.",
             "Ramos com pull requests, mesmo trabalhando sozinho: mostra o processo e dá-te prática.",
             "Sem ficheiros gerados, sem `.venv`, sem `.env` com segredos. Um `.gitignore` desde o primeiro commit.",
             "Se apagares e recriares o repositório para 'ficar limpo', apagas a prova de que trabalhaste ao longo do tempo."
