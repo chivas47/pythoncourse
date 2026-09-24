@@ -13,6 +13,7 @@ Uso, na raiz do repositório:
 """
 
 import json
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -108,6 +109,15 @@ def main(pedidos):
                 if passou != deve_passar:
                     problemas.append(f"{id_}: o corredor do browser {'falha' if deve_passar else 'passa'} com o {caso}\n{log}")
         print(f"ok {id_} {pasta}/{ex['ficheiro']}", flush=True)
+    ruff = shutil.which("ruff")
+    if ruff:
+        # as soluções são o exemplo do que o aluno deve entregar: têm de passar no ruff, como o dele
+        for comando in (["format", "--check"], ["check"]):
+            r = subprocess.run([ruff, *comando, str(SOLUCOES)], capture_output=True, text=True, encoding="utf-8")
+            if r.returncode != 0:
+                problemas.append(f"ruff {' '.join(comando)} falha nas soluções:\n{r.stdout}{r.stderr}")
+    else:
+        print("aviso: ruff não encontrado, as soluções não foram verificadas quanto ao estilo")
     total = sum(1 for i, _, _ in todos if not pedidos or i in pedidos)
     if problemas:
         print(f"\n{len(problemas)} problema(s) em {total} exercício(s):\n")
