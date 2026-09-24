@@ -99,7 +99,7 @@ Regras que o curso segue, e que convém manter:
 Precisa de Node e de Python 3.11 ou mais recente.
 
 ```
-python -m pip install pytest ruff
+python -m pip install pytest ruff==0.15.8
 python ferramentas/validar.py            # tudo
 python ferramentas/validar.py 4.3 6.1    # só alguns
 ```
