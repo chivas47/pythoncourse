@@ -232,7 +232,7 @@ try:
 except ErroDeValidacao as e:
     print("pedido rejeitado:", e)`],
           ["p", "Repara que junta todos os erros antes de levantar. Devolver um erro de cada vez obriga o utilizador a corrigir, submeter, corrigir, submeter. Isto é desenho de produto dentro de uma função."],
-          ["obra", "Em APIs, este padrão é o que separa um 500 de um 400 com mensagem útil. O `ErroDeValidacao` do teu domínio é apanhado na camada web e traduzido para uma resposta com o campo que falhou. Vais fazer isso no módulo 20."],
+          ["obra", "Em APIs, este padrão é o que separa um 500 de um 400 com mensagem útil. O `ErroDeValidacao` do teu domínio é apanhado na camada web e traduzido para uma resposta com o campo que falhou. Vais fazer isso no módulo 25."],
           ["aviso", "`raise ErroDeValidacao` sem parênteses funciona mas levanta a classe sem mensagem. E dentro de um `except`, usa `raise ... from erro` para não perderes o traceback original: quem depurar quer ver as duas pontas."],
           ["code", String.raw`try:
     dados = json.loads(texto)

@@ -264,7 +264,7 @@ def test_nao_altera_a_lista():
         id: "8.4", titulo: "Anotações de tipo", min: 12, estado: "pronta",
         meta: "No fim: escreves assinaturas que o editor e a equipa conseguem ler sem abrir o corpo da função.",
         blocos: [
-          ["p", "Uma anotação diz que tipo se espera. Python não a verifica em execução: quem verifica é o teu editor e uma ferramenta chamada mypy, no módulo 15. O valor é documentação que não fica desatualizada em silêncio."],
+          ["p", "Uma anotação diz que tipo se espera. Python não a verifica em execução: quem verifica é o teu editor e uma ferramenta chamada mypy, no módulo 20. O valor é documentação que não fica desatualizada em silêncio."],
           ["py", String.raw`def area(largura: float, altura: float) -> float:
     return largura * altura
 
@@ -285,11 +285,11 @@ def primeiro(valores: list[int]) -> int | None:
           ["lista", [
             "Nas funções públicas de um módulo, que outras pessoas vão chamar.",
             "Em qualquer coisa que devolva `None` em certos casos.",
-            "Em estruturas de dados que atravessam camadas, como as `dataclasses` do módulo 11.",
+            "Em estruturas de dados que atravessam camadas, como as `dataclasses` do módulo 14.",
             "Em código que já te enganou uma vez sobre o que recebia."
           ]],
           ["obra", "Num projeto novo em 2026, uma função sem anotações levanta perguntas em revisão. Não porque falte rigor teórico: é porque sem elas ninguém sabe se `dados` é uma lista de dicionários, um dicionário de listas ou um objeto, sem ir ler três ficheiros."],
-          ["aviso", "Anotar não valida. `def idade(n: int)` chamada com a string 'trinta' corre na mesma até rebentar mais à frente. Validação de dados que vêm de fora faz-se com código, ou com Pydantic, no módulo 20."],
+          ["aviso", "Anotar não valida. `def idade(n: int)` chamada com a string 'trinta' corre na mesma até rebentar mais à frente. Validação de dados que vêm de fora faz-se com código, ou com Pydantic, no módulo 25."],
           ["py", String.raw`def dobro(n: int) -> int:
     return n * 2
 

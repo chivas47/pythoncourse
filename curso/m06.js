@@ -116,7 +116,7 @@ print(letras[::-1])`],
 print(nome[:9], nome[-3:])`],
           ["p", "Ao contrário dos índices, as fatias nunca dão erro: `letras[10:20]` é simplesmente uma lista vazia."],
           ["h", "Copiar não é o mesmo que dar outro nome"],
-          ["aviso", "`lista_b = lista_a` não copia nada: são dois nomes para a mesma lista, e alterar uma altera a outra. Para copiar usa `lista_a.copy()` ou `list(lista_a)`. Isto apanha toda a gente uma vez, e há de te apanhar num argumento por omissão no módulo 6."],
+          ["aviso", "`lista_b = lista_a` não copia nada: são dois nomes para a mesma lista, e alterar uma altera a outra. Para copiar usa `lista_a.copy()` ou `list(lista_a)`. Isto apanha toda a gente uma vez, e há de te apanhar num argumento por omissão na aula 9.4."],
           ["py", String.raw`a = [1, 2]
 b = a
 b.append(3)
